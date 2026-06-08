@@ -3,11 +3,11 @@
 Welcome to the team! This guide takes you from **nothing installed** to
 **editing the project in Visual Studio Code, running the app, and sharing your
 changes** — step by step, no prior coding or Git experience required.
-Set aside about **25 minutes** for the one-time setup.
+Set aside about **15 minutes** for the one-time setup.
 
-We'll use:
+You already have **Visual Studio Code** (the editor where you'll change files —
+your "home base"). You'll just add two more free programs:
 - **GitHub Desktop** — a free app with buttons (not typed commands) to get the project and share changes
-- **Visual Studio Code** — a free editor where you'll see and change the project files (your "home base")
 - **Node.js** — runs the app
 
 > 🖥️ Written for **Windows**. On a Mac it's nearly identical — the download links
@@ -15,39 +15,31 @@ We'll use:
 
 ---
 
-## Before you start: get a free GitHub account & accept the invite
+## Before you start: accept your invitation
 
-1. If you don't already have one, go to **[github.com/signup](https://github.com/signup)** and create a free account.
-2. Tell **Christina** your GitHub **username** (or your sign-up email) so she can invite you.
-3. You'll get an email titled something like *"Christina invited you to collaborate."* Click **View invitation** → **Accept invitation**.
+Christina has already invited you to the project. Just accept it:
+1. Check your email for a message titled *"Christina invited you to collaborate."* Click **View invitation** → **Accept invitation**.
+2. No email? Go to **[github.com/notifications](https://github.com/notifications)** while signed in, or open **github.com/cravaglia/chris-lilach-karina** directly and accept there.
 
 ✅ Once you've accepted, continue below.
 
 ---
 
-## Step 1 — Install three free programs
+## Step 1 — Install two free programs
 
-You only do this once.
+You already have Visual Studio Code, so you only need these two. You do this once.
 
 ### A) GitHub Desktop — gets the project & shares your changes
 1. Go to **[desktop.github.com](https://desktop.github.com)**
 2. Click **Download for Windows** *(Mac: Download for macOS)*
 3. Open the downloaded file and let it install — it opens automatically when done
 
-### B) Visual Studio Code — where you'll edit the project
-> ⚠️ **Get "Visual Studio Code"** — NOT "Visual Studio" (they're different products,
-> and Visual Studio is the wrong, much larger one). Use the link below to be sure.
-
-1. Go to **[code.visualstudio.com](https://code.visualstudio.com)**
-2. Click **Download for Windows** *(Mac: Download Mac Universal)*
-3. Open the installer, click **Next** through the defaults, and **Finish**
-
-### C) Node.js — runs the app
+### B) Node.js — runs the app
 1. Go to **[nodejs.org](https://nodejs.org)**
 2. Click the big **"LTS"** button (the recommended version)
 3. Open the installer and click **Next** through all the steps at their default settings, then **Finish**
 
-That's all three. 🎉
+That's both. 🎉
 
 ---
 
@@ -168,9 +160,8 @@ Before you start working each time, grab the latest:
 
 | What you see | What to do |
 |---|---|
-| `'npm' is not recognized` | Node.js didn't finish installing. Re-run the Node.js installer (Step 1C), then **close and reopen** VS Code so the terminal picks it up. |
+| `'npm' is not recognized` | Node.js didn't finish installing. Re-run the Node.js installer (Step 1B), then **close and reopen** VS Code so the terminal picks it up. |
 | The browser page won't load | Make sure the terminal still shows it's running and you didn't press Ctrl+C. Type `npm start` again. |
-| I downloaded "Visual Studio" by mistake | That's the wrong (huge) program. Uninstall it and get **Visual Studio Code** from [code.visualstudio.com](https://code.visualstudio.com). |
 | GitHub Desktop says "can't push" | Click **Pull origin** first, then **Push origin** again. |
 | "Merge conflict" message | Two people edited the same line. Message the team — Christina or Claude can help resolve it quickly. |
 | You're just stuck | Take a screenshot and drop it in the team chat. No question is too basic. |
