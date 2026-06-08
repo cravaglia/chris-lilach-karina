@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journey Recovery Intelligence · NICE CXone</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --nice-purple: #6B21E8; --nice-purple-light: #8B5CF6; --nice-dark: #0F0F1A;
+    --nice-sidebar: #13132A; --nice-card: #1C1C38; --nice-card2: #22224A;
+    --nice-border: #2D2D5E; --nice-text: #E2E2F0; --nice-muted: #8888AA;
+    --nice-green: #10B981; --nice-red: #EF4444; --nice-amber: #F59E0B;
+    --nice-blue: #3B82F6; --nice-teal: #06B6D4;
+  }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--nice-dark); color: var(--nice-text); min-height: 100vh; display: flex; overflow: hidden; }
+  .sidebar { width: 220px; background: var(--nice-sidebar); border-right: 1px solid var(--nice-border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid var(--nice-border); display: flex; align-items: center; gap: 10px; }
+  .logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg, var(--nice-purple), var(--nice-teal)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: white; letter-spacing: -1px; }
+  .logo-text { font-size: 13px; font-weight: 700; color: white; line-height: 1.2; }
+  .logo-sub { font-size: 10px; color: var(--nice-muted); font-weight: 400; }
+  .nav { padding: 12px 0; flex: 1; }
+  .nav-section { font-size: 10px; color: var(--nice-muted); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 8px 20px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 13px; color: var(--nice-muted); cursor: pointer; transition: all .15s; border-left: 3px solid transparent; margin: 1px 0; }
+  .nav-item:hover { color: var(--nice-text); background: rgba(107,33,232,.1); }
+  .nav-item.active { color: white; background: rgba(107,33,232,.18); border-left-color: var(--nice-purple-light); }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; background: var(--nice-red); color: white; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; }
+  .nav-badge-amber { background: var(--nice-amber); }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { height: 56px; border-bottom: 1px solid var(--nice-border); display: flex; align-items: center; padding: 0 24px; gap: 16px; background: var(--nice-sidebar); }
+  .topbar-title { font-size: 15px; font-weight: 600; flex: 1; }
+  .topbar-chip { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; background: rgba(107,33,232,.2); color: var(--nice-purple-light); border: 1px solid rgba(107,33,232,.35); }
+  .topbar-chip.green { background: rgba(16,185,129,.15); color: var(--nice-green); border-color: rgba(16,185,129,.3); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#6B21E8,#06B6D4); display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white; }
+  .content { flex: 1; overflow-y: auto; padding: 24px; }
+  .screen { display: none; } .screen.active { display: block; }
+  .signal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .signal-card { background: var(--nice-card); border: 1px solid var(--nice-border); border-radius: 12px; padding: 18px; cursor: pointer; transition: all .2s; position: relative; overflow: hidden; }
+  .signal-card:hover { border-color: var(--nice-purple-light); transform: translateY(-1px); }
+  .signal-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .signal-card.red::before { background: var(--nice-red); }
+  .signal-card.amber::before { background: var(--nice-amber); }
+  .signal-card.green::before { background: var(--nice-green); }
+  .signal-card.purple::before { background: var(--nice-purple-light); }
+  .signal-label { font-size: 11px; color: var(--nice-muted); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .signal-value { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .signal-value.red { color: var(--nice-red); } .signal-value.amber { color: var(--nice-amber); }
+  .signal-value.green { color: var(--nice-green); } .signal-value.purple { color: var(--nice-purple-light); }
+  .signal-delta { font-size: 12px; color: var(--nice-muted); }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-title { font-size: 14px; font-weight: 600; }
+  .section-action { font-size: 12px; color: var(--nice-purple-light); cursor: pointer; }
+  .session-table { width: 100%; border-collapse: collapse; }
+  .session-table th { font-size: 11px; color: var(--nice-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--nice-border); }
+  .session-table td { padding: 14px 14px; border-bottom: 1px solid rgba(45,45,94,.5); font-size: 13px; }
+  .session-table tr:hover td { background: rgba(107,33,232,.06); cursor: pointer; }
+  .session-table tr:last-child td { border-bottom: none; }
+  .sentiment-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+  .sentiment-pill.hot { background: rgba(239,68,68,.15); color: var(--nice-red); }
+  .sentiment-pill.warm { background: rgba(245,158,11,.15); color: var(--nice-amber); }
+  .sentiment-pill.neutral { background: rgba(99,102,241,.15); color: #818CF8; }
+  .sentiment-pill.calm { background: rgba(16,185,129,.15); color: var(--nice-green); }
+  .recovery-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 20px; }
+  .recovery-badge.strong { background: rgba(16,185,129,.15); color: var(--nice-green); border: 1px solid rgba(16,185,129,.3); }
+  .recovery-badge.partial { background: rgba(245,158,11,.15); color: var(--nice-amber); border: 1px solid rgba(245,158,11,.3); }
+  .recovery-badge.failed { background: rgba(239,68,68,.15); color: var(--nice-red); border: 1px solid rgba(239,68,68,.3); }
+  .agent-cell { display: flex; align-items: center; gap: 8px; }
+  .agent-dot { width: 28px; height: 28px; border-radius: 50%; display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0; }
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--nice-muted); cursor: pointer; margin-bottom: 20px; transition: color .15s; }
+  .back-btn:hover { color: var(--nice-text); }
+  .journey-layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+  .card { background: var(--nice-card); border: 1px solid var(--nice-border); border-radius: 12px; overflow: hidden; }
+  .card-header { padding: 16px 20px; border-bottom: 1px solid var(--nice-border); display: flex; align-items: center; justify-content: space-between; }
+  .card-title { font-size: 14px; font-weight: 600; }
+  .card-body { padding: 20px; }
+  .chart-container { position: relative; height: 220px; margin-bottom: 12px; }
+  .phase-labels { display: flex; margin-top: 4px; }
+  .phase-label { text-align: center; font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; padding: 4px 0; border-radius: 4px; }
+  .phase-label.ai { flex: 0 0 44%; color: var(--nice-blue); background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.2); margin-right: 1%; }
+  .phase-label.dead { flex: 0 0 12%; color: var(--nice-muted); background: rgba(45,45,94,.5); border: 1px solid rgba(45,45,94,.8); margin-right: 1%; }
+  .phase-label.human { flex: 0 0 42%; color: var(--nice-green); background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.2); }
+  .scorecard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .score-item { background: var(--nice-card2); border-radius: 8px; padding: 14px; border: 1px solid var(--nice-border); }
+  .score-item-label { font-size: 10px; color: var(--nice-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+  .score-item-value { font-size: 20px; font-weight: 700; }
+  .score-item-value.green { color: var(--nice-green); } .score-item-value.red { color: var(--nice-red); }
+  .score-item-value.amber { color: var(--nice-amber); }
+  .score-item-sub { font-size: 11px; color: var(--nice-muted); margin-top: 2px; }
+  .subscore-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .subscore-label { font-size:11px; color:var(--nice-muted); width:120px; flex-shrink:0; }
+  .subscore-track { flex:1; height:6px; border-radius:3px; background:var(--nice-card2); overflow:hidden; }
+  .subscore-fill { height:100%; border-radius:3px; }
+  .subscore-val { font-size:12px; font-weight:700; width:30px; text-align:right; }
+  .brief-section { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--nice-border); }
+  .brief-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .brief-section-label { font-size: 10px; color: var(--nice-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .brief-section-label::before { content: ''; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .brief-section-label.wants::before { background: var(--nice-blue); }
+  .brief-section-label.tried::before { background: var(--nice-amber); }
+  .brief-section-label.broke::before { background: var(--nice-red); }
+  .brief-section-label.temp::before { background: #F87171; }
+  .brief-section-label.open::before { background: var(--nice-purple-light); }
+  .brief-section-text { font-size: 13px; color: var(--nice-text); line-height: 1.5; }
+  .brief-highlight { background: rgba(107,33,232,.12); border: 1px solid rgba(107,33,232,.25); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #C4B5FD; line-height: 1.6; font-style: italic; margin-top: 12px; }
+  .brief-highlight-label { font-size: 10px; font-weight: 700; color: var(--nice-purple-light); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; font-style: normal; }
+  .root-cause-banner, .overcontain-banner { display: flex; align-items: center; gap: 12px; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+  .root-cause-banner { background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.2); }
+  .overcontain-banner { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.2); }
+  .rc-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(59,130,246,.2); display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .oc-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(245,158,11,.2); display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+  .rc-label { font-size: 10px; color: var(--nice-blue); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 2px; }
+  .oc-label { font-size: 10px; color: var(--nice-amber); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 2px; }
+  .rc-value, .oc-value { font-size: 13px; font-weight: 600; }
+  .emotion-bar { background: var(--nice-card2); border-radius: 8px; padding: 14px; border: 1px solid var(--nice-border); margin-bottom: 12px; }
+  .emotion-label { font-size: 10px; color: var(--nice-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+  .emotion-track { height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--nice-red), var(--nice-amber), var(--nice-green)); position: relative; margin-bottom: 6px; }
+  .emotion-indicator { position: absolute; top: -4px; width: 16px; height: 16px; border-radius: 50%; background: white; transform: translateX(-50%); transition: left .8s ease; }
+  .emotion-ticks { display: flex; justify-content: space-between; font-size: 10px; color: var(--nice-muted); }
+  .event-list { display: flex; flex-direction: column; gap: 0; }
+  .event-item { display: flex; gap: 12px; position: relative; }
+  .event-item::before { content: ''; position: absolute; left: 15px; top: 28px; bottom: -8px; width: 1px; background: var(--nice-border); }
+  .event-item:last-child::before { display: none; }
+  .event-dot { width: 30px; height: 30px; border-radius: 50%; display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:4px;position:relative;z-index:1; }
+  .event-dot.bot { background: rgba(59,130,246,.2); border: 2px solid rgba(59,130,246,.4); }
+  .event-dot.dead { background: rgba(45,45,94,.8); border: 2px solid var(--nice-border); }
+  .event-dot.human { background: rgba(16,185,129,.2); border: 2px solid rgba(16,185,129,.4); }
+  .event-dot.warn { background: rgba(239,68,68,.2); border: 2px solid rgba(239,68,68,.4); }
+  .event-content { padding-bottom: 20px; flex: 1; }
+  .event-time { font-size: 10px; color: var(--nice-muted); margin-bottom: 2px; }
+  .event-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .event-desc { font-size: 12px; color: var(--nice-muted); line-height: 1.5; }
+  .event-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; margin-top: 4px; }
+  .event-tag.red { background: rgba(239,68,68,.15); color: var(--nice-red); }
+  .event-tag.amber { background: rgba(245,158,11,.15); color: var(--nice-amber); }
+  .event-tag.green { background: rgba(16,185,129,.15); color: var(--nice-green); }
+  .action-table-wrap { background: var(--nice-card); border: 1px solid var(--nice-border); border-radius: 12px; overflow: hidden; }
+  .action-table { width: 100%; border-collapse: collapse; }
+  .action-table th { font-size: 11px; color: var(--nice-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--nice-border); background: var(--nice-card2); }
+  .action-table td { padding: 14px 16px; border-bottom: 1px solid rgba(45,45,94,.5); font-size: 13px; vertical-align: top; }
+  .action-table tr:last-child td { border-bottom: none; }
+  .action-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; cursor: pointer; transition: all .2s; border: 1px solid; }
+  .action-btn.purple { color: var(--nice-purple-light); border-color: rgba(107,33,232,.4); background: rgba(107,33,232,.1); }
+  .action-btn.purple:hover { background: rgba(107,33,232,.25); }
+  .action-btn.green { color: var(--nice-green); border-color: rgba(16,185,129,.4); background: rgba(16,185,129,.1); }
+  .action-btn.green:hover { background: rgba(16,185,129,.25); }
+  .owner-tag { font-size: 11px; font-weight: 600; color: var(--nice-muted); }
+  .signal-desc { font-size: 12px; color: var(--nice-muted); margin-top: 2px; }
+  .impact-chip { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 8px; margin-top: 4px; background: rgba(245,158,11,.15); color: var(--nice-amber); }
+  .predict-toast { position: fixed; top: 72px; right: 24px; background: #1C1C38; border: 1px solid rgba(239,68,68,.5); border-radius: 12px; padding: 14px 18px; width: 300px; box-shadow: 0 8px 32px rgba(0,0,0,.4); opacity: 0; transform: translateX(20px); transition: all .4s ease; pointer-events: none; z-index: 100; }
+  .predict-toast.show { opacity: 1; transform: translateX(0); pointer-events: all; }
+  .toast-label { font-size: 10px; font-weight: 700; color: var(--nice-red); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .toast-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--nice-red); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+  .toast-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .toast-desc { font-size: 12px; color: var(--nice-muted); line-height: 1.4; }
+  .toast-route { margin-top: 10px; display: flex; align-items: center; gap: 8px; }
+  .toast-route-btn { flex: 1; font-size: 12px; font-weight: 600; padding: 6px 0; text-align: center; border-radius: 8px; cursor: pointer; background: rgba(239,68,68,.2); color: var(--nice-red); border: 1px solid rgba(239,68,68,.4); transition: all .2s; }
+  .toast-route-btn:hover { background: rgba(239,68,68,.35); }
+  .toast-close { width: 28px; height: 28px; border-radius: 6px; display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--nice-muted);font-size:16px; }
+  .toast-close:hover { background: rgba(255,255,255,.1); color: white; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--nice-card); border: 1px solid var(--nice-border); border-radius: 16px; padding: 28px; max-width: 500px; width: 90%; box-shadow: 0 24px 64px rgba(0,0,0,.5); }
+  .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .modal p { font-size: 13px; color: var(--nice-muted); margin-bottom: 20px; line-height: 1.6; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .modal-btn { font-size: 13px; font-weight: 600; padding: 8px 20px; border-radius: 8px; cursor: pointer; border: none; transition: all .2s; }
+  .modal-btn.cancel { background: var(--nice-card2); color: var(--nice-text); }
+  .modal-btn.confirm { background: var(--nice-purple); color: white; }
+  .modal-btn.confirm:hover { background: var(--nice-purple-light); }
+  .tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .tag.reuse { background: rgba(6,182,212,.12); color: var(--nice-teal); border: 1px solid rgba(6,182,212,.25); }
+  .tag.new { background: rgba(107,33,232,.12); color: var(--nice-purple-light); border: 1px solid rgba(107,33,232,.25); }
+  .flex-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .session-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; gap: 20px; }
+  .session-id { font-size: 12px; color: var(--nice-muted); font-weight: 500; margin-bottom: 4px; }
+  .session-name { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .session-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .meta-chip { font-size: 11px; color: var(--nice-muted); }
+  .session-scores { display: flex; gap: 12px; }
+  .score-box { background: var(--nice-card); border: 1px solid var(--nice-border); border-radius: 10px; padding: 12px 16px; text-align: center; }
+  .score-box-val { font-size: 22px; font-weight: 700; }
+  .score-box-val.green { color: var(--nice-green); } .score-box-val.purple { color: var(--nice-purple-light); }
+  .score-box-label { font-size: 10px; color: var(--nice-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+  .loading { color: var(--nice-muted); font-size: 13px; padding: 20px; }
+  ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--nice-border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">N</div>
+    <div><div class="logo-text">CXone</div><div class="logo-sub">Quality Management</div></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Analytics</div>
+    <div class="nav-item" onclick="goHome()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item active" id="nav-journey" onclick="goHome()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l3-8 4 16 3-8 4 0"/></svg>
+      Journey Recovery <span class="nav-badge" id="nav-journey-badge">·</span>
+    </div>
+    <div class="nav-item" onclick="goSupervisor()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Supervisor Actions <span class="nav-badge nav-badge-amber">5</span>
+    </div>
+    <div class="nav-section" style="margin-top:8px;">Evaluation</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> QM Evaluations</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Feedback Mgmt</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Bot Evaluation</div>
+  </nav>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Journey Recovery Intelligence</div>
+    <div class="topbar-chip">Today · June 8, 2026</div>
+    <div class="topbar-chip green">⬤ Live</div>
+    <div class="avatar">CR</div>
+  </div>
+
+  <div class="content">
+    <!-- HOME -->
+    <div class="screen active" id="screen-home">
+      <div class="signal-grid" id="signal-grid"><div class="loading">Loading signals…</div></div>
+      <div class="section-header">
+        <div class="section-title">🚨 Flagged Journeys — Needs Review</div>
+        <div class="section-action" id="flagged-count"></div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <table class="session-table">
+          <thead><tr><th>Session</th><th>Customer</th><th>Issue</th><th>Handoff Temp</th><th>Dead Zone</th><th>Recovery</th><th>Resolution</th><th>Agent</th></tr></thead>
+          <tbody id="journeys-tbody"><tr><td colspan="8" class="loading">Loading journeys…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="section-header"><div class="section-title">🔁 Re-Escalations — Resolution Didn't Stick</div></div>
+      <div class="card">
+        <table class="session-table">
+          <thead><tr><th>Customer</th><th>Original Session</th><th>Re-Escalated</th><th>Days Gap</th><th>Intent</th><th>Attribution</th></tr></thead>
+          <tbody id="reesc-tbody"><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SESSION DETAIL (rendered dynamically) -->
+    <div class="screen" id="screen-session"></div>
+
+    <!-- SUPERVISOR -->
+    <div class="screen" id="screen-supervisor">
+      <div style="font-size:18px;font-weight:700;margin-bottom:6px;">Supervisor Action Feed</div>
+      <div style="font-size:13px;color:var(--nice-muted);margin-bottom:24px;">Every seam signal mapped to a recommended next step with an owner.</div>
+      <div class="action-table-wrap">
+        <table class="action-table">
+          <thead><tr><th>Signal</th><th>Impact</th><th>Recommended Action</th><th>Owner</th><th></th></tr></thead>
+          <tbody id="actions-tbody"><tr><td colspan="5" class="loading">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="predict-toast" id="predict-toast">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+    <div style="flex:1;">
+      <div class="toast-label"><div class="toast-dot"></div> Live Escalation Warning</div>
+      <div class="toast-title">JRN-00862 · R. Sandhu — Trending bad</div>
+      <div class="toast-desc">Bot on turn 5, sentiment −0.6. Matches prior handoffs that ended in failed recovery. Confidence: 0.81</div>
+      <div class="toast-route"><div class="toast-route-btn" onclick="dismissToast()">Route to best agent →</div></div>
+    </div>
+    <div class="toast-close" onclick="dismissToast()">×</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <h3 id="modal-title">Create Ticket</h3>
+    <p id="modal-desc"></p>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeModalDirect()">Cancel</button>
+      <button class="modal-btn confirm" onclick="closeModalDirect()">✓ Create in Jira</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const api = (p) => fetch(p).then(r => r.json());
+const mmss = (t) => `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`;
+const fmt = (n) => (n > 0 ? '+' : '') + n.toFixed(2);
+const esc = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+let chart;
+
+// ── HOME ─────────────────────────────────────────────────────────────────────
+async function renderHome() {
+  const sig = await api('/api/signals');
+  document.getElementById('signal-grid').innerHTML = `
+    <div class="signal-card red"><div class="signal-label">Dead Zone &gt; 30s</div><div class="signal-value red">${sig.deadZoneCount}</div><div class="signal-delta">Flagged today · above 30s threshold</div></div>
+    <div class="signal-card amber"><div class="signal-label">Failed Recovery Rate</div><div class="signal-value amber">${sig.failedRecoveryRate}%</div><div class="signal-delta">Sentiment did not turn around</div></div>
+    <div class="signal-card amber"><div class="signal-label">Over-Contained Handoffs</div><div class="signal-value amber">${sig.overContainedCount}</div><div class="signal-delta">Bot held 3+ extra turns</div></div>
+    <div class="signal-card green"><div class="signal-label">Avg Emotional Recovery</div><div class="signal-value green">${fmt(sig.avgEmotionalRecovery)}</div><div class="signal-delta">Sentiment delta across the seam</div></div>`;
+  document.getElementById('nav-journey-badge').textContent = sig.reEscalations + sig.deadZoneCount;
+
+  const journeys = await api('/api/journeys');
+  document.getElementById('flagged-count').textContent = `${journeys.length} sessions`;
+  const tempCls = { Hot:'hot', Warm:'warm', Neutral:'neutral', Calm:'calm' };
+  const tempIcon = { Hot:'🔥', Warm:'⚠', Neutral:'•', Calm:'✓' };
+  const resLabel = (r, re) => {
+    if (re) return '<span style="font-size:12px;color:var(--nice-red);">↻ Re-esc</span>';
+    if (r && r.outcome === 'resolved') return '<span style="font-size:12px;color:var(--nice-green);">✓ Held</span>';
+    return '<span style="font-size:12px;color:var(--nice-amber);">⚠ Repeat</span>';
+  };
+  document.getElementById('journeys-tbody').innerHTML = journeys.map(j => `
+    <tr onclick="openSession('${j.id}')">
+      <td style="font-family:monospace;font-size:12px;color:var(--nice-muted);">${j.id}</td>
+      <td><strong>${esc(j.customer)}</strong><br><span style="font-size:11px;color:var(--nice-muted);">Account #${j.account}</span></td>
+      <td>${esc(j.issueLabel)}<br><span style="font-size:11px;color:var(--nice-muted);">${esc(j.issueSub||'')}</span></td>
+      <td><span class="sentiment-pill ${tempCls[j.handoffTemp]||'neutral'}">${tempIcon[j.handoffTemp]||''} ${j.handoffTemp}</span></td>
+      <td style="color:${j.deadZoneSeconds>30?'var(--nice-red)':'var(--nice-amber)'};font-weight:600;">${mmss(j.deadZoneSeconds||0)}</td>
+      <td>${j.recovery ? `<span class="recovery-badge ${j.recovery.label}">${j.recovery.delta>=0?'▲':'▼'} ${fmt(j.recovery.delta)}</span>` : '—'}</td>
+      <td>${resLabel(j.resolution, j.reEscalated)}</td>
+      <td><div class="agent-cell"><div class="agent-dot" style="background:${j.agent.color};">${j.agent.initials}</div><span>${esc(j.agent.name)}</span></div></td>
+    </tr>`).join('');
+
+  const reesc = await api('/api/reescalations');
+  document.getElementById('reesc-tbody').innerHTML = reesc.map(l => `
+    <tr>
+      <td><strong>${esc(l.customer)}</strong></td>
+      <td style="font-family:monospace;font-size:12px;">${l.originalSession}</td>
+      <td style="font-family:monospace;font-size:12px;">${l.reEscalatedSession}</td>
+      <td style="color:var(--nice-red);font-weight:700;">${l.gapDays} day${l.gapDays===1?'':'s'}</td>
+      <td>${esc(l.intent)}</td>
+      <td><span class="tag new">${esc(l.attribution)}</span></td>
+    </tr>`).join('') || '<tr><td colspan="6" class="loading">No re-escalations.</td></tr>';
+}
+
+// ── SESSION DETAIL ────────────────────────────────────────────────────────────
+async function openSession(id) {
+  showScreen('screen-session');
+  document.getElementById('topbar-title').textContent = `Session ${id}`;
+  document.getElementById('nav-journey').classList.add('active');
+  const el = document.getElementById('screen-session');
+  el.innerHTML = '<div class="loading">Loading journey…</div>';
+  const d = await api('/api/journeys/' + id);
+  const rec = d.scores.emotionalRecovery, dz = d.scores.deadZone, oc = d.scores.overContainment;
+  const sc = d.scorecard, b = d.warmBrief;
+  const recCls = rec ? rec.label : 'partial';
+  const tempPct = { Hot:8, Warm:35, Neutral:55, Calm:80 }[d.emotionalTemp.label] || 50;
+
+  el.innerHTML = `
+    <div class="back-btn" onclick="goHome()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Journey Recovery · Flagged Journeys</div>
+    <div class="session-header">
+      <div>
+        <div class="session-id">Session ${d.id} · ${esc(d.customer)}</div>
+        <div class="session-name">${esc(d.customer)} — ${esc(d.issueLabel)}</div>
+        <div class="session-meta">
+          <span class="meta-chip">Agent: ${esc(d.agent.name)} · Team: ${esc(d.agent.team)}</span>
+          <span class="meta-chip">· Intent: ${esc(d.intent)}</span>
+          <span class="meta-chip"><span class="tag reuse">Root cause from QM</span></span>
+        </div>
+      </div>
+      <div class="session-scores">
+        <div class="score-box"><div class="score-box-val ${rec&&rec.delta>=0?'green':'purple'}">${rec?fmt(rec.delta):'—'}</div><div class="score-box-label">Recovery Score</div></div>
+        <div class="score-box"><div class="score-box-val purple">${sc.overall}</div><div class="score-box-label">Journey QM</div></div>
+      </div>
+    </div>
+    <div class="journey-layout">
+      <div>
+        <div class="root-cause-banner">
+          <div class="rc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></div>
+          <div><div class="rc-label">Root Cause · From QM <span class="tag reuse" style="margin-left:6px;">reuse</span></div><div class="rc-value">${esc(d.rootCause||'—')}</div></div>
+        </div>
+        ${oc && oc.extraTurns>0 ? `<div class="overcontain-banner">
+          <div class="oc-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <div><div class="oc-label">Over-Containment Detected</div><div class="oc-value">Bot held ${oc.extraTurns} turns past the optimal handoff point (turn ${oc.optimalTurn})</div></div>
+        </div>` : ''}
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-header"><div class="card-title">Sentiment Journey · End to End</div>
+            ${rec ? `<div class="flex-row"><span style="font-size:12px;color:var(--nice-muted);">${fmt(rec.atHandoff)} → ${fmt(rec.final)}</span><span class="recovery-badge ${recCls}">${rec.delta>=0?'▲':'▼'} ${fmt(rec.delta)} recovery</span></div>` : ''}
+          </div>
+          <div class="card-body">
+            <div class="chart-container"><canvas id="sentimentChart"></canvas></div>
+            <div class="phase-labels"><div class="phase-label ai">🤖 AI Leg · ${d.scores.aiTurnCount} turns</div><div class="phase-label dead">⏸ Dead Zone</div><div class="phase-label human">👤 Human Leg · ${d.scores.humanTurnCount} turns</div></div>
+          </div>
+        </div>
+        <div class="card"><div class="card-header"><div class="card-title">Journey Events</div></div><div class="card-body"><div class="event-list" id="event-list"></div></div></div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-header"><div class="card-title">Journey Scorecard</div></div>
+          <div class="card-body">
+            <div class="scorecard-grid">
+              <div class="score-item"><div class="score-item-label">Emotional Recovery</div><div class="score-item-value ${rec&&rec.delta>=0?'green':'red'}">${rec?fmt(rec.delta):'—'}</div><div class="score-item-sub">${rec?`${fmt(rec.atHandoff)} → ${fmt(rec.final)}`:''}</div></div>
+              <div class="score-item"><div class="score-item-label">Dead Zone</div><div class="score-item-value ${dz&&dz.breached?'red':'green'}">${dz?mmss(dz.seconds):'—'}</div><div class="score-item-sub">Threshold: 0:30</div></div>
+              <div class="score-item"><div class="score-item-label">Over-Containment</div><div class="score-item-value amber">${oc?`+${oc.extraTurns} turns`:'—'}</div><div class="score-item-sub">${oc&&oc.optimalTurn?`Optimal: turn ${oc.optimalTurn}`:''}</div></div>
+              <div class="score-item"><div class="score-item-label">Re-Escalation</div><div class="score-item-value ${d.reEscalated?'red':'green'}" style="font-size:15px;">${d.reEscalated?'Yes':'None (7-day)'}</div><div class="score-item-sub">${d.reEscalated?'Did not hold':'Resolution held'}</div></div>
+            </div>
+            <div style="margin:8px 0 14px;">
+              ${subScore('AI containment', sc.aiContainment)}
+              ${subScore('Handoff quality', sc.handoffQuality)}
+              ${subScore('Human resolution', sc.humanResolution)}
+              ${subScore('Emotional outcome', sc.emotionalOutcome)}
+            </div>
+            <div class="emotion-bar">
+              <div class="emotion-label">Emotional Temperature at Handoff</div>
+              <div class="emotion-track"><div class="emotion-indicator" style="left:${tempPct}%;border:3px solid ${tempPct<40?'var(--nice-red)':'var(--nice-green)'};box-shadow:0 0 0 3px rgba(239,68,68,.3);"></div></div>
+              <div class="emotion-ticks"><span>Critical</span><span>Frustrated</span><span>Neutral</span><span>Satisfied</span></div>
+            </div>
+            <div style="font-size:11px;color:var(--nice-muted);">Difficulty source: <strong style="color:var(--nice-text);text-transform:capitalize;">${esc(d.difficultySource||'—')}</strong></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">🤝 Warm-Transfer Brief</div><span class="tag reuse">Auto-generated</span></div>
+          <div class="card-body">
+            <div class="brief-section"><div class="brief-section-label wants">Customer Wants</div><div class="brief-section-text">${esc(b.wants)}</div></div>
+            <div class="brief-section"><div class="brief-section-label tried">Bot Tried</div><div class="brief-section-text">${esc(b.botTried)}</div></div>
+            <div class="brief-section"><div class="brief-section-label broke">Broke At</div><div class="brief-section-text">${esc(b.brokeAt)}</div></div>
+            <div class="brief-section"><div class="brief-section-label temp">Emotional Temp</div><div class="brief-section-text">${esc(b.emotionalTemp)}</div></div>
+            <div class="brief-section"><div class="brief-section-label open" style="color:var(--nice-purple-light);">Carried Over</div><div class="brief-section-text">${esc(b.carriedOver)}</div></div>
+            ${b.suggestedOpening ? `<div class="brief-highlight"><div class="brief-highlight-label">💬 Suggested Opening</div>"${esc(b.suggestedOpening)}"</div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  renderEvents(d);
+  renderChart(d);
+}
+
+function subScore(label, val) {
+  const color = val >= 75 ? 'var(--nice-green)' : val >= 50 ? 'var(--nice-amber)' : 'var(--nice-red)';
+  return `<div class="subscore-row"><div class="subscore-label">${label}</div><div class="subscore-track"><div class="subscore-fill" style="width:${val}%;background:${color};"></div></div><div class="subscore-val" style="color:${color};">${val}</div></div>`;
+}
+
+function renderEvents(d) {
+  const esc_t = d.turns.find(t => t.event === 'escalation_triggered');
+  const pickup = d.turns.find(t => t.event === 'human_pickup');
+  const firstBot = d.turns.find(t => t.actor === 'bot');
+  const firstHuman = d.turns.find(t => t.actor === 'human');
+  const lastHuman = [...d.turns].reverse().find(t => t.actor === 'human');
+  const oc = d.scores.overContainment, dz = d.scores.deadZone, rec = d.scores.emotionalRecovery;
+  const ev = [];
+  if (firstBot) ev.push({c:'bot',icon:'🤖',time:`${mmss(firstBot.t)} · Bot leg begins`,title:'Customer opens chat',desc:esc(firstBot.text)});
+  if (d.loop && d.loop.detected && d.loop.firstLoopTurn) ev.push({c:'warn',icon:'⚠',time:`Turn ${d.loop.firstLoopTurn} · Loop detected`,title:'Customer repeats the request',desc:`Repeated "${esc(d.loop.token)}" ${d.loop.repeats}× — strongest early frustration signal.`,tag:'amber',tagText:'⚠ Loop / repeat detected'});
+  if (oc && oc.extraTurns>0) ev.push({c:'warn',icon:'⚠',time:`Turn ${oc.optimalTurn} · Optimal handoff point`,title:'Over-containment threshold crossed',desc:`Bot should have transferred here. It held ${oc.extraTurns} more turns.`,tag:'red',tagText:`Over-contained +${oc.extraTurns} turns`});
+  if (esc_t) ev.push({c:'warn',icon:'🚨',time:`${mmss(esc_t.t)} · Escalation`,title:'Bot gives up — escalation triggered',desc:`Customer routed to a human.`,tag:'red',tagText:`Sentiment: ${rec?fmt(rec.atHandoff):''} · near-abandonment`});
+  if (esc_t && pickup) ev.push({c:'dead',icon:'⏸',time:`${mmss(esc_t.t)} → ${mmss(pickup.t)} · Dead zone`,title:`Transfer in progress — ${mmss(dz.seconds)} silent wait`,desc:'Customer in queue, no interaction. Previously invisible — now tracked.',tag:dz.breached?'red':'green',tagText:`Dead zone: ${mmss(dz.seconds)} · ${dz.breached?'above':'within'} 30s threshold`});
+  if (firstHuman) ev.push({c:'human',icon:'👤',time:`${mmss(firstHuman.t)} · Human leg begins`,title:`${esc(d.agent.name)} picks up — warm brief delivered`,desc:'Agent receives full context. Zero re-asking. Opens with suggested phrase.',tag:'green',tagText:'✓ Context delivered · 0:00 re-work'});
+  if (lastHuman && lastHuman !== firstHuman) ev.push({c:'human',icon:'✅',time:`${mmss(lastHuman.t)} · Resolution`,title: d.reEscalated?'Closed — but did not hold':'Resolution',desc:esc(lastHuman.text),tag:d.reEscalated?'amber':'green',tagText:d.reEscalated?'⚠ Re-escalated later':`✓ Recovery: ${rec?fmt(rec.delta):''} · resolution held`});
+  document.getElementById('event-list').innerHTML = ev.map(e => `
+    <div class="event-item"><div class="event-dot ${e.c}">${e.icon}</div><div class="event-content">
+      <div class="event-time">${e.time}</div><div class="event-title">${e.title}</div><div class="event-desc">${e.desc}</div>
+      ${e.tag?`<div class="event-tag ${e.tag}">${e.tagText}</div>`:''}
+    </div></div>`).join('');
+}
+
+function renderChart(d) {
+  if (chart) { chart.destroy(); chart = null; }
+  const aiPts = d.turns.filter(t => t.actor==='bot' && typeof t.sentiment==='number');
+  const humanPts = d.turns.filter(t => t.actor==='human' && typeof t.sentiment==='number');
+  const n = aiPts.length, m = humanPts.length;
+  const handoff = n ? aiPts[n-1].sentiment : 0;
+  const labels = [...aiPts.map(t=>'T'+t.turn), 'TRANSFER', 'WAIT', ...humanPts.map((_,i)=>'H'+(i+1))];
+  const aiData = [...aiPts.map(t=>t.sentiment), ...Array(2+m).fill(null)];
+  const deadData = Array(n+2+m).fill(null); if (n) deadData[n-1]=handoff; deadData[n]=handoff; deadData[n+1]=handoff;
+  const humData = Array(n+2+m).fill(null); humData[n+1]=handoff; humanPts.forEach((t,i)=>humData[n+2+i]=t.sentiment);
+  const ctx = document.getElementById('sentimentChart').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [
+      { label:'AI Leg', data:aiData, borderColor:'#3B82F6', backgroundColor:'rgba(59,130,246,0.08)', fill:true, tension:0.4, borderWidth:2.5,
+        pointRadius:aiData.map((v,i)=>v===null?0:(i===n-1?6:3)), pointBackgroundColor:aiData.map((_,i)=>i===n-1?'#EF4444':'#3B82F6'), pointBorderColor:aiData.map((_,i)=>i===n-1?'#EF4444':'#3B82F6') },
+      { label:'Dead Zone', data:deadData, borderColor:'#4B4B7A', borderDash:[4,4], pointRadius:0, borderWidth:2, fill:false, tension:0 },
+      { label:'Human Leg', data:humData, borderColor:'#10B981', backgroundColor:'rgba(16,185,129,0.08)', fill:true, tension:0.4, borderWidth:2.5,
+        pointRadius:humData.map((v,i)=>v===null?0:(i===n+2+m-1?6:3)), pointBackgroundColor:'#10B981' },
+    ]},
+    options: { responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+      plugins:{ legend:{display:false}, tooltip:{ backgroundColor:'#1C1C38', borderColor:'#2D2D5E', borderWidth:1, titleColor:'#E2E2F0', bodyColor:'#8888AA',
+        callbacks:{ label:(c)=> c.raw===null?null:` ${c.dataset.label}: ${fmt(c.raw)}` } } },
+      scales:{ x:{ grid:{color:'rgba(45,45,94,0.5)'}, ticks:{color:'#8888AA',font:{size:11}} },
+               y:{ min:-1, max:0.7, grid:{color:'rgba(45,45,94,0.5)'}, ticks:{color:'#8888AA',font:{size:11},callback:v=>v>0?`+${v}`:v} } } }
+  });
+}
+
+// ── SUPERVISOR ────────────────────────────────────────────────────────────────
+async function renderSupervisor() {
+  const actions = await api('/api/supervisor-actions');
+  document.getElementById('actions-tbody').innerHTML = actions.map(a => `
+    <tr>
+      <td><strong>${esc(a.signal)}</strong><div class="signal-desc">${esc(a.detail)}</div></td>
+      <td><span class="impact-chip">${esc(a.impact)}</span></td>
+      <td style="color:var(--nice-text);">${esc(a.action)}</td>
+      <td><span class="owner-tag">${esc(a.owner)}</span></td>
+      <td><div class="action-btn ${a.type==='coaching'?'green':'purple'}" onclick="showModal('${esc(a.action)}','Owner: ${esc(a.owner)} · Impact: ${esc(a.impact)}. ${esc(a.detail)}')">${a.type==='coaching'?'Schedule coaching':'+ Create ticket'}</div></td>
+    </tr>`).join('');
+}
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function goHome(){ showScreen('screen-home'); document.getElementById('topbar-title').textContent='Journey Recovery Intelligence'; document.getElementById('nav-journey').classList.add('active'); dismissToast(); }
+function goSupervisor(){ showScreen('screen-supervisor'); document.getElementById('topbar-title').textContent='Supervisor Action Feed'; document.getElementById('nav-journey').classList.remove('active'); renderSupervisor(); setTimeout(()=>document.getElementById('predict-toast').classList.add('show'),1500); }
+function dismissToast(){ document.getElementById('predict-toast').classList.remove('show'); }
+function showModal(t,d){ document.getElementById('modal-title').textContent=t; document.getElementById('modal-desc').textContent=d; document.getElementById('modal-overlay').classList.add('show'); }
+function closeModal(e){ if(e.target===document.getElementById('modal-overlay')) closeModalDirect(); }
+function closeModalDirect(){ document.getElementById('modal-overlay').classList.remove('show'); }
+
+renderHome();
+</script>
+</body>
+</html>
