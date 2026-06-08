@@ -9,6 +9,10 @@ node_modules/
 secrets.json
 credentials.json
 
+# Server log files (created when running the app)
+server.out
+server.err
+
 # Logs & OS / editor cruft
 *.log
 npm-debug.log*
