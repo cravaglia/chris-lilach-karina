@@ -5,7 +5,7 @@
       { "label": "Rightful Escalations", "value": "1,090", "sub": "64% of handovers · correctly needed a human" },
       { "label": "Recovery Rate", "value": "71%", "valueClass": "amber", "trend": { "dir": "down", "text": "▼ 4.2% vs prior" } },
       { "label": "Avg Emotional Recovery", "value": "+1.6", "valueClass": "green", "sub": "sentiment Δ across handoff (1–5)" },
-      { "label": "Dead Zone (avg)", "value": "0:48", "valueClass": "red", "sub": "silent wait before pickup · NEW" },
+      { "label": "Wait Before Pickup", "value": "0:48", "valueClass": "red", "sub": "silent wait before pickup · NEW" },
       { "label": "Resolution Held (7-day)", "value": "82%", "trend": { "dir": "down", "text": "▼ 3.1% vs prior" } }
     ],
     "escalationQuality": { "rightful": 64, "avoidable": 36 },
@@ -13,16 +13,16 @@
     "recommendedActions": [
       { "title": "Coach recovery on special-handling exceptions", "desc": "62% recovery vs 88% for your top recoverers. Same hard contacts — the gap is human handling, not the bot.", "impact": "+26 pts recovery", "owner": "QM Coaching", "cta": "View best recoverers →" },
       { "title": "Arm agents with the special-handling exception path", "desc": "Agents stall on who can authorize a partner-carrier or equipment-handling exception. Push the path + precedent into Agent Assist.", "impact": "−1:10 handle time", "owner": "Agent Assist", "cta": "Configure Assist →" },
-      { "title": "Cut the 48s dead zone on hot transfers", "desc": "Hot, rightful escalations wait 48s in silence before pickup — 9% abandon mid-transfer.", "impact": "~$24K/yr", "owner": "WFM routing", "cta": "Create ticket →" }
+      { "title": "Cut the 48s wait before pickup on hot transfers", "desc": "Hot, rightful escalations wait 48s in silence before pickup — 9% abandon mid-transfer.", "impact": "~$24K/yr", "owner": "WFM routing", "cta": "Create ticket →" }
     ]
   },
   "quality": {
     "kpis": [
       { "label": "Recovered", "value": "774", "sub": "of 1,090 rightful escalations" },
       { "label": "Recovery Rate", "value": "71%", "valueClass": "amber", "sub": "sentiment ended positive" },
-      { "label": "Avg Recovery Score", "value": "7.4", "valueClass": "green", "sub": "out of 10 · across the seam" },
+      { "label": "Avg Recovery Score", "value": "7.4", "valueClass": "green", "sub": "out of 10 · human leg" },
       { "label": "Re-escalation (7-day)", "value": "18%", "valueClass": "red", "sub": "resolution didn't stick" },
-      { "label": "Dead Zone (avg)", "value": "0:48", "valueClass": "amber", "sub": "escalation → pickup" }
+      { "label": "Wait Before Pickup", "value": "0:48", "valueClass": "amber", "sub": "escalation → pickup" }
     ],
     "radar": {
       "labels": ["Empathy", "Patience", "Context", "Proficiency", "Resolution", "Personalization"],

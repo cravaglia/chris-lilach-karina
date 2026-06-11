@@ -296,7 +296,7 @@
         <div class="kpi"><div class="l">Rightful Escalations</div><div class="v">1,090</div><div class="s">64% of handovers · correctly needed a human</div></div>
         <div class="kpi"><div class="l">Recovery Rate</div><div class="v amber">71%</div><div class="trend down">▼ 4.2% vs prior</div></div>
         <div class="kpi"><div class="l">Avg Emotional Recovery</div><div class="v green">+1.6</div><div class="s">sentiment Δ across handoff (1–5)</div></div>
-        <div class="kpi"><div class="l">Dead Zone (avg)</div><div class="v red">0:48</div><div class="s">silent wait before pickup · NEW</div></div>
+        <div class="kpi"><div class="l">Wait Before Pickup</div><div class="v red">0:48</div><div class="s">silent wait before pickup · NEW</div></div>
         <div class="kpi"><div class="l">Resolution Held (7-day)</div><div class="v">82%</div><div class="trend down">▼ 3.1% vs prior</div></div>
       </div>
 
@@ -311,13 +311,13 @@
           </div>
         </div>
         <div class="card">
-          <h3>Sentiment Across the Seam</h3>
-          <div class="sub">Each leg is measured on its own — the recovery <i>across</i> the seam isn't.</div>
+          <h3>Sentiment Through the Handoff</h3>
+          <div class="sub">Each leg is measured on its own — the recovery <i>through</i> the handoff isn't.</div>
           <div class="chart-wrap sm" id="cSeam"></div>
           <div class="seam-legend">
             <span><span class="dot" style="background:var(--blue2)"></span>AI leg</span>
-            <span><span class="dot" style="background:#E0A800"></span>Dead zone</span>
-            <span><span class="dot" style="background:var(--green)"></span>Human leg · recovery across the seam unscored</span>
+            <span><span class="dot" style="background:#E0A800"></span>Transfer wait</span>
+            <span><span class="dot" style="background:var(--green)"></span>Human leg · recovery after handoff unscored</span>
           </div>
         </div>
       </div>
@@ -337,7 +337,7 @@
           <button class="btn ghost">Configure Assist →</button>
         </div>
         <div class="rec">
-          <h4>Cut the 48s dead zone on hot transfers</h4>
+          <h4>Cut the 48s wait before pickup on hot transfers</h4>
           <p>Hot, rightful escalations wait 48s in silence before pickup — 9% abandon mid-transfer.</p>
           <div class="chips"><span class="chip-i">~$24K/yr</span><span class="chip-o">WFM routing</span></div>
           <button class="btn ghost">Create ticket →</button>
@@ -352,7 +352,7 @@
         <div class="kpi"><div class="l">Recovery Rate</div><div class="v amber">71%</div><div class="s">sentiment ended positive</div></div>
         <div class="kpi"><div class="l">Avg Recovery Score</div><div class="v green">7.4</div><div class="s">out of 10 · human leg</div></div>
         <div class="kpi"><div class="l">Re-escalation (7-day)</div><div class="v red">18%</div><div class="s">resolution didn't stick</div></div>
-        <div class="kpi"><div class="l">Dead Zone (avg)</div><div class="v amber">0:48</div><div class="s">escalation → pickup</div></div>
+        <div class="kpi"><div class="l">Wait Before Pickup</div><div class="v amber">0:48</div><div class="s">escalation → pickup</div></div>
       </div>
 
       <div class="grid2">
@@ -372,7 +372,7 @@
         <h3>Sessions to Investigate</h3>
         <div class="sub">Rightful escalations where recovery broke down. Click a row to open the stitched journey.</div>
         <table>
-          <thead><tr><th>Session ID</th><th>Escalation Type</th><th>Channel</th><th>Handoff → Final</th><th>Dead Zone</th><th>Recovery</th><th>Resolution</th><th></th></tr></thead>
+          <thead><tr><th>Session ID</th><th>Escalation Type</th><th>Channel</th><th>Handoff → Final</th><th>Transfer Wait</th><th>Recovery</th><th>Resolution</th><th></th></tr></thead>
           <tbody id="sessRows"></tbody>
         </table>
       </div>
@@ -469,7 +469,7 @@ const SCRIPT={
     "<b>Hook:</b> \"Agentic Analytics watches the AI agent until it says 'connecting you to a specialist' — then goes dark.\"",
     "<b>Banner:</b> 64% of escalations are <b>rightful</b> — a bot shouldn't handle them. Reframe: not every escalation is a bot failure.",
     "<b>Escalation Quality donut:</b> avoidable → Automation Opportunities (handled); rightful → measured here.",
-    "<b>Sentiment Across the Seam:</b> bot drops → dead zone → human recovers. Each leg is measured alone; the recovery <i>across</i> the seam isn't."],
+    "<b>Sentiment Through the Handoff:</b> bot drops → transfer wait → human recovers. Each leg is measured alone; the recovery <i>through</i> the handoff isn't."],
     n:"👉 Next: click the <b>Recovery Quality</b> tab"},
   quality:{t:'Scene 2 · The punchline',c:[
     "<b>Radar = the money slide:</b> the same evaluation NICE runs on the bot, pointed at the <b>human leg</b>. Top recoverers (purple) vs team (gray).",
@@ -548,7 +548,7 @@ function initSeam(){
   let grid='';for(let v=1;v<=5;v++){const y=20+(5-v)*35;grid+=`<line x1="40" y1="${y}" x2="450" y2="${y}" stroke="#EEF0F4"/><text x="32" y="${y+3}" font-size="9" fill="#9AA1AD" text-anchor="end">${v}</text>`;}
   const band=`<rect x="216" y="20" width="58" height="140" fill="rgba(224,168,0,.10)"/><line x1="216" y1="20" x2="216" y2="160" stroke="#E0A800" stroke-dasharray="3 3"/>`;
   const xl=`<text x="128" y="178" font-size="10" fill="#9AA1AD" text-anchor="middle">AI leg</text>
-    <text x="245" y="178" font-size="9" fill="#8A6500" text-anchor="middle">dead zone · 0:48</text>
+    <text x="245" y="178" font-size="9" fill="#8A6500" text-anchor="middle">wait · 0:48</text>
     <text x="380" y="178" font-size="10" fill="#9AA1AD" text-anchor="middle">human leg</text>`;
   document.getElementById('cSeam').innerHTML=svg('0 0 480 188',
     grid+band+area(ai,'rgba(45,127,249,.10)')+area(hum,'rgba(16,185,129,.10)')+

@@ -167,7 +167,7 @@ function initSeam(seam) {
   const bx = aiPts[aiPts.length - 1][0], bw = humPts[0][0] - bx;
   const band = `<rect x="${bx}" y="20" width="${bw}" height="140" fill="rgba(224,168,0,.10)"/><line x1="${bx}" y1="20" x2="${bx}" y2="160" stroke="#E0A800" stroke-dasharray="3 3"/>`;
   const xl = `<text x="125" y="178" font-size="10" fill="#9AA1AD" text-anchor="middle">AI leg</text>
-    <text x="${bx + bw / 2}" y="178" font-size="9" fill="#8A6500" text-anchor="middle">dead zone</text>
+    <text x="${bx + bw / 2}" y="178" font-size="9" fill="#8A6500" text-anchor="middle">wait</text>
     <text x="360" y="178" font-size="10" fill="#9AA1AD" text-anchor="middle">human leg</text>`;
   $('cSeam').innerHTML = svg('0 0 480 188',
     grid + band + area(aiPts, 'rgba(45,127,249,.10)') + area(humPts, 'rgba(16,185,129,.10)') +
@@ -245,7 +245,7 @@ const SCRIPT = {
     "<b>Hook:</b> \"Agentic Analytics watches the AI agent until it says 'connecting you to a specialist' — then goes dark.\"",
     "<b>Banner:</b> 64% of escalations are <b>rightful</b> — a bot shouldn't handle them. Reframe: not every escalation is a bot failure.",
     "<b>Escalation Quality donut:</b> avoidable → Automation Opportunities (handled); rightful → measured here.",
-    "<b>Sentiment Across the Seam:</b> bot drops → dead zone → human recovers. Each leg is measured alone; the recovery <i>across</i> the seam isn't."],
+    "<b>Sentiment Through the Handoff:</b> bot drops → transfer wait → human recovers. Each leg is measured alone; the recovery <i>through</i> the handoff isn't."],
     n: "👉 Next: click the <b>Recovery Quality</b> tab" },
   quality: { t: 'Scene 2 · The punchline', c: [
     "<b>Radar = the money slide:</b> the same evaluation NICE runs on the bot, pointed at the <b>human leg</b>. Top recoverers (purple) vs team (gray).",
