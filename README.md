@@ -1,6 +1,6 @@
 # Journey Recovery Intelligence
 
-> 🚀 **Latest version → [`recovery-v2/`](recovery-v2/)** (see `recovery-v2/README.md`). That's the one to collaborate on. The files at the repo root are the original prototype.
+> 🚀 **Latest version → [`RightfulEscalations/`](RightfulEscalations/)** (see `RightfulEscalations/README.md`). That's the one to collaborate on. The files at the repo root are the original prototype.
 
 
 A working prototype for **NICE CXone Quality Management** that measures the AI→human

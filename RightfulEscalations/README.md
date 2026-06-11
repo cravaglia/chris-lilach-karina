@@ -1,15 +1,16 @@
-# Agent Recovery — v2 (latest version)
+# Rightful Escalations — agent-recovery (latest version)
 
-This is the **current** version of the agent-recovery concept (the one to collaborate on). It measures
-the customer's **recovery across the AI→human seam** on rightful escalations, then closes the loop by
-publishing best-practice guidance into Agent Assist. All data is **synthetic** (the "Voyager" airline).
+This is the **current** version of the concept (the one to collaborate on). It measures the customer's
+**recovery across the AI→human seam** on *rightful* escalations — the contacts a bot shouldn't handle —
+then closes the loop by publishing best-practice guidance into Agent Assist. All data is **synthetic**
+(the "Voyager" airline).
 
 Two parts:
 
 ## `app/` — the buildable modular app (collaborate here)
 Data-driven Express app, skinned to look like a page inside NICE Agentic Analytics.
 ```bash
-cd recovery-v2/app
+cd RightfulEscalations/app
 npm install      # first time
 npm start        # → http://localhost:3100
 npm test         # engine unit tests (5)
