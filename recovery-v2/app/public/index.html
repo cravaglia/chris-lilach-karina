@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journey Recovery · Agentic Analytics · NICE CXone</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="rail">
+  <div class="logo"></div>
+  <div class="ri">▦</div>
+  <div class="ri">＋</div>
+</div>
+
+<div class="nav">
+  <div class="nav-top"><span>Agentic Analytics</span><span class="chev">▾</span></div>
+  <div class="nav-item"><span class="ic">⌂</span> Home</div>
+  <div class="nav-item"><span class="ic">🤖</span> Automation Opportunities</div>
+  <div class="nav-item"><span class="ic">🧠</span> AI Agents</div>
+  <div class="nav-item active"><span class="ic">↻</span> Journey Recovery <span class="nav-badge">NEW</span></div>
+  <div class="nav-item"><span class="ic">🕘</span> Action History</div>
+  <div class="nav-item"><span class="ic">🔖</span> Saved Dashboards <span class="plus">＋</span></div>
+  <div class="nav-item"><span class="ic">🕒</span> Recent</div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="crumb">▣ &nbsp;Journey Recovery</div>
+    <div class="spacer"></div>
+    <span class="tb-ic">？</span><span class="tb-ic">🖥</span><span class="tb-ic">🔔</span>
+    <div class="avatar">LZ</div>
+    <div class="ask">✦ Ask</div>
+    <div class="demo-toggle" onclick="toggleDemo()">🎬 Demo Script</div>
+  </div>
+
+  <div class="content">
+    <h1 class="page grad">Journey Recovery</h1>
+    <div class="filters">
+      <div class="pill"><span>📅</span><span class="lbl">Date range:</span> May 30, 2026 – Jun 5, 2026</div>
+      <div class="pill"><span class="lbl">Project:</span> All <span class="cv">▾</span></div>
+      <div class="pill"><span class="lbl">Channel:</span> All <span class="cv">▾</span></div>
+      <div class="pill r link">⤓ Transcript Viewer</div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="overview" onclick="tab('overview')">Overview</div>
+      <div class="tab" data-tab="quality" onclick="tab('quality')">Recovery Quality</div>
+      <div class="tab" data-tab="playbook" onclick="tab('playbook')">Recovery Playbook</div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="screen active" id="overview">
+      <div class="narr"><span class="spark">✦</span><p id="ov-narr"></p></div>
+      <div class="kpis" id="ov-kpis"></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Escalation Quality</h3>
+          <div class="sub">Was the handoff a bot failure — or a contact that <i>should</i> reach a human?</div>
+          <div class="chart-wrap sm" id="cEscQ"></div>
+          <div class="seam-legend">
+            <span><span class="dot" style="background:var(--blue)"></span>Rightful-human — measured here</span>
+            <span><span class="dot" style="background:var(--amber)"></span>Avoidable — handled by Automation Opportunities</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Sentiment Across the Seam</h3>
+          <div class="sub">Each leg is measured on its own — the recovery <i>across</i> the seam isn't.</div>
+          <div class="chart-wrap sm" id="cSeam"></div>
+          <div class="seam-legend">
+            <span><span class="dot" style="background:var(--blue2)"></span>AI leg</span>
+            <span><span class="dot" style="background:#E0A800"></span>Dead zone</span>
+            <span><span class="dot" style="background:var(--green)"></span>Human leg · recovery across the seam unscored</span>
+          </div>
+        </div>
+      </div>
+      <div class="sec-title">⚡ Recommended Actions</div>
+      <div class="grid3" id="ov-actions"></div>
+    </div>
+
+    <!-- RECOVERY QUALITY -->
+    <div class="screen" id="quality">
+      <div class="kpis" id="q-kpis"></div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Human Recovery Quality</h3>
+          <div class="sub">The same evaluation NICE runs on the <i>bot</i> — pointed at the <b>human leg</b>, on the hardest contacts.</div>
+          <div class="chart-wrap" id="cRadar"></div>
+        </div>
+        <div class="card">
+          <h3>Recovery by Escalation Type</h3>
+          <div class="sub">Which rightful escalations is the team recovering — and which are breaking?</div>
+          <div id="rbt"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Sessions to Investigate</h3>
+        <div class="sub">Rightful escalations where recovery broke down. Click a row to open the stitched journey.</div>
+        <table>
+          <thead><tr><th>Session ID</th><th>Escalation Type</th><th>Channel</th><th>Handoff → Final</th><th>Dead Zone</th><th>Recovery</th><th>Resolution</th><th></th></tr></thead>
+          <tbody id="sessRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PLAYBOOK (fix workspace: worklist → per-flow workspace) -->
+    <div class="screen" id="playbook">
+      <div id="pb-root"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO SCRIPT -->
+<div class="demobar" id="demobar">
+  <div class="db-head"><span id="db-title">🎬 Demo Script</span><span class="db-nav"><button onclick="stepNav(-1)">◀ Prev</button><button onclick="stepNav(1)">Next ▶</button></span><span class="db-x" onclick="toggleDemo()">×</span></div>
+  <ul id="db-cues"></ul>
+  <div id="db-next" class="db-next"></div>
+</div>
+
+<!-- PUBLISH MODAL -->
+<div class="ov" id="pub" onclick="if(event.target===this)closePub()">
+  <div class="pubmodal"><div id="pubBody"></div></div>
+</div>
+
+<!-- TRANSCRIPT VIEWER MODAL -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-h" id="tx-head"></div>
+    <div class="modal-b">
+      <div class="conv" id="tx-conv"></div>
+      <div class="assist" id="tx-assist"></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+{
+  "overview": {
+    "narrative": "Over the last 7 days, <b>1,713 contacts reached a human</b>. We classify <span class=\"hl\">1,090 (64%) as rightful escalations</span> — exceptions, special-handling, and emotionally hard contacts a bot <i>shouldn't</i> contain. After handoff your team <b>recovered 71%</b> of them; the rest ended worse than they arrived. Recovery is breaking most on <b>special-handling exceptions</b> (like customers traveling with medical equipment) — and three agents recover them far better than the rest.",
+    "kpis": [
+      { "label": "Rightful Escalations", "value": "1,090", "sub": "64% of handovers · correctly needed a human" },
+      { "label": "Recovery Rate", "value": "71%", "valueClass": "amber", "trend": { "dir": "down", "text": "▼ 4.2% vs prior" } },
+      { "label": "Avg Emotional Recovery", "value": "+1.6", "valueClass": "green", "sub": "sentiment Δ across handoff (1–5)" },
+      { "label": "Dead Zone (avg)", "value": "0:48", "valueClass": "red", "sub": "silent wait before pickup · NEW" },
+      { "label": "Resolution Held (7-day)", "value": "82%", "trend": { "dir": "down", "text": "▼ 3.1% vs prior" } }
+    ],
+    "escalationQuality": { "rightful": 64, "avoidable": 36 },
+    "seam": { "ai": [3.0, 2.4, 1.8, 1.5], "hum": [1.5, 2.6, 3.6, 4.4] },
+    "recommendedActions": [
+      { "title": "Coach recovery on special-handling exceptions", "desc": "62% recovery vs 88% for your top recoverers. Same hard contacts — the gap is human handling, not the bot.", "impact": "+26 pts recovery", "owner": "QM Coaching", "cta": "View best recoverers →" },
+      { "title": "Arm agents with the special-handling exception path", "desc": "Agents stall on who can authorize a partner-carrier or equipment-handling exception. Push the path + precedent into Agent Assist.", "impact": "−1:10 handle time", "owner": "Agent Assist", "cta": "Configure Assist →" },
+      { "title": "Cut the 48s dead zone on hot transfers", "desc": "Hot, rightful escalations wait 48s in silence before pickup — 9% abandon mid-transfer.", "impact": "~$24K/yr", "owner": "WFM routing", "cta": "Create ticket →" }
+    ]
+  },
+  "quality": {
+    "kpis": [
+      { "label": "Recovered", "value": "774", "sub": "of 1,090 rightful escalations" },
+      { "label": "Recovery Rate", "value": "71%", "valueClass": "amber", "sub": "sentiment ended positive" },
+      { "label": "Avg Recovery Score", "value": "7.4", "valueClass": "green", "sub": "out of 10 · across the seam" },
+      { "label": "Re-escalation (7-day)", "value": "18%", "valueClass": "red", "sub": "resolution didn't stick" },
+      { "label": "Dead Zone (avg)", "value": "0:48", "valueClass": "amber", "sub": "escalation → pickup" }
+    ],
+    "radar": {
+      "labels": ["Empathy", "Patience", "Context", "Proficiency", "Resolution", "Personalization"],
+      "top": [9.2, 9.0, 8.8, 8.6, 9.1, 9.0],
+      "team": [6.8, 6.2, 7.4, 7.0, 6.5, 5.2]
+    },
+    "byType": [
+      { "name": "Special-handling exception", "sub": "medical equipment, accessibility", "pct": 62, "color": "#EF4444" },
+      { "name": "Out-of-policy approval", "sub": "fee waivers, exceptions", "pct": 66, "color": "#F59E0B" },
+      { "name": "High-emotion complaint", "sub": "vulnerable, at-risk", "pct": 73, "color": "#F59E0B" },
+      { "name": "Retention save", "sub": "cancel intent", "pct": 88, "color": "#10B981" },
+      { "name": "Complex multi-issue", "sub": "needs a person", "pct": 84, "color": "#10B981" }
+    ],
+    "sessions": [
+      { "id": "VOY-45012", "type": "Special-handling exception", "channel": "Voice", "handoff": 1.8, "final": 2.0, "deadZoneSec": 70, "score": 3.6, "resolution": "Re-esc", "resClass": "broke" },
+      { "id": "VOY-44907", "type": "Out-of-policy approval", "channel": "Webchat", "handoff": 1.8, "final": 2.4, "deadZoneSec": 72, "score": 4.2, "resolution": "Re-esc", "resClass": "broke" },
+      { "id": "VOY-44888", "type": "Manager sign-off", "channel": "Voice", "handoff": 2.3, "final": 3.1, "deadZoneSec": 55, "score": 5.6, "resolution": "Repeat", "resClass": "broke" },
+      { "id": "VOY-44850", "type": "High-emotion complaint", "channel": "Twilio-SMS", "handoff": 1.5, "final": 4.2, "deadZoneSec": 31, "score": 8.7, "resolution": "Held", "resClass": "held" },
+      { "id": "VOY-44799", "type": "Special-handling exception", "channel": "Voice", "handoff": 2.0, "final": 1.9, "deadZoneSec": 94, "score": 3.4, "resolution": "Re-esc", "resClass": "broke" }
+    ]
+  },
+  "playbook": {
+    "intro": "These escalation flows are losing the most customers <i>after</i> handoff. Pick one to fix — see who recovers it best, what they actually say, then publish reusable guidance into <b>Agent Assist</b> so every agent gets it.",
+    "flows": [
+      {
+        "id": "special-handling",
+        "name": "Special-handling exception",
+        "sub": "medical equipment · accessibility · companions",
+        "recovery": 62, "top": 88, "volume": 214,
+        "leaders": [
+          { "rank": 1, "name": "Sarah Okonkwo", "team": "Rebooking · 41 hard recoveries", "score": 91, "top": true },
+          { "rank": 2, "name": "Marcus Reyes", "team": "Care · 38 hard recoveries", "score": 88, "top": true },
+          { "rank": 3, "name": "Priya Anand", "team": "Care · 33 hard recoveries", "score": 86, "top": true },
+          { "rank": 4, "name": "Team average", "team": "all agents · same difficulty", "score": 62, "top": false }
+        ],
+        "examples": [
+          { "agent": "Sarah Okonkwo", "quote": "Because you travel with medical equipment, I've already arranged a partner-carrier exception and flagged temperature-controlled handling at both airports — set up just for you." },
+          { "agent": "Marcus Reyes", "quote": "I can see you need special handling — I've personally called ground crew so your equipment is prioritised on and off the aircraft." },
+          { "agent": "Priya Anand", "quote": "I've documented this as a standing exception on your profile, so every future trip is handled this way without you asking." }
+        ],
+        "commonMove": "name the special need → personalise it → arrange it proactively (never \"it's in the notes\")",
+        "guidance": {
+          "template": "Because you travel with [special-need], I've arranged a partner-carrier exception on [rebooked-flight] and actioned assistance with [assistance-type] with ground crews at [origin] and [destination] — set up specifically for you.",
+          "tokens": ["special-need", "rebooked-flight", "assistance-type", "origin", "destination"],
+          "previewCases": [
+            { "id": "VOY-45012", "label": "Alex Chen · medical equipment", "values": { "special-need": "medical equipment", "rebooked-flight": "EuroAir EA402", "assistance-type": "temperature-controlled handling", "origin": "MSP", "destination": "CDG" } },
+            { "id": "VOY-44991", "label": "R. Díaz · service animal", "values": { "special-need": "a service animal", "rebooked-flight": "SkyLink 220", "assistance-type": "bulkhead seating + priority boarding", "origin": "ORD", "destination": "LHR" } },
+            { "id": "VOY-44799", "label": "J. Okafor · mobility device", "values": { "special-need": "a mobility device", "rebooked-flight": "AeroLink 88", "assistance-type": "wheelchair + jet-bridge boarding", "origin": "ATL", "destination": "CDG" } }
+          ],
+          "surface": "Copilot for Agents · a suggested response the agent can insert",
+          "authoredIn": "GenAI Prompt Editor · Draft → Test → Publish (versioned)",
+          "surfaceOn": "Special-handling escalations · skill = Rebooking / Care"
+        }
+      },
+      {
+        "id": "out-of-policy",
+        "name": "Out-of-policy approval",
+        "sub": "fee waivers · exceptions",
+        "recovery": 66, "top": 87, "volume": 180,
+        "leaders": [
+          { "rank": 1, "name": "Sarah Okonkwo", "team": "Retention", "score": 89, "top": true },
+          { "rank": 2, "name": "Devon Pratt", "team": "Billing", "score": 85, "top": true },
+          { "rank": 3, "name": "Team average", "team": "all agents", "score": 66, "top": false }
+        ],
+        "examples": [
+          { "agent": "Sarah Okonkwo", "quote": "I've applied a one-time exception and authorised this for you — it's done, you won't need to call back." },
+          { "agent": "Devon Pratt", "quote": "This is outside standard policy, so I've personally approved it given your history with us." }
+        ],
+        "commonMove": "name the exception as personal and already done — not \"let me check if I can\"",
+        "guidance": {
+          "template": "I've applied a [exception-type] exception and authorised [resolution] for you — it's done. I've noted [account] so this is handled going forward.",
+          "tokens": ["exception-type", "resolution", "account"],
+          "previewCases": [
+            { "id": "VOY-44907", "label": "M. Realba · fee waiver", "values": { "exception-type": "one-time", "resolution": "the $40 fee waiver", "account": "your account" } }
+          ],
+          "surface": "Copilot for Agents · a suggested response the agent can insert",
+          "authoredIn": "GenAI Prompt Editor · Draft → Test → Publish (versioned)",
+          "surfaceOn": "Out-of-policy approval escalations · skill = Billing / Retention"
+        }
+      },
+      {
+        "id": "manager-signoff",
+        "name": "Manager / authority sign-off",
+        "sub": "discretionary decisions",
+        "recovery": 69, "top": 85, "volume": 96,
+        "leaders": [
+          { "rank": 1, "name": "Marcus Reyes", "team": "Care", "score": 87, "top": true },
+          { "rank": 2, "name": "Team average", "team": "all agents", "score": 69, "top": false }
+        ],
+        "examples": [
+          { "agent": "Marcus Reyes", "quote": "I've looped in my supervisor and we've agreed on this together — here's exactly what happens next and when." }
+        ],
+        "commonMove": "give a concrete next step + timeline so the wait never feels open-ended",
+        "guidance": {
+          "template": "I've escalated this to [authority] and we've agreed [decision]. Here's what happens next: [next-step] by [timeframe].",
+          "tokens": ["authority", "decision", "next-step", "timeframe"],
+          "previewCases": [
+            { "id": "VOY-44888", "label": "K. Lund · manager approval", "values": { "authority": "my duty manager", "decision": "to honour the original fare", "next-step": "a confirmation email", "timeframe": "end of day" } }
+          ],
+          "surface": "Copilot for Agents · a suggested response the agent can insert",
+          "authoredIn": "GenAI Prompt Editor · Draft → Test → Publish (versioned)",
+          "surfaceOn": "Manager sign-off escalations · all skills"
+        }
+      }
+    ]
+  },
+  "heroSession": {
+    "id": "VOY-45012",
+    "title": "Flight change · medical-equipment exception",
+    "classificationTag": "Rightful escalation",
+    "outcome": "failed",
+    "recovery": "+0.2",
+    "score": "3.6",
+    "deadZone": "1:10",
+    "transcript": [
+      { "role": "customer", "who": "Customer (Alex Chen · Platinum)", "text": "My flight MSP→CDG was cancelled and I travel with powered medical equipment that needs temperature-controlled handling. I have to get there tomorrow." },
+      { "role": "bot", "who": "AI Agent", "text": "I'm sorry — flight VYR221 was cancelled due to the storm. Rebooking onto a partner carrier and the medical-equipment handling both need a specialist to authorize. I'm connecting you to one now." },
+      { "deadzone": "⏸ 1:10 — waiting for a live agent" },
+      { "role": "human", "who": "Tom (Rebooking)", "text": "Okay, I found a seat on EuroAir EA402 tomorrow evening and rebooked you. Anything else?" },
+      { "role": "customer", "who": "Customer", "text": "But what about my medical equipment? Will it actually be handled? Last time it sat on the tarmac and nearly failed. I'm really worried." },
+      { "role": "human", "who": "Tom (Rebooking)", "text": "It should be fine — it's in the booking notes. You're all set." },
+      { "role": "customer", "who": "Customer", "text": "That's it? This is exactly what went wrong last time. I need to speak to someone else." }
+    ],
+    "assist": {
+      "classification": "Rightful escalation — partner-carrier + medical-equipment exception. A bot can't authorize this. Goal: recover the relationship.",
+      "facts": [
+        { "label": "Who can authorize", "value": "Tier-2 ops manager · partner-carrier exceptions" },
+        { "label": "Policy", "value": "Medical equipment: flag priority offload + temperature-controlled handling with ground services" },
+        { "label": "Precedent", "value": "3 medical-equipment exceptions approved this quarter" }
+      ],
+      "gap": "QM will score Tom's agent skills as usual — but the <b>recovery across this handoff</b> isn't stitched or scored anywhere today. Tom rebooked the flight yet never addressed the equipment, so sentiment never recovered and Alex re-escalated. The best-recoverer move that fixes this isn't in Agent Assist yet.",
+      "publishedGuidance": "Because you travel with <b>medical equipment</b>, I've arranged a partner-carrier exception on <b>EuroAir EA402</b> and personally arranged assistance with <b>temperature-controlled handling</b> with ground crews at <b>MSP</b> and <b>CDG</b> — set up specifically for you."
+    }
+  }
+}
