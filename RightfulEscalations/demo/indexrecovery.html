@@ -294,10 +294,10 @@
 
       <div class="kpis">
         <div class="kpi"><div class="l">Rightful Escalations</div><div class="v">1,090</div><div class="s">64% of handovers · correctly needed a human</div></div>
+        <div class="kpi"><div class="l">Resolution Held (7-day)</div><div class="v">82%</div><div class="trend down">▼ 3.1% vs prior</div></div>
         <div class="kpi"><div class="l">Recovery Rate</div><div class="v amber">71%</div><div class="trend down">▼ 4.2% vs prior</div></div>
         <div class="kpi"><div class="l">Avg Emotional Recovery</div><div class="v green">+1.6</div><div class="s">sentiment Δ across handoff (1–5)</div></div>
         <div class="kpi"><div class="l">Wait Before Pickup</div><div class="v red">0:48</div><div class="s">silent wait before pickup · NEW</div></div>
-        <div class="kpi"><div class="l">Resolution Held (7-day)</div><div class="v">82%</div><div class="trend down">▼ 3.1% vs prior</div></div>
       </div>
 
       <div class="grid2">
@@ -370,7 +370,8 @@
 
       <div class="card">
         <h3>Sessions to Investigate</h3>
-        <div class="sub">Rightful escalations where recovery broke down. Click a row to open the stitched journey.</div>
+        <div class="sub">Drills down from <b>Recovery by Escalation Type</b> above — click a bar to filter. These are the rightful escalations where recovery broke down; click a row to open the stitched journey.</div>
+        <div id="sessFilterBar" style="margin-bottom:10px;"></div>
         <table>
           <thead><tr><th>Session ID</th><th>Escalation Type</th><th>Channel</th><th>Handoff → Final</th><th>Transfer Wait</th><th>Recovery</th><th>Resolution</th><th></th></tr></thead>
           <tbody id="sessRows"></tbody>
@@ -409,6 +410,13 @@
 
         <div class="deadzone">⏸ 1:10 — waiting for a live agent</div>
 
+        <div style="border:1px solid #D8E5F7;background:#F4F8FE;border-radius:10px;padding:11px 13px;margin:0 0 14px;font-size:12.5px;line-height:1.5;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#2D7FF9;margin-bottom:7px;">👁 What Tom saw at pickup · carried over from the AI agent</div>
+          <div style="margin-bottom:6px;"><b>Context carried over:</b> Booking VYR221 (MSP→CDG · cancelled, winter storm) · Alex Chen · Platinum · 3rd contact on this issue</div>
+          <div style="margin-bottom:6px;"><b>Bot already did:</b> looked up the flight · proposed rebooking · flagged medical-equipment + partner-carrier exception for a specialist</div>
+          <div><b>Sentiment at handoff:</b> 🔥 Hot — frustrated, worried the equipment won't be handled, near abandonment (1.8 / 5)</div>
+        </div>
+
         <div class="msg human"><div class="who">Tom (Rebooking)</div><div class="bub">Okay, I found a seat on EuroAir EA402 tomorrow evening and rebooked you. Anything else?</div></div>
         <div class="msg cust"><div class="who">Customer</div><div class="bub">But what about my medical equipment? Will it actually be handled? Last time it sat on the tarmac and nearly failed. I'm really worried.</div></div>
         <div class="msg human"><div class="who">Tom (Rebooking)</div><div class="bub">It should be fine — it's in the booking notes. You're all set.</div></div>
@@ -424,7 +432,7 @@
         <div class="act"><b>Precedent</b>3 medical-equipment exceptions approved this quarter</div>
         <div id="gap-block">
           <h4>Recovery gap</h4>
-          <div class="gap-note">⚠ QM will score Tom's agent skills as usual — but the <b>recovery across this handoff</b> isn't stitched or scored anywhere today. Tom rebooked the flight yet never addressed the equipment, so sentiment never recovered and Alex re-escalated. The best-recoverer move that fixes this isn't in Agent Assist yet.</div>
+          <div class="gap-note">⚠ QM will score Tom's <b>soft skills (empathy, patience, de-escalation)</b> as usual — but the <b>recovery across this handoff</b> isn't stitched or scored anywhere today. Tom rebooked the flight yet never addressed the equipment, so sentiment never recovered and Alex re-escalated. The best-recoverer move that fixes this isn't in Agent Assist yet.</div>
         </div>
         <div id="tip-block" style="display:none;">
           <h4>✓ Recovery gap — now closed</h4>
@@ -468,17 +476,19 @@ const SCRIPT={
   overview:{t:'Scene 1 · Set the frame',c:[
     "<b>Hook:</b> \"Agentic Analytics watches the AI agent until it says 'connecting you to a specialist' — then goes dark.\"",
     "<b>Banner:</b> 64% of escalations are <b>rightful</b> — a bot shouldn't handle them. Reframe: not every escalation is a bot failure.",
+    "<b>KPIs read as the story:</b> escalated (Rightful) → did it stick (Resolution Held) → did we recover them (Recovery Rate, Emotional Recovery) → the silent wait.",
     "<b>Escalation Quality donut:</b> avoidable → Automation Opportunities (handled); rightful → measured here.",
     "<b>Sentiment Through the Handoff:</b> bot drops → transfer wait → human recovers. Each leg is measured alone; the recovery <i>through</i> the handoff isn't."],
     n:"👉 Next: click the <b>Recovery Quality</b> tab"},
   quality:{t:'Scene 2 · The punchline',c:[
-    "<b>Radar = the money slide:</b> the same evaluation NICE runs on the bot, pointed at the <b>human leg</b>. Top recoverers (purple) vs team (gray).",
-    "<b>Recovery by type:</b> retention saves 88%, out-of-policy approvals 62% — same difficulty, the gap is human handling.",
-    "Click a <b>session row</b> → open the stitched journey."],
-    n:"👉 Next: click session <b>VOY-45012</b> (the broken one) to open the stitched journey"},
+    "<b>Radar = the money slide:</b> the same QM evaluation NICE runs on the bot, pointed at the <b>human leg</b> — scoring the soft skills that drive recovery (empathy, patience, context, proficiency, resolution, expectations). <b>Top recoverers (green)</b> vs <b>team average (gray)</b> = the gap to close.",
+    "<b>Recovery by type:</b> retention saves 88%, special-handling 62% — same difficulty, the gap is human handling.",
+    "<b>Drill down:</b> click a <b>Recovery-by-Type bar</b> → the Sessions list filters to just that flow. Then click a <b>session row</b> → open the stitched journey."],
+    n:"👉 Next: click the <b>Special-handling</b> bar, then open session <b>VOY-45012</b> (the broken one)"},
   modal:{t:'Scene 3 · The gap',c:[
-    "<b>Left = the conversation</b> — the familiar transcript. The AI <i>correctly</i> escalated (rightful — medical-equipment exception). Then Tom rebooked but never addressed the equipment → Alex re-escalated.",
-    "<b>Right = Recovery Analysis (new in this workspace).</b> QM already scores Tom's agent skills — what's <b>not</b> measured anywhere is the <b>recovery across this handoff</b>, bot→human stitched as one outcome.",
+    "<b>Left = the conversation</b> — the familiar transcript. The AI <i>correctly</i> escalated (rightful — medical-equipment exception).",
+    "<b>“What Tom saw at pickup” card</b> (between the legs): exactly what carried over to the agent — context, the bot's prior actions, and the customer's 🔥 hot sentiment. Tom had all of it — yet rebooked without addressing the equipment → Alex re-escalated.",
+    "<b>Right = Recovery Analysis (new in this workspace).</b> QM already scores Tom's <b>soft skills</b> (empathy, patience, de-escalation) — what's <b>not</b> measured anywhere is the <b>recovery across this handoff</b>, bot→human stitched as one outcome.",
     "It flags the <b>gap</b>: the best-recoverer move that would've saved this isn't in Agent Assist yet."],
     n:"👉 Next: close (×) → <b>Recovery Playbook</b> tab to fix the whole flow"},
   playbook:{t:'Scene 4 · Fix the flow & close the loop',c:[
@@ -571,26 +581,36 @@ function initRadar(){ if(radarDone)return; radarDone=true;
 
 // ---- recovery by type ----
 const RBT=[
-  {n:'Special-handling exception',s:'medical equipment, accessibility',v:62,c:'#EF4444'},
-  {n:'Manager / authority sign-off',s:'discretionary decisions',v:69,c:'#F59E0B'},
-  {n:'High-emotion complaint',s:'vulnerable, at-risk',v:73,c:'#F59E0B'},
-  {n:'Retention save',s:'cancel intent',v:88,c:'#10B981'},
-  {n:'Complex multi-issue',s:'needs a person',v:84,c:'#10B981'},
+  {n:'Special-handling exception',s:'medical equipment, accessibility',v:62,c:'#EF4444',k:'special'},
+  {n:'Manager / authority sign-off',s:'discretionary decisions',v:69,c:'#F59E0B',k:'manager'},
+  {n:'High-emotion complaint',s:'vulnerable, at-risk',v:73,c:'#F59E0B',k:'emotion'},
+  {n:'Retention save',s:'cancel intent',v:88,c:'#10B981',k:'retention'},
+  {n:'Complex multi-issue',s:'needs a person',v:84,c:'#10B981',k:'complex'},
 ];
-function renderRbt(){document.getElementById('rbt').innerHTML=RBT.map(r=>`
-  <div class="rbt-row"><div class="rbt-name">${r.n}<small>${r.s}</small></div>
+function renderRbt(){document.getElementById('rbt').innerHTML=RBT.map(r=>{const on=sessFilter===r.k;return `
+  <div class="rbt-row" style="cursor:pointer;${on?'background:#F4F8FE;border-radius:8px;':''}" onclick="sessSelect('${r.k}')" title="Filter sessions to ${r.n}">
+  <div class="rbt-name" style="${on?'font-weight:700;':''}">${on?'▸ ':''}${r.n}<small>${r.s}</small></div>
   <div class="rbt-track"><div class="rbt-fill" style="width:${r.v}%;background:${r.c}"></div></div>
-  <div class="rbt-val" style="color:${r.c}">${r.v}%</div></div>`).join('');}
+  <div class="rbt-val" style="color:${r.c}">${r.v}%</div></div>`;}).join('');}
 
 // ---- sessions ----
 const SESS=[
-  {id:'VOY-45012',type:'Special-handling exception',tcls:'rightful',ch:'Voice',sent:'1.8 → 2.0',dz:'1:10',sc:'3.6',scl:'lo',res:'Re-esc',rcls:'broke'},
-  {id:'VOY-44907',type:'Out-of-policy approval',tcls:'rightful',ch:'Webchat',sent:'1.8 → 2.4',dz:'1:12',sc:'4.2',scl:'lo',res:'Re-esc',rcls:'broke'},
-  {id:'VOY-44888',type:'Manager sign-off',tcls:'rightful',ch:'Voice',sent:'2.3 → 3.1',dz:'0:55',sc:'5.6',scl:'mid',res:'Repeat',rcls:'broke'},
-  {id:'VOY-44850',type:'High-emotion complaint',tcls:'rightful',ch:'Twilio-SMS',sent:'1.5 → 4.2',dz:'0:31',sc:'8.7',scl:'hi',res:'Held',rcls:'held'},
-  {id:'VOY-44799',type:'Special-handling exception',tcls:'rightful',ch:'Voice',sent:'2.0 → 1.9',dz:'1:34',sc:'3.4',scl:'lo',res:'Re-esc',rcls:'broke'},
+  {id:'VOY-45012',type:'Special-handling exception',k:'special',tcls:'rightful',ch:'Voice',sent:'1.8 → 2.0',dz:'1:10',sc:'3.6',scl:'lo',res:'Re-esc',rcls:'broke'},
+  {id:'VOY-44907',type:'Out-of-policy approval',k:'outofpolicy',tcls:'rightful',ch:'Webchat',sent:'1.8 → 2.4',dz:'1:12',sc:'4.2',scl:'lo',res:'Re-esc',rcls:'broke'},
+  {id:'VOY-44888',type:'Manager sign-off',k:'manager',tcls:'rightful',ch:'Voice',sent:'2.3 → 3.1',dz:'0:55',sc:'5.6',scl:'mid',res:'Repeat',rcls:'broke'},
+  {id:'VOY-44850',type:'High-emotion complaint',k:'emotion',tcls:'rightful',ch:'Twilio-SMS',sent:'1.5 → 4.2',dz:'0:31',sc:'8.7',scl:'hi',res:'Held',rcls:'held'},
+  {id:'VOY-44799',type:'Special-handling exception',k:'special',tcls:'rightful',ch:'Voice',sent:'2.0 → 1.9',dz:'1:34',sc:'3.4',scl:'lo',res:'Re-esc',rcls:'broke'},
 ];
-function renderSessions(){document.getElementById('sessRows').innerHTML=SESS.map(s=>`
+let sessFilter=null;
+function sessSelect(k){ sessFilter = (sessFilter===k ? null : k); renderRbt(); renderSessions(); }
+function renderSessions(){
+  const rows = sessFilter ? SESS.filter(s=>s.k===sessFilter) : SESS;
+  const fb=document.getElementById('sessFilterBar');
+  if(fb){ const lbl=sessFilter ? ((RBT.find(r=>r.k===sessFilter)||{}).n) : null;
+    fb.innerHTML = lbl
+      ? `<span style="font-size:12px;color:#6B7280;">Drilled into <b style="color:#1A1F36;">${lbl}</b> · ${rows.length} session${rows.length===1?'':'s'} <span class="link" onclick="sessSelect('${sessFilter}')" style="margin-left:8px;">✕ clear</span></span>`
+      : `<span style="font-size:12px;color:#9AA1AD;">Showing all flagged sessions — click a bar above to drill in.</span>`; }
+  document.getElementById('sessRows').innerHTML = rows.length ? rows.map(s=>`
   <tr class="clk" onclick="openModal()">
     <td class="mono">${s.id}</td>
     <td><span class="tag ${s.tcls}">${s.type}</span></td>
@@ -600,7 +620,8 @@ function renderSessions(){document.getElementById('sessRows').innerHTML=SESS.map
     <td class="score ${s.scl}">${s.sc}</td>
     <td><span class="tag ${s.rcls}">${s.res}</span></td>
     <td><span class="link">⤓ Open</span></td>
-  </tr>`).join('');}
+  </tr>`).join('') : `<tr><td colspan="8" style="text-align:center;color:#9AA1AD;padding:22px;">No sessions flagged for this type — recovery is healthy here ✓</td></tr>`;
+}
 
 // ---- playbook (fix workspace) ----
 const PB_INTRO="These escalation flows are losing the most customers <i>after</i> handoff. Pick one to fix — see who recovers it best, what they actually say, then publish reusable guidance into <b>Agent Assist</b> so every agent gets it.";
@@ -663,7 +684,7 @@ function workspaceHtml(f){ const g=f.guidance, init=pvCompute(f,g.template); ret
     </div>
   </div>
   <div class="card"><h3>3 · Proposed Agent Assist guidance</h3>
-    <div class="sub">✦ AI-suggested — already validated across every real case + aligned to best practices. Your part is the <b>human touch</b>: warm up the wording, then publish. (Click a token to insert; ▶ Test re-checks tokens after any edit.)</div>
+    <div class="sub">✦ AI-suggested — already validated across every real case + aligned to best practices. It pairs the <b>right recovery action</b> with how top agents <b>communicate it</b> (empathy + assertive ownership). Your part is the <b>human touch</b>: warm up the wording, then publish. (Click a token to insert; ▶ Test re-checks tokens after any edit.)</div>
     <textarea id="tplEdit" class="tpl-edit" rows="4">${g.template}</textarea>
     <div class="chips-row"><span class="chips-lbl">Insert token:</span>${g.tokens.map(t=>`<span class="tok-chip" onclick="pbInsert('${t}')">[${t}]</span>`).join('')}</div>
     <div class="ws-actions ws-actions-split"><div><button class="btn ghost" style="width:auto;" onclick="pbRefresh()">↻ Refresh from AI</button> <button class="btn ghost" style="width:auto;" onclick="pbTest()">▶ Test</button></div><button class="btn" style="width:auto;" onclick="openPublish('${f.id}')">Publish to Agent Assist →</button></div>
