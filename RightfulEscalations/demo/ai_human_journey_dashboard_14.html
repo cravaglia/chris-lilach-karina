@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI–Human Journey Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F4F6FA;
+  --surface: #FFFFFF;
+  --surface2: #F0F2F7;
+  --border: #DDE2ED;
+  --ai: #5B4FE8;
+  --ai-dim: rgba(91,79,232,0.08);
+  --human: #00A98A;
+  --human-dim: rgba(0,169,138,0.08);
+  --handover: #D9880E;
+  --handover-dim: rgba(217,136,14,0.08);
+  --danger: #D02F3E;
+  --danger-dim: rgba(208,47,62,0.08);
+  --success: #1E9652;
+  --muted: #7A86A0;
+  --text: #1A2236;
+  --text-dim: #4B5672;
+  --tab-active: #5B4FE8;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 13px;
+}
+
+/* ── Top bar ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 20px; }
+.logo {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.logo span { color: var(--ai); }
+.breadcrumb { font-size: 12px; color: var(--muted); }
+.breadcrumb b { color: var(--text); }
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.filter-group { display: flex; align-items: center; gap: 6px; }
+.filter-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+select, .date-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+select:focus { border-color: var(--ai); }
+.filter-divider { width: 1px; height: 20px; background: var(--border); }
+
+/* ── Journey flow bar ── */
+.journey-flow {
+  display: flex;
+  align-items: stretch;
+  margin: 20px 28px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.flow-leg {
+  flex: 1;
+  padding: 14px 18px;
+  position: relative;
+}
+.flow-leg + .flow-leg::before {
+  content: '→';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 16px;
+  z-index: 2;
+}
+.flow-leg.ai-leg   { background: var(--ai-dim); border-right: 1px solid var(--border); border-left: 4px solid var(--ai); }
+.flow-leg.wait-leg { background: var(--handover-dim); border-right: 1px solid var(--border); flex: 0 0 140px; border-left: 4px solid var(--handover); }
+.flow-leg.human-leg { background: var(--human-dim); border-left: 4px solid var(--human); }
+.flow-leg-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.flow-leg.ai-leg .flow-leg-label { color: var(--ai); }
+.flow-leg.wait-leg .flow-leg-label { color: var(--handover); }
+.flow-leg.human-leg .flow-leg-label { color: var(--human); }
+.flow-leg-stat { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 500; }
+.flow-leg-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 2px;
+  padding: 16px 28px 0;
+  border-bottom: 1px solid var(--border);
+  margin: 0 0 0;
+}
+.tab {
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--text); border-bottom-color: var(--tab-active); }
+
+/* ── Main layout ── */
+.main { padding: 24px 28px 60px; }
+
+/* ── Section headers ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  margin-top: 28px;
+}
+.section-header:first-child { margin-top: 0; }
+.section-title-row { display: flex; align-items: center; gap: 8px; }
+.section-dot { width: 8px; height: 8px; border-radius: 50%; }
+.section-title { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+.section-action { font-size: 12px; color: var(--ai); cursor: pointer; }
+
+/* ── KPI grid ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 0;
+}
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 10px 10px 0 0;
+}
+.kpi-card.k-ai::before      { background: var(--ai); }
+.kpi-card.k-handover::before { background: var(--handover); }
+.kpi-card.k-human::before   { background: var(--human); }
+.kpi-card.k-danger::before  { background: var(--danger); }
+.kpi-card.k-neutral::before { background: var(--muted); }
+
+.kpi-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 6px; }
+.kpi-value { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 500; line-height: 1; margin-bottom: 6px; }
+.kpi-card.k-ai .kpi-value      { color: var(--ai); }
+.kpi-card.k-handover .kpi-value { color: var(--handover); }
+.kpi-card.k-human .kpi-value   { color: var(--human); }
+.kpi-card.k-danger .kpi-value  { color: var(--danger); }
+.kpi-card.k-neutral .kpi-value { color: var(--text); }
+
+.kpi-delta {
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.delta-up   { color: var(--success); }
+.delta-down { color: var(--danger); }
+.kpi-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ── Escalation unified widget row ── */
+.esc-kpi-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.esc-unified-card {
+  height: 100%;
+}
+.kpi-sub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ── Two-col ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* ── Chart card ── */
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.chart-card-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.chart-card-sub { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+
+/* ── Escalation breakdown ── */
+.esc-breakdown { display: flex; flex-direction: column; gap: 10px; }
+.esc-row { display: flex; align-items: center; gap: 10px; }
+.esc-label { font-size: 12px; color: var(--text-dim); width: 180px; flex-shrink: 0; }
+.esc-bar-wrap { flex: 1; background: var(--surface2); border-radius: 4px; height: 8px; overflow: hidden; }
+.esc-bar { height: 8px; border-radius: 4px; }
+.esc-pct { font-family: 'JetBrains Mono', monospace; font-size: 12px; width: 38px; text-align: right; flex-shrink: 0; }
+
+/* ── Sentiment track ── */
+.sentiment-track {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  height: 80px;
+  position: relative;
+  margin-top: 10px;
+}
+.sent-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.sent-zone-label { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+.sent-bar-outer { width: 100%; background: var(--surface2); border-radius: 4px; overflow: hidden; position: relative; }
+.sent-bar-inner { border-radius: 4px; }
+.sent-arrow { font-size: 18px; color: var(--muted); align-self: center; padding: 0 4px; flex: 0; }
+.sent-val { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 500; }
+
+/* ── Drill-down table ── */
+.drill-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.drill-table th {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.drill-table td {
+  padding: 10px 12px;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text);
+}
+.drill-table tr:last-child td { border-bottom: none; }
+.drill-table tr:hover td { background: #F0F2F7; cursor: pointer; }
+.intent-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--surface2);
+  color: var(--text-dim);
+}
+.score-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.score-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.score-fill { height: 6px; border-radius: 3px; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── Resolution sources ── */
+.res-sources { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.res-source-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--surface2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.res-source-icon { font-size: 16px; flex-shrink: 0; }
+.res-source-label { flex: 1; font-size: 12px; font-weight: 500; }
+.res-source-sub { font-size: 11px; color: var(--muted); }
+.res-source-val { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 500; color: var(--human); }
+
+/* ── Coaching card ── */
+.coaching-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.coaching-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.coaching-card.priority-1 { border-color: var(--danger); }
+.coaching-card.priority-2 { border-color: var(--handover); }
+.coaching-card.priority-3 { border-color: var(--ai); }
+.coaching-priority {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.priority-1 .coaching-priority { color: var(--danger); }
+.priority-2 .coaching-priority { color: var(--handover); }
+.priority-3 .coaching-priority { color: var(--ai); }
+.coaching-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.coaching-desc { font-size: 12px; color: var(--muted); line-height: 1.55; margin-bottom: 12px; }
+.coaching-impact {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.impact-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.impact-tag.positive { background: rgba(30,150,82,0.10); color: var(--success); border-color: rgba(30,150,82,0.2); }
+.coaching-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-dim);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s;
+}
+.coaching-btn:hover { background: var(--ai-dim); border-color: var(--ai); color: var(--ai); }
+
+/* ── Legend ── */
+.legend { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── SVG charts ── */
+svg text { font-family: 'Inter', sans-serif; }
+
+/* ── Tab panels ── */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Inline badge ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.badge-wrong  { background: var(--danger-dim); color: var(--danger); }
+.badge-right  { background: var(--human-dim); color: var(--human); }
+.badge-wait   { background: var(--handover-dim); color: var(--handover); }
+
+.spacer { height: 16px; }
+
+/* ── Mini donut ── */
+.mini-donut-wrap { display: flex; align-items: center; gap: 16px; margin-top: 12px; }
+.donut-legend { display: flex; flex-direction: column; gap: 6px; }
+.donut-legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; }
+.donut-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">NiCE <span>Journey</span></div>
+    <div class="breadcrumb">AI–Human Mixed Journey · <b>Recovery & Handover Intelligence</b></div>
+  </div>
+  <div class="filters">
+    <div class="filter-group">
+      <span class="filter-label">Date</span>
+      <button class="date-btn">May 30 – Jun 5, 2026 ▾</button>
+    </div>
+    <div class="filter-divider"></div>
+    <div class="filter-group">
+      <span class="filter-label">Intent</span>
+      <select>
+        <option>All Intents</option>
+        <option>Payment Issue</option>
+        <option>Medical Equipment</option>
+        <option>Account Update</option>
+        <option>Complaint</option>
+        <option>Cancellation</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">AI Agent Type</span>
+      <select>
+        <option>All Agent Types</option>
+        <option>Payment Bot</option>
+        <option>Triage Bot</option>
+        <option>FAQ Bot</option>
+        <option>Scheduling Bot</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Channel</span>
+      <select>
+        <option>All Channels</option>
+        <option>Voice</option>
+        <option>Chat</option>
+        <option>Email</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY FLOW BAR -->
+<div class="journey-flow">
+  <div class="flow-leg ai-leg">
+    <div class="flow-leg-label">AI Agent Leg</div>
+    <div class="flow-leg-stat" style="color:var(--ai)">1,713</div>
+    <div class="flow-leg-sub">contacts started with AI · avg 4m 12s</div>
+  </div>
+  <div class="flow-leg wait-leg">
+    <div class="flow-leg-label">Handover Wait</div>
+    <div class="flow-leg-stat" style="color:var(--handover)">0:48</div>
+    <div class="flow-leg-sub">avg silent wait</div>
+  </div>
+  <div class="flow-leg human-leg">
+    <div class="flow-leg-label">Human Agent Leg</div>
+    <div class="flow-leg-stat" style="color:var(--human)">1,090</div>
+    <div class="flow-leg-sub">escalated · 71% recovered</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview', this)">Overview</div>
+  <div class="tab" onclick="switchTab('escalations', this)">Escalation Quality</div>
+  <div class="tab" onclick="switchTab('handover', this)">Handover Detail</div>
+  <div class="tab" onclick="switchTab('resolution', this)">Resolution & Recovery</div>
+  <div class="tab" onclick="switchTab('playbook', this)">Coaching Playbook</div>
+</div>
+
+<div class="main">
+
+  <!-- ══════════════════════════════════════════ OVERVIEW ══ -->
+  <div class="tab-panel active" id="tab-overview">
+
+    <div class="section-header">
+      <div class="section-title-row">
+        <div class="section-dot" style="background:var(--text-dim)"></div>
+        <div class="section-title">Journey KPIs</div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--ai)"></div>AI leg</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--handover)"></div>Handover</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--human)"></div>Human leg</div>
+      </div>
+    </div>
+
+    <!-- Row 1: Unified escalation widget (full width) -->
+    <div class="chart-card" style="margin-bottom:0;">
+      <!-- Header row: big number + subtitle -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+        <div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Total Escalations · Last 7 Days</div>
+          <div style="display:flex;align-items:baseline;gap:10px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:600;color:var(--text);line-height:1;">1,713</div>
+            <div style="font-size:12px;color:var(--muted);">contacts escalated from AI to human</div>
+          </div>
+        </div>
+        <div style="text-align:right;font-size:11px;color:var(--muted);line-height:1.7;">
+          <div>All intents · All AI agent types</div>
+          <div>May 30 – Jun 5, 2026</div>
+        </div>
+      </div>
+
+      <!-- Stacked bar with labels above each segment -->
+      <div style="margin-bottom:6px;display:flex;">
+        <div style="width:64%;font-size:10px;font-weight:700;color:var(--ai);letter-spacing:0.06em;text-transform:uppercase;padding-left:2px;">Rightful · 64%</div>
+        <div style="width:36%;font-size:10px;font-weight:700;color:var(--handover);letter-spacing:0.06em;text-transform:uppercase;text-align:right;padding-right:2px;">Avoidable · 36%</div>
+      </div>
+      <div style="height:12px;border-radius:8px;overflow:hidden;display:flex;margin-bottom:16px;box-shadow:inset 0 1px 2px rgba(0,0,0,0.06);">
+        <div style="width:64%;background:var(--ai);border-radius:8px 0 0 8px;"></div>
+        <div style="width:36%;background:var(--handover);border-radius:0 8px 8px 0;opacity:0.9;"></div>
+      </div>
+
+      <!-- Two split panels side by side -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+        <!-- Rightful panel -->
+        <div style="background:var(--ai-dim);border:1px solid rgba(91,79,232,0.18);border-radius:10px;padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--ai);flex-shrink:0;"></div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ai);">Rightful Escalations</div>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--ai);line-height:1;">1,090</span>
+            <span style="font-size:13px;font-weight:600;color:var(--ai);opacity:0.65;">64%</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);">Correctly needed a human agent</div>
+        </div>
+
+        <!-- Avoidable panel -->
+        <div style="background:var(--handover-dim);border:1px solid rgba(217,136,14,0.18);border-radius:10px;padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--handover);flex-shrink:0;"></div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--handover);">Avoidable · Automation Opp</div>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--handover);line-height:1;">623</span>
+            <span style="font-size:13px;font-weight:600;color:var(--handover);opacity:0.65;">36%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
+            <span style="color:var(--muted);">Could have been resolved by AI</span>
+            <a onclick="switchTab('escalations', document.querySelectorAll('.tab')[1])" style="color:var(--ai);font-weight:600;text-decoration:none;cursor:pointer;white-space:nowrap;">Automation Opportunities →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Two-column row: Resolution Outcome + Intent Quality -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <!-- Resolution Outcome widget -->
+      <div class="chart-card">
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Resolution Outcome · 1,090 Contacts</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">14-day hold window</div>
+
+        <!-- Stacked bar -->
+        <div style="margin-bottom:5px;display:flex;font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">
+          <div style="width:58%;color:var(--human);">Resolved & Held · 58%</div>
+          <div style="width:13%;color:var(--handover);text-align:center;">Reopened · 13%</div>
+          <div style="width:29%;color:var(--danger);text-align:right;">Not Resolved · 29%</div>
+        </div>
+        <div style="height:12px;border-radius:8px;overflow:hidden;display:flex;margin-bottom:18px;">
+          <div style="width:58%;background:var(--human);border-radius:8px 0 0 8px;"></div>
+          <div style="width:13%;background:var(--handover);opacity:0.9;"></div>
+          <div style="width:29%;background:var(--danger);border-radius:0 8px 8px 0;opacity:0.85;"></div>
+        </div>
+
+        <!-- 3 tiles -->
+        <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:0;">
+          <div style="padding-right:12px;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--human);margin-bottom:4px;">Resolved & Held</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;color:var(--human);line-height:1;margin-bottom:2px;">58%</div>
+            <div style="font-size:11px;color:var(--muted);">633 contacts</div>
+            <div style="font-size:11px;color:var(--success);margin-top:4px;">▲ 1.2% vs prior</div>
+          </div>
+          <div style="background:var(--border);"></div>
+          <div style="padding:0 12px;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--handover);margin-bottom:4px;">Reopened</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;color:var(--handover);line-height:1;margin-bottom:2px;">13%</div>
+            <div style="font-size:11px;color:var(--muted);">142 contacts</div>
+            <div style="font-size:11px;color:var(--danger);margin-top:4px;">▼ 3.1% vs prior</div>
+          </div>
+          <div style="background:var(--border);"></div>
+          <div style="padding-left:12px;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--danger);margin-bottom:4px;">Not Resolved</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;color:var(--danger);line-height:1;margin-bottom:2px;">29%</div>
+            <div style="font-size:11px;color:var(--muted);">315 contacts</div>
+            <div style="font-size:11px;color:var(--danger);margin-top:4px;">▼ 2.4% vs prior</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Intent Quality widget (Worst to Best) -->
+      <div class="chart-card">
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Intent Quality · Worst to Best</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">FCR score per intent · resolution breakdown</div>
+
+        <!-- Column headers -->
+        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Intent</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:center;">Resolved & Held</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">
+            <span style="color:var(--danger);margin-right:4px;">■</span>Not Resolved
+            <span style="color:var(--handover);margin-left:8px;margin-right:4px;">■</span>Reopened
+            <span style="color:var(--human);margin-left:8px;margin-right:4px;">■</span>Resolved & Held
+          </div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:right;">Signal</div>
+        </div>
+
+        <!-- Account Updates: FCR 43 -->
+        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+          <div style="font-size:12px;color:var(--text);">Account Updates</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">43</div>
+          <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
+            <div style="width:30%;background:var(--danger);opacity:0.85;"></div>
+            <div style="width:27%;background:var(--handover);opacity:0.85;"></div>
+            <div style="width:43%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--danger);">
+            <span style="font-size:13px;">🚨</span> Training Opp
+          </div>
+        </div>
+
+        <!-- Billing Disputes: FCR 50 -->
+        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+          <div style="font-size:12px;color:var(--text);">Billing Disputes</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">50</div>
+          <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
+            <div style="width:25%;background:var(--danger);opacity:0.85;"></div>
+            <div style="width:25%;background:var(--handover);opacity:0.85;"></div>
+            <div style="width:50%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--danger);">
+            <span style="font-size:13px;">🚨</span> Training Opp
+          </div>
+        </div>
+
+        <!-- Cancellation Requests: FCR 60 -->
+        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+          <div style="font-size:12px;color:var(--text);">Cancellation Req.</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">60</div>
+          <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
+            <div style="width:18%;background:var(--danger);opacity:0.85;"></div>
+            <div style="width:22%;background:var(--handover);opacity:0.85;"></div>
+            <div style="width:60%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);text-align:right;">—</div>
+        </div>
+
+        <!-- Payment Issues: FCR 70 -->
+        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+          <div style="font-size:12px;color:var(--text);">Payment Issues</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">70</div>
+          <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
+            <div style="width:12%;background:var(--danger);opacity:0.85;"></div>
+            <div style="width:18%;background:var(--handover);opacity:0.85;"></div>
+            <div style="width:70%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);text-align:right;">—</div>
+        </div>
+
+        <!-- Retention Save: FCR 85 -->
+        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+          <div style="font-size:12px;color:var(--text);">Retention Save</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">85</div>
+          <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
+            <div style="width:5%;background:var(--danger);opacity:0.85;"></div>
+            <div style="width:10%;background:var(--handover);opacity:0.85;"></div>
+            <div style="width:85%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--human);">
+            <span style="font-size:13px;">⭐</span> Best Practice
+          </div>
+        </div>
+
+        <!-- Overall row -->
+        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:7px 0 0;">
+          <div style="font-size:12px;font-weight:700;color:var(--text);">Overall</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--text);text-align:center;">85</div>
+          <div style="font-size:11px;color:var(--muted);display:flex;gap:12px;">
+            <span><span style="color:var(--danger);font-weight:600;">30%</span> not resolved</span>
+            <span><span style="color:var(--handover);font-weight:600;">13%</span> reopened</span>
+            <span><span style="color:var(--human);font-weight:600;">29%</span> resolved & held</span>
+          </div>
+          <div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Sentiment card: 3 metrics LEFT, trend chart RIGHT -->
+    <div class="chart-card">
+      <div style="display:grid;grid-template-columns:1fr 1px 1fr;gap:0;align-items:stretch;">
+
+        <!-- LEFT: 3 metric scores stacked -->
+        <div style="padding-right:24px;display:flex;flex-direction:column;justify-content:space-between;">
+
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ai);margin-bottom:4px;">Journey Sentiment Δ</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--ai);line-height:1;margin-bottom:3px;">+1.6</div>
+            <div style="font-size:11px;color:var(--muted);">AI 2.1 → Human 3.7</div>
+          </div>
+
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Journey Survey Score</div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--text);line-height:1;">3.9</span>
+              <span style="font-size:11px;color:var(--muted);">/ 5</span>
+            </div>
+            <div style="display:flex;gap:2px;">
+              <div style="flex:1;height:3px;border-radius:2px;background:var(--ai);opacity:0.8;"></div>
+              <div style="flex:1;height:3px;border-radius:2px;background:var(--ai);opacity:0.8;"></div>
+              <div style="flex:1;height:3px;border-radius:2px;background:var(--ai);opacity:0.8;"></div>
+              <div style="flex:1;height:3px;border-radius:2px;background:var(--ai);opacity:0.8;"></div>
+              <div style="flex:1;height:3px;border-radius:2px;background:var(--border);"></div>
+            </div>
+          </div>
+
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:10px 0;">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--human);margin-bottom:4px;">Journey QM Score</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--human);line-height:1;margin-bottom:3px;">74</div>
+            <div style="font-size:11px;color:var(--danger);">▼ 3pts vs prior period</div>
+          </div>
+
+        </div>
+
+        <!-- DIVIDER -->
+        <div style="background:var(--border);"></div>
+
+        <!-- RIGHT: sentiment line chart -->
+        <div style="padding-left:24px;">
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Sentiment Through the Journey</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:14px;">Each leg scored independently · recovery measured at human leg end</div>
+          <svg width="100%" height="108" viewBox="0 0 420 108" preserveAspectRatio="xMidYMid meet">
+            <line x1="0" y1="96" x2="420" y2="96" stroke="#DDE2ED" stroke-width="1"/>
+            <line x1="0" y1="74" x2="420" y2="74" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="52" x2="420" y2="52" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="30" x2="420" y2="30" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <text x="4" y="99" fill="#7A86A0" font-size="9">1</text>
+            <text x="4" y="77" fill="#7A86A0" font-size="9">2</text>
+            <text x="4" y="55" fill="#7A86A0" font-size="9">3</text>
+            <text x="4" y="33" fill="#7A86A0" font-size="9">4</text>
+            <rect x="14" y="0" width="160" height="96" fill="rgba(91,79,232,0.05)" rx="4"/>
+            <rect x="180" y="0" width="60" height="96" fill="rgba(217,136,14,0.05)" rx="4"/>
+            <rect x="246" y="0" width="170" height="96" fill="rgba(0,169,138,0.05)" rx="4"/>
+            <polyline points="20,72 80,76 160,79" fill="none" stroke="#5B4FE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="20" cy="72" r="4" fill="#5B4FE8"/>
+            <circle cx="160" cy="79" r="4" fill="#5B4FE8"/>
+            <line x1="160" y1="79" x2="180" y2="79" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
+            <line x1="180" y1="79" x2="246" y2="79" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
+            <polyline points="246,79 320,54 416,37" fill="none" stroke="#00A98A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="246" cy="79" r="4" fill="#D9880E"/>
+            <circle cx="416" cy="37" r="4" fill="#00A98A"/>
+            <text x="20" y="68" fill="#5B4FE8" font-size="9" font-family="JetBrains Mono">2.1</text>
+            <text x="160" y="75" fill="#5B4FE8" font-size="9" font-family="JetBrains Mono">1.8</text>
+            <text x="416" y="33" fill="#00A98A" font-size="9" font-family="JetBrains Mono">3.7</text>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="section-header">
+      <div class="section-title-row">
+        <div class="section-dot" style="background:var(--ai)"></div>
+        <div class="section-title">Drill-Down · By Intent & AI Agent Type</div>
+      </div>
+      <span class="section-action">Export ↗</span>
+    </div>
+    <div class="chart-card" style="padding:0;overflow:hidden">
+      <table class="drill-table">
+        <thead>
+          <tr>
+            <th>Intent</th>
+            <th>AI Agent Type</th>
+            <th>Escalations</th>
+            <th>Wrongful %</th>
+            <th>Wait</th>
+            <th>Sent Δ</th>
+            <th>QM Score</th>
+            <th>Resolved 7d</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="intent-pill">Medical Equipment</span></td>
+            <td><span class="mono">Triage Bot</span></td>
+            <td><span class="mono">312</span></td>
+            <td><span class="badge badge-wrong">12% wrong</span></td>
+            <td><span class="mono" style="color:var(--handover)">1:12</span></td>
+            <td><span class="mono" style="color:var(--human)">+2.1</span></td>
+            <td>
+              <div class="score-bar">
+                <div class="score-track"><div class="score-fill" style="width:88%;background:var(--human)"></div></div>
+                <span class="mono">88</span>
+              </div>
+            </td>
+            <td><span class="mono" style="color:var(--human)">91%</span></td>
+          </tr>
+          <tr>
+            <td><span class="intent-pill">Payment Issue</span></td>
+            <td><span class="mono">Payment Bot</span></td>
+            <td><span class="mono">287</span></td>
+            <td><span class="badge badge-wrong">41% wrong</span></td>
+            <td><span class="mono" style="color:var(--danger)">0:28</span></td>
+            <td><span class="mono" style="color:var(--human)">+0.8</span></td>
+            <td>
+              <div class="score-bar">
+                <div class="score-track"><div class="score-fill" style="width:62%;background:var(--handover)"></div></div>
+                <span class="mono">62</span>
+              </div>
+            </td>
+            <td><span class="mono" style="color:var(--handover)">74%</span></td>
+          </tr>
+          <tr>
+            <td><span class="intent-pill">Cancellation</span></td>
+            <td><span class="mono">FAQ Bot</span></td>
+            <td><span class="mono">198</span></td>
+            <td><span class="badge badge-wrong">58% wrong</span></td>
+            <td><span class="mono" style="color:var(--danger)">0:55</span></td>
+            <td><span class="mono" style="color:var(--danger)">-0.3</span></td>
+            <td>
+              <div class="score-bar">
+                <div class="score-track"><div class="score-fill" style="width:55%;background:var(--danger)"></div></div>
+                <span class="mono">55</span>
+              </div>
+            </td>
+            <td><span class="mono" style="color:var(--danger)">61%</span></td>
+          </tr>
+          <tr>
+            <td><span class="intent-pill">Account Update</span></td>
+            <td><span class="mono">Scheduling Bot</span></td>
+            <td><span class="mono">156</span></td>
+            <td><span class="badge badge-right">8% wrong</span></td>
+            <td><span class="mono">0:32</span></td>
+            <td><span class="mono" style="color:var(--human)">+1.4</span></td>
+            <td>
+              <div class="score-bar">
+                <div class="score-track"><div class="score-fill" style="width:79%;background:var(--human)"></div></div>
+                <span class="mono">79</span>
+              </div>
+            </td>
+            <td><span class="mono" style="color:var(--human)">85%</span></td>
+          </tr>
+          <tr>
+            <td><span class="intent-pill">Complaint</span></td>
+            <td><span class="mono">Triage Bot</span></td>
+            <td><span class="mono">137</span></td>
+            <td><span class="badge badge-right">5% wrong</span></td>
+            <td><span class="mono" style="color:var(--danger)">1:04</span></td>
+            <td><span class="mono" style="color:var(--human)">+1.9</span></td>
+            <td>
+              <div class="score-bar">
+                <div class="score-track"><div class="score-fill" style="width:71%;background:var(--ai)"></div></div>
+                <span class="mono">71</span>
+              </div>
+            </td>
+            <td><span class="mono">78%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /overview -->
+
+  <!-- ══════════════════════════════════════════ ESCALATIONS ══ -->
+  <div class="tab-panel" id="tab-escalations">
+    <div class="section-header" style="margin-top:0">
+      <div class="section-title-row">
+        <div class="section-dot" style="background:var(--danger)"></div>
+        <div class="section-title">Escalation Quality Breakdown</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card k-danger">
+        <div class="kpi-label">Total Escalations</div>
+        <div class="kpi-value">1,713</div>
+      </div>
+      <div class="kpi-card k-ai">
+        <div class="kpi-label">Rightful Escalations</div>
+        <div class="kpi-value">1,090</div>
+        <div class="kpi-sub">64% — should reach a human</div>
+      </div>
+      <div class="kpi-card k-handover">
+        <div class="kpi-label">Wrongful / Avoidable</div>
+        <div class="kpi-value">623</div>
+        <div class="kpi-sub">36% — automation opportunities</div>
+      </div>
+      <div class="kpi-card k-neutral">
+        <div class="kpi-label">Customer-Requested</div>
+        <div class="kpi-value">418</div>
+        <div class="kpi-sub">38% of rightful</div>
+      </div>
+      <div class="kpi-card k-neutral">
+        <div class="kpi-label">AI Dead Ends</div>
+        <div class="kpi-value">672</div>
+        <div class="kpi-sub">62% of rightful</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-card-title">Rightful Escalation — Granular Reasons</div>
+        <div class="chart-card-sub">Why did the AI correctly hand off to a human?</div>
+        <div class="esc-breakdown" style="margin-top:8px">
+          <div class="esc-row">
+            <div class="esc-label">Customer asked for human</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:38%;background:var(--ai)"></div></div>
+            <div class="esc-pct mono">38%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">AI reached intent dead end</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:29%;background:var(--ai);opacity:0.7"></div></div>
+            <div class="esc-pct mono">29%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Special handling exception</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:18%;background:var(--handover)"></div></div>
+            <div class="esc-pct mono">18%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Emotional distress detected</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:10%;background:var(--danger)"></div></div>
+            <div class="esc-pct mono">10%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Compliance/auth required</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:5%;background:var(--muted)"></div></div>
+            <div class="esc-pct mono">5%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-title">Avoidable Escalations — Automation Opportunities</div>
+        <div class="chart-card-sub">623 contacts could have been resolved by AI with prompt or flow improvements</div>
+        <div class="esc-breakdown" style="margin-top:8px">
+          <div class="esc-row">
+            <div class="esc-label">FAQ / knowledge gap</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:44%;background:var(--handover)"></div></div>
+            <div class="esc-pct mono">44%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Prompt loop / no progress</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:28%;background:var(--handover);opacity:0.7"></div></div>
+            <div class="esc-pct mono">28%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">System integration failure</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:18%;background:var(--danger);opacity:0.6"></div></div>
+            <div class="esc-pct mono">18%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Language / NLU failure</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:10%;background:var(--muted)"></div></div>
+            <div class="esc-pct mono">10%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /escalations -->
+
+  <!-- ══════════════════════════════════════════ HANDOVER ══ -->
+  <div class="tab-panel" id="tab-handover">
+    <div class="section-header" style="margin-top:0">
+      <div class="section-title-row">
+        <div class="section-dot" style="background:var(--handover)"></div>
+        <div class="section-title">Handover Detail</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card k-handover">
+        <div class="kpi-label">Avg Wait Before Pickup</div>
+        <div class="kpi-value">0:48</div>
+        <div class="kpi-sub">silent — no hold music/msg</div>
+      </div>
+      <div class="kpi-card k-danger">
+        <div class="kpi-label">Abandon During Wait</div>
+        <div class="kpi-value">9%</div>
+        <div class="kpi-sub">~$24K/yr opportunity cost</div>
+      </div>
+      <div class="kpi-card k-ai">
+        <div class="kpi-label">AI Summary at Handover</div>
+        <div class="kpi-value">61%</div>
+        <div class="kpi-sub">of transfers include context</div>
+      </div>
+      <div class="kpi-card k-neutral">
+        <div class="kpi-label">Avg AI Leg Duration</div>
+        <div class="kpi-value">4:12</div>
+        <div class="kpi-sub">before escalation</div>
+      </div>
+      <div class="kpi-card k-human">
+        <div class="kpi-label">Handover QM Score</div>
+        <div class="kpi-value">68</div>
+        <div class="kpi-sub">scored separately from legs</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="three-col">
+      <div class="chart-card">
+        <div class="chart-card-title">AI Handover Summary Quality</div>
+        <div class="chart-card-sub">What context did the AI pass to the human agent?</div>
+        <div class="esc-breakdown" style="margin-top:12px">
+          <div class="esc-row">
+            <div class="esc-label">AI agent name/type</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:95%;background:var(--human)"></div></div>
+            <div class="esc-pct mono">95%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Customer ID passed</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:88%;background:var(--human)"></div></div>
+            <div class="esc-pct mono">88%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Reason for call</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:72%;background:var(--ai)"></div></div>
+            <div class="esc-pct mono">72%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">What AI tried to do</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:61%;background:var(--ai);opacity:0.7"></div></div>
+            <div class="esc-pct mono">61%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Why AI is transferring</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:44%;background:var(--handover)"></div></div>
+            <div class="esc-pct mono">44%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-title">Wait Time Distribution</div>
+        <div class="chart-card-sub">How long customers wait before human pickup</div>
+        <svg width="100%" height="130" viewBox="0 0 240 130" preserveAspectRatio="xMidYMid meet" style="margin-top:8px">
+          <rect x="10" y="80" width="30" height="40" fill="#00A98A" rx="3" opacity="0.8"/>
+          <rect x="50" y="50" width="30" height="70" fill="#00A98A" rx="3" opacity="0.8"/>
+          <rect x="90" y="30" width="30" height="90" fill="#D9880E" rx="3" opacity="0.8"/>
+          <rect x="130" y="55" width="30" height="65" fill="#D9880E" rx="3" opacity="0.6"/>
+          <rect x="170" y="85" width="30" height="35" fill="#D02F3E" rx="3" opacity="0.7"/>
+          <text x="25" y="128" fill="#7A86A0" font-size="9" text-anchor="middle">&lt;15s</text>
+          <text x="65" y="128" fill="#7A86A0" font-size="9" text-anchor="middle">15-30s</text>
+          <text x="105" y="128" fill="#7A86A0" font-size="9" text-anchor="middle">30-60s</text>
+          <text x="145" y="128" fill="#7A86A0" font-size="9" text-anchor="middle">1-2m</text>
+          <text x="185" y="128" fill="#7A86A0" font-size="9" text-anchor="middle">&gt;2m</text>
+          <text x="25" y="76" fill="#1A2236" font-size="9" text-anchor="middle">18%</text>
+          <text x="65" y="46" fill="#1A2236" font-size="9" text-anchor="middle">27%</text>
+          <text x="105" y="26" fill="#1A2236" font-size="9" text-anchor="middle">32%</text>
+          <text x="145" y="51" fill="#1A2236" font-size="9" text-anchor="middle">15%</text>
+          <text x="185" y="81" fill="#1A2236" font-size="9" text-anchor="middle">8%</text>
+        </svg>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-title">Handover Trigger Type</div>
+        <div class="chart-card-sub">Who initiated the transfer?</div>
+        <div class="esc-breakdown" style="margin-top:16px">
+          <div class="esc-row">
+            <div class="esc-label">AI decided to transfer</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:62%;background:var(--ai)"></div></div>
+            <div class="esc-pct mono">62%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Customer requested human</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:38%;background:var(--human)"></div></div>
+            <div class="esc-pct mono">38%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /handover -->
+
+  <!-- ══════════════════════════════════════════ RESOLUTION ══ -->
+  <div class="tab-panel" id="tab-resolution">
+    <div class="section-header" style="margin-top:0">
+      <div class="section-title-row">
+        <div class="section-dot" style="background:var(--human)"></div>
+        <div class="section-title">Resolution & Recovery</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card k-human">
+        <div class="kpi-label">Overall Recovery Rate</div>
+        <div class="kpi-value">71%</div>
+        <div class="kpi-delta delta-down">▼ 4.2% vs prior</div>
+      </div>
+      <div class="kpi-card k-human">
+        <div class="kpi-label">FCR (First Contact)</div>
+        <div class="kpi-value">68%</div>
+        <div class="kpi-sub">resolved same interaction</div>
+      </div>
+      <div class="kpi-card k-neutral">
+        <div class="kpi-label">Journey Survey Score</div>
+        <div class="kpi-value">3.9</div>
+        <div class="kpi-sub">out of 5 · 742 responses</div>
+      </div>
+      <div class="kpi-card k-neutral">
+        <div class="kpi-label">Agent Confirmed Resolved</div>
+        <div class="kpi-value">74%</div>
+        <div class="kpi-sub">via disposition / transcript</div>
+      </div>
+      <div class="kpi-card k-human">
+        <div class="kpi-label">Resolution Held 7d</div>
+        <div class="kpi-value">82%</div>
+        <div class="kpi-delta delta-down">▼ 3.1% vs prior</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-card-title">Resolution Signal Sources</div>
+        <div class="chart-card-sub">How resolution is determined — multiple signals triangulated</div>
+        <div class="res-sources">
+          <div class="res-source-row">
+            <div class="res-source-icon">📋</div>
+            <div>
+              <div class="res-source-label">FCR Metric</div>
+              <div class="res-source-sub">Existing system flag — same-contact resolution</div>
+            </div>
+            <div class="res-source-val">68%</div>
+          </div>
+          <div class="res-source-row">
+            <div class="res-source-icon">🎙️</div>
+            <div>
+              <div class="res-source-label">Transcript / Auto Summary</div>
+              <div class="res-source-sub">"Was your issue resolved today?" detected in transcript</div>
+            </div>
+            <div class="res-source-val">74%</div>
+          </div>
+          <div class="res-source-row">
+            <div class="res-source-icon">⭐</div>
+            <div>
+              <div class="res-source-label">Post-Journey Survey</div>
+              <div class="res-source-sub">Survey question: issue resolved? · 742 responses</div>
+            </div>
+            <div class="res-source-val">71%</div>
+          </div>
+          <div class="res-source-row" style="opacity:0.5">
+            <div class="res-source-icon">🔗</div>
+            <div>
+              <div class="res-source-label">System Data Signal <span style="font-size:10px;color:var(--handover)">(in development)</span></div>
+              <div class="res-source-sub">Delivery confirmation, refund posted, account updated</div>
+            </div>
+            <div class="res-source-val" style="color:var(--muted)">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-title">Recovery Rate · By Intent</div>
+        <div class="chart-card-sub">How well human agents recover after AI handover, per intent</div>
+        <div class="esc-breakdown" style="margin-top:12px">
+          <div class="esc-row">
+            <div class="esc-label">Medical Equipment</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:88%;background:var(--human)"></div></div>
+            <div class="esc-pct mono" style="color:var(--human)">88%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Account Update</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:85%;background:var(--human)"></div></div>
+            <div class="esc-pct mono" style="color:var(--human)">85%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Complaint</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:78%;background:var(--ai)"></div></div>
+            <div class="esc-pct mono">78%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Payment Issue</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:74%;background:var(--handover)"></div></div>
+            <div class="esc-pct mono" style="color:var(--handover)">74%</div>
+          </div>
+          <div class="esc-row">
+            <div class="esc-label">Cancellation</div>
+            <div class="esc-bar-wrap"><div class="esc-bar" style="width:61%;background:var(--danger)"></div></div>
+            <div class="esc-pct mono" style="color:var(--danger)">61%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /resolution -->
+
+  <!-- ══════════════════════════════════════════ PLAYBOOK ══ -->
+  <div class="tab-panel" id="tab-playbook">
+    <div class="section-header" style="margin-top:0">
+      <div class="section-title-row">
+        <div class="section-dot" style="background:var(--human)"></div>
+        <div class="section-title">Coaching Playbook — Human Agent Recovery</div>
+      </div>
+      <span style="font-size:12px;color:var(--muted)">Ranked by recovery impact · filtered to post-handover behaviors</span>
+    </div>
+
+    <div class="coaching-grid">
+      <div class="coaching-card priority-1">
+        <div class="coaching-priority">🔴 Immediate · Priority 1</div>
+        <div class="coaching-title">Own the Context — Don't Ask What the Bot Already Captured</div>
+        <div class="coaching-desc">Only 61% of transfers include full AI context. Agents who re-ask questions already answered by the AI score 22pts lower on Journey QM and trigger a -0.8 sentiment drop. Coach agents to use the AI summary panel before speaking.</div>
+        <div class="coaching-impact">
+          <span class="impact-tag positive">+22pts QM</span>
+          <span class="impact-tag positive">+0.8 sentiment</span>
+          <span class="impact-tag">312 affected contacts</span>
+        </div>
+        <button class="coaching-btn">View Transcript Examples →</button>
+      </div>
+
+      <div class="coaching-card priority-1">
+        <div class="coaching-priority">🔴 Immediate · Priority 2</div>
+        <div class="coaching-title">Acknowledge the Wait — Every Time</div>
+        <div class="coaching-desc">Agents who acknowledge the transfer wait within 10 seconds achieve 88% recovery vs 62% for those who don't. Script: "Thank you for holding — I can see you were just with our automated assistant. Let me pick this up from where it left off."</div>
+        <div class="coaching-impact">
+          <span class="impact-tag positive">+26pts recovery</span>
+          <span class="impact-tag">0:48 avg wait to address</span>
+        </div>
+        <button class="coaching-btn">View Best Recoverers →</button>
+      </div>
+
+      <div class="coaching-card priority-2">
+        <div class="coaching-priority">🟡 Near-Term · Priority 3</div>
+        <div class="coaching-title">Special-Handling Exception Authority</div>
+        <div class="coaching-desc">18% of rightful escalations involve special-handling (medical equipment, travel exceptions). Agents stall on who can authorize. Push the exception decision tree into Agent Assist. Reduces handle time by 1m 10s per contact.</div>
+        <div class="coaching-impact">
+          <span class="impact-tag positive">-1:10 handle time</span>
+          <span class="impact-tag">Agent Assist</span>
+        </div>
+        <button class="coaching-btn">Configure Agent Assist →</button>
+      </div>
+
+      <div class="coaching-card priority-2">
+        <div class="coaching-priority">🟡 Near-Term · Priority 4</div>
+        <div class="coaching-title">Cancellation Recovery Script</div>
+        <div class="coaching-desc">Cancellation intent has the lowest recovery rate (61%) and the only negative sentiment trend (-0.3). FAQ Bot is escalating 58% of these unnecessarily. Coach agents on retention language and flag the bot's FAQ gap for prompt update.</div>
+        <div class="coaching-impact">
+          <span class="impact-tag positive">+14pts potential</span>
+          <span class="impact-tag">198 contacts/wk</span>
+        </div>
+        <button class="coaching-btn">View Cancellation Transcripts →</button>
+      </div>
+
+      <div class="coaching-card priority-3">
+        <div class="coaching-priority">🔵 Coaching · Priority 5</div>
+        <div class="coaching-title">Close the Loop — Confirm Resolution Before Wrap</div>
+        <div class="coaching-desc">Only 74% of agents explicitly confirm resolution in transcript. Gap between transcript confirmation (74%) and 7-day held resolution (82%) suggests under-reporting, not actual failure. Coach agents to ask and document "Was your issue fully resolved today?"</div>
+        <div class="coaching-impact">
+          <span class="impact-tag">FCR accuracy</span>
+          <span class="impact-tag">Disposition quality</span>
+        </div>
+        <button class="coaching-btn">View QM Rubric →</button>
+      </div>
+
+      <div class="coaching-card priority-3">
+        <div class="coaching-priority">🔵 Coaching · Priority 6</div>
+        <div class="coaching-title">Top Recoverers — Replicate the Playbook</div>
+        <div class="coaching-desc">3 agents recover 88% vs the team's 62% on special-handling contacts. Same contacts, same intents — the gap is human handling. Surface their calls in team calibration and extract the behavioral pattern for peer coaching.</div>
+        <div class="coaching-impact">
+          <span class="impact-tag positive">62% → 88%</span>
+          <span class="impact-tag">QM Coaching</span>
+        </div>
+        <button class="coaching-btn">Compare Top vs Bottom →</button>
+      </div>
+    </div>
+
+  </div><!-- /playbook -->
+
+</div><!-- /main -->
+
+<script>
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+</script>
+</body>
+</html>
