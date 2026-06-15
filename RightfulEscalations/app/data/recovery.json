@@ -6,7 +6,7 @@
       { "label": "Recovery Rate", "value": "71%", "valueClass": "amber", "trend": { "dir": "down", "text": "▼ 4.2% vs prior" } },
       { "label": "Avg Emotional Recovery", "value": "+1.6", "valueClass": "green", "sub": "sentiment Δ across handoff (1–5)" },
       { "label": "Wait Before Pickup", "value": "0:48", "valueClass": "red", "sub": "silent wait before pickup · NEW" },
-      { "label": "Resolution Held (7-day)", "value": "82%", "trend": { "dir": "down", "text": "▼ 3.1% vs prior" } }
+      { "label": "No Reopening (7-day)", "value": "82%", "trend": { "dir": "down", "text": "▼ 3.1% vs prior" } }
     ],
     "escalationQuality": { "rightful": 64, "avoidable": 36 },
     "seam": { "ai": [3.0, 2.4, 1.8, 1.5], "hum": [1.5, 2.6, 3.6, 4.4] },
