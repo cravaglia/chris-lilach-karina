@@ -35,29 +35,155 @@ body {
   color: var(--text);
   min-height: 100vh;
   font-size: 13px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ── Top bar ── */
+/* ── Lyra Global Top Bar ── */
+.lyra-global-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  height: 48px;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  flex-shrink: 0;
+}
+.lyra-logo-icon {
+  width: 28px;
+  height: 28px;
+  background: var(--ai);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: white;
+  font-weight: 800;
+  letter-spacing: -1px;
+  flex-shrink: 0;
+}
+.lyra-app-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lyra-app-name .chevron { font-size: 11px; color: var(--muted); }
+
+/* ── Lyra Body (sidebar + content) ── */
+.lyra-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Lyra Sidebar ── */
+.lyra-sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: #FFFFFF;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.lyra-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 8px;
+  gap: 2px;
+  flex: 1;
+}
+.lyra-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-dim);
+  transition: background 0.12s, color 0.12s;
+  text-decoration: none;
+}
+.lyra-nav-item:hover { background: var(--surface2); color: var(--text); }
+.lyra-nav-item.active {
+  background: #EEF0FD;
+  color: var(--ai);
+  font-weight: 600;
+}
+.lyra-nav-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.lyra-nav-item.active .lyra-nav-icon { opacity: 1; }
+.lyra-nav-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 4px;
+}
+.lyra-nav-plus {
+  margin-left: auto;
+  font-size: 16px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+/* ── Page wrap (right of sidebar) ── */
+.lyra-page-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ── Page header bar (breadcrumb row) ── */
+.lyra-page-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.lyra-page-header-icon {
+  color: var(--muted);
+  font-size: 15px;
+}
+.lyra-page-header-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+/* ── Top bar (filters bar) ── */
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 28px;
+  padding: 12px 24px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  position: sticky; top: 0; z-index: 100;
+  flex-shrink: 0;
 }
 .topbar-left { display: flex; align-items: center; gap: 20px; }
-.logo {
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.02em;
-  color: var(--text);
-}
-.logo span { color: var(--ai); }
-.breadcrumb { font-size: 12px; color: var(--muted); }
-.breadcrumb b { color: var(--text); }
+.logo { display: none; }
+.breadcrumb { display: none; }
 
 .filters {
   display: flex;
@@ -422,11 +548,65 @@ svg text { font-family: 'Inter', sans-serif; }
 </head>
 <body>
 
-<!-- TOP BAR -->
+<!-- LYRA GLOBAL TOP BAR -->
+<div class="lyra-global-bar">
+  <div class="lyra-logo-icon">··</div>
+  <div class="lyra-app-name">Agentic Analytics <span class="chevron">∨</span></div>
+</div>
+
+<!-- LYRA BODY -->
+<div class="lyra-body">
+
+<!-- SIDEBAR -->
+<div class="lyra-sidebar">
+  <nav class="lyra-nav">
+    <a class="lyra-nav-item" href="#">
+      <span class="lyra-nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path d="M9 22V12h6v10"/></svg></span>
+      Home
+    </a>
+    <a class="lyra-nav-item" href="#">
+      <span class="lyra-nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+      Automation Opportunities
+    </a>
+    <a class="lyra-nav-item" href="#">
+      <span class="lyra-nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+      AI Agents
+    </a>
+    <a class="lyra-nav-item active" href="#">
+      <span class="lyra-nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M8 17l4-4 4 4"/><path d="M12 13V3"/><path d="M3 21h18"/></svg></span>
+      Handover Intelligence
+    </a>
+    <div class="lyra-nav-divider"></div>
+    <a class="lyra-nav-item" href="#">
+      <span class="lyra-nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+      Action History
+    </a>
+    <a class="lyra-nav-item" href="#">
+      <span class="lyra-nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path d="M5 5h14M5 12h14M5 19h7"/></svg></span>
+      Saved Dashboards
+      <span class="lyra-nav-plus">+</span>
+    </a>
+    <a class="lyra-nav-item" href="#">
+      <span class="lyra-nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+      Recent
+    </a>
+  </nav>
+</div>
+
+<!-- PAGE WRAPPER -->
+<div class="lyra-page-wrap">
+
+<!-- PAGE HEADER -->
+<div class="lyra-page-header">
+  <span class="lyra-page-header-icon">⊞</span>
+  <span class="lyra-page-header-title">Handover Intelligence</span>
+</div>
+
+<!-- FILTERS BAR -->
 <div class="topbar">
   <div class="topbar-left">
-    <div class="logo">NiCE <span>Journey</span></div>
-    <div class="breadcrumb">AI–Human Mixed Journey · <b>Recovery & Handover Intelligence</b></div>
+    <div class="logo"></div>
+    <div class="breadcrumb"></div>
   </div>
   <div class="filters">
     <div class="filter-group">
@@ -470,7 +650,7 @@ svg text { font-family: 'Inter', sans-serif; }
 <!-- JOURNEY FLOW BAR -->
 <div class="journey-flow">
   <div class="flow-leg ai-leg">
-    <div class="flow-leg-label">AI Agent Leg</div>
+    <div class="flow-leg-label">AI Agent</div>
     <div class="flow-leg-stat" style="color:var(--ai)">1,713</div>
     <div class="flow-leg-sub">contacts started with AI · avg 4m 12s</div>
   </div>
@@ -480,7 +660,7 @@ svg text { font-family: 'Inter', sans-serif; }
     <div class="flow-leg-sub">avg silent wait</div>
   </div>
   <div class="flow-leg human-leg">
-    <div class="flow-leg-label">Human Agent Leg</div>
+    <div class="flow-leg-label">Human Agent</div>
     <div class="flow-leg-stat" style="color:var(--human)">1,090</div>
     <div class="flow-leg-sub">escalated · 71% recovered</div>
   </div>
@@ -489,10 +669,8 @@ svg text { font-family: 'Inter', sans-serif; }
 <!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="switchTab('overview', this)">Overview</div>
-  <div class="tab" onclick="switchTab('escalations', this)">Escalation Quality</div>
-  <div class="tab" onclick="switchTab('handover', this)">Handover Detail</div>
-  <div class="tab" onclick="switchTab('resolution', this)">Resolution & Recovery</div>
   <div class="tab" onclick="switchTab('playbook', this)">Coaching Playbook</div>
+  <div class="tab" onclick="switchTab('handover', this)">Handover Detail</div>
 </div>
 
 <div class="main">
@@ -506,9 +684,9 @@ svg text { font-family: 'Inter', sans-serif; }
         <div class="section-title">Journey KPIs</div>
       </div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--ai)"></div>AI leg</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--ai)"></div>AI Agent</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--handover)"></div>Handover</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--human)"></div>Human leg</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--human)"></div>Human Agent</div>
       </div>
     </div>
 
@@ -567,7 +745,7 @@ svg text { font-family: 'Inter', sans-serif; }
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
             <span style="color:var(--muted);">Could have been resolved by AI</span>
-            <a onclick="switchTab('escalations', document.querySelectorAll('.tab')[1])" style="color:var(--ai);font-weight:600;text-decoration:none;cursor:pointer;white-space:nowrap;">Automation Opportunities →</a>
+            <a onclick="switchTab('handover', document.querySelectorAll('.tab')[1])" style="color:var(--ai);font-weight:600;text-decoration:none;cursor:pointer;white-space:nowrap;">Automation Opportunities →</a>
           </div>
         </div>
 
@@ -582,7 +760,7 @@ svg text { font-family: 'Inter', sans-serif; }
       <!-- Resolution Outcome widget -->
       <div class="chart-card">
         <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Resolution Outcome · 1,090 Contacts</div>
-        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">14-day hold window</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">14-day window - Not reopened</div>
 
         <!-- Stacked bar -->
         <div style="margin-bottom:5px;display:flex;font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">
@@ -623,95 +801,99 @@ svg text { font-family: 'Inter', sans-serif; }
 
       <!-- Intent Quality widget (Worst to Best) -->
       <div class="chart-card">
-        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Intent Quality · Worst to Best</div>
-        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">FCR score per intent · resolution breakdown</div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Resolution Outcome By Intent</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">Ranked by FCR</div>
 
         <!-- Column headers -->
-        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">
           <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Intent</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:center;">Resolved & Held</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:center;">Resolved & Held (FCR) %</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">
-            <span style="color:var(--danger);margin-right:4px;">■</span>Not Resolved
-            <span style="color:var(--handover);margin-left:8px;margin-right:4px;">■</span>Reopened
-            <span style="color:var(--human);margin-left:8px;margin-right:4px;">■</span>Resolved & Held
+            <span style="color:var(--human);font-weight:700;">Resolved & Held</span>
+            <span style="color:var(--handover);font-weight:700;margin-left:12px;">Reopened</span>
+            <span style="color:var(--danger);font-weight:700;margin-left:12px;">Not Resolved</span>
           </div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:right;">Signal</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:right;">Action</div>
         </div>
 
-        <!-- Account Updates: FCR 43 -->
-        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
-          <div style="font-size:12px;color:var(--text);">Account Updates</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">43</div>
+        <!-- Special-handling exception: FCR 44 -->
+        <div onclick="switchTab('playbook', document.querySelectorAll('.tab')[1])" style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+          <div style="font-size:12px;color:var(--ai);font-weight:600;text-decoration:underline;text-underline-offset:2px;">Special-handling exception</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">44%</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
-            <div style="width:30%;background:var(--danger);opacity:0.85;"></div>
-            <div style="width:27%;background:var(--handover);opacity:0.85;"></div>
-            <div style="width:43%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--danger);">
-            <span style="font-size:13px;">🚨</span> Training Opp
-          </div>
-        </div>
-
-        <!-- Billing Disputes: FCR 50 -->
-        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
-          <div style="font-size:12px;color:var(--text);">Billing Disputes</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">50</div>
-          <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
-            <div style="width:25%;background:var(--danger);opacity:0.85;"></div>
-            <div style="width:25%;background:var(--handover);opacity:0.85;"></div>
-            <div style="width:50%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--danger);">
-            <span style="font-size:13px;">🚨</span> Training Opp
-          </div>
-        </div>
-
-        <!-- Cancellation Requests: FCR 60 -->
-        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
-          <div style="font-size:12px;color:var(--text);">Cancellation Req.</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">60</div>
-          <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
-            <div style="width:18%;background:var(--danger);opacity:0.85;"></div>
+            <div style="width:44%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
             <div style="width:22%;background:var(--handover);opacity:0.85;"></div>
-            <div style="width:60%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+            <div style="width:34%;background:var(--danger);opacity:0.85;border-radius:0 5px 5px 0;"></div>
           </div>
-          <div style="font-size:11px;color:var(--muted);text-align:right;">—</div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--ai);">
+            📋 Coach
+          </div>
         </div>
 
-        <!-- Payment Issues: FCR 70 -->
-        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
-          <div style="font-size:12px;color:var(--text);">Payment Issues</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">70</div>
+        <!-- Manager / authority sign-off: FCR 53 -->
+        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+          <div style="font-size:12px;color:var(--text);">Manager / authority sign-off</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">53%</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
-            <div style="width:12%;background:var(--danger);opacity:0.85;"></div>
-            <div style="width:18%;background:var(--handover);opacity:0.85;"></div>
-            <div style="width:70%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+            <div style="width:53%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
+            <div style="width:20%;background:var(--handover);opacity:0.85;"></div>
+            <div style="width:27%;background:var(--danger);opacity:0.85;border-radius:0 5px 5px 0;"></div>
           </div>
-          <div style="font-size:11px;color:var(--muted);text-align:right;">—</div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--ai);">
+            📋 Coach
+          </div>
         </div>
 
-        <!-- Retention Save: FCR 85 -->
-        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
-          <div style="font-size:12px;color:var(--text);">Retention Save</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">85</div>
+        <!-- Complex multi-issue: FCR 56 -->
+        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+          <div style="font-size:12px;color:var(--text);">Complex multi-issue</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">56%</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
-            <div style="width:5%;background:var(--danger);opacity:0.85;"></div>
-            <div style="width:10%;background:var(--handover);opacity:0.85;"></div>
-            <div style="width:85%;background:var(--human);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+            <div style="width:56%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
+            <div style="width:19%;background:var(--handover);opacity:0.85;"></div>
+            <div style="width:25%;background:var(--danger);opacity:0.85;border-radius:0 5px 5px 0;"></div>
           </div>
-          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--human);">
-            <span style="font-size:13px;">⭐</span> Best Practice
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--ai);">
+            📋 Coach
+          </div>
+        </div>
+
+        <!-- High-emotion complaint: FCR 63 -->
+        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+          <div style="font-size:12px;color:var(--text);">High-emotion complaint</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">63%</div>
+          <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
+            <div style="width:63%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
+            <div style="width:17%;background:var(--handover);opacity:0.85;"></div>
+            <div style="width:20%;background:var(--danger);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--ai);">
+            📋 Coach
+          </div>
+        </div>
+
+        <!-- Retention save: FCR 94 -->
+        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+          <div style="font-size:12px;color:var(--text);">Retention save</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">94%</div>
+          <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
+            <div style="width:94%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
+            <div style="width:4%;background:var(--handover);opacity:0.85;"></div>
+            <div style="width:2%;background:var(--danger);opacity:0.85;border-radius:0 5px 5px 0;"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:5px;font-size:11px;font-weight:600;color:var(--handover);">
+            🎓 Train
           </div>
         </div>
 
         <!-- Overall row -->
-        <div style="display:grid;grid-template-columns:130px 36px 1fr 110px;gap:6px;align-items:center;padding:7px 0 0;">
+        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:7px 0 0;">
           <div style="font-size:12px;font-weight:700;color:var(--text);">Overall</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--text);text-align:center;">85</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--text);text-align:center;">58%</div>
           <div style="font-size:11px;color:var(--muted);display:flex;gap:12px;">
-            <span><span style="color:var(--danger);font-weight:600;">30%</span> not resolved</span>
+            <span><span style="color:var(--human);font-weight:600;">58%</span> resolved & held</span>
             <span><span style="color:var(--handover);font-weight:600;">13%</span> reopened</span>
-            <span><span style="color:var(--human);font-weight:600;">29%</span> resolved & held</span>
+            <span><span style="color:var(--danger);font-weight:600;">29%</span> not resolved</span>
           </div>
           <div></div>
         </div>
@@ -721,73 +903,99 @@ svg text { font-family: 'Inter', sans-serif; }
 
     <div class="spacer"></div>
 
-    <!-- Sentiment card: 3 metrics LEFT, trend chart RIGHT -->
+    <!-- Sentiment card: new mockup layout -->
     <div class="chart-card">
-      <div style="display:grid;grid-template-columns:1fr 1px 1fr;gap:0;align-items:stretch;">
 
-        <!-- LEFT: 3 metric scores stacked -->
-        <div style="padding-right:24px;display:flex;flex-direction:column;justify-content:space-between;">
+      <!-- Header row -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Journey Sentiment Overview</div>
+          <div style="font-size:12px;color:var(--ai);">How the customer <em>feels</em> across the whole journey — and the signals this view is built from.</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Intent</div>
+          <select style="font-size:12px;padding:5px 10px;border-radius:6px;border:1px solid var(--border);">
+            <option>All Intents</option>
+            <option>Payment Issue</option>
+            <option>Retention Save</option>
+            <option>Complaint</option>
+          </select>
+        </div>
+      </div>
 
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ai);margin-bottom:4px;">Journey Sentiment Δ</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--ai);line-height:1;margin-bottom:3px;">+1.6</div>
-            <div style="font-size:11px;color:var(--muted);">AI 2.1 → Human 3.7</div>
-          </div>
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;margin-top:14px;">
 
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:10px 0;border-bottom:1px solid var(--border);">
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Journey Survey Score</div>
-            <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px;">
-              <span style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--text);line-height:1;">3.9</span>
-              <span style="font-size:11px;color:var(--muted);">/ 5</span>
-            </div>
-            <div style="display:flex;gap:2px;">
-              <div style="flex:1;height:3px;border-radius:2px;background:var(--ai);opacity:0.8;"></div>
-              <div style="flex:1;height:3px;border-radius:2px;background:var(--ai);opacity:0.8;"></div>
-              <div style="flex:1;height:3px;border-radius:2px;background:var(--ai);opacity:0.8;"></div>
-              <div style="flex:1;height:3px;border-radius:2px;background:var(--ai);opacity:0.8;"></div>
-              <div style="flex:1;height:3px;border-radius:2px;background:var(--border);"></div>
-            </div>
-          </div>
+        <!-- LEFT: chart -->
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Sentiment through the journey · scored 1–5 · final reading at the human-leg end</div>
 
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:10px 0;">
-            <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--human);margin-bottom:4px;">Journey QM Score</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--human);line-height:1;margin-bottom:3px;">74</div>
-            <div style="font-size:11px;color:var(--danger);">▼ 3pts vs prior period</div>
-          </div>
-
+          <svg width="100%" height="180" viewBox="0 0 560 180" preserveAspectRatio="xMidYMid meet">
+            <!-- leg backgrounds (shifted down 20px to leave room for labels) -->
+            <rect x="28"  y="20" width="220" height="148" fill="rgba(91,79,232,0.05)"  rx="4"/>
+            <rect x="252" y="20" width="80"  height="148" fill="rgba(217,136,14,0.06)" rx="4"/>
+            <rect x="336" y="20" width="218" height="148" fill="rgba(0,169,138,0.05)"  rx="4"/>
+            <!-- leg labels inside SVG, centered over each band -->
+            <text x="138" y="14" fill="#5B4FE8" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">AI AGENT</text>
+            <text x="292" y="14" fill="#D9880E" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">HANDOVER</text>
+            <text x="445" y="14" fill="#00A98A" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">HUMAN AGENT</text>
+            <!-- grid lines -->
+            <line x1="28" y1="168" x2="554" y2="168" stroke="#DDE2ED" stroke-width="1"/>
+            <line x1="28" y1="138" x2="554" y2="138" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="28" y1="108" x2="554" y2="108" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="28" y1="78"  x2="554" y2="78"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="28" y1="48"  x2="554" y2="48"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <!-- y-axis labels -->
+            <text x="6" y="171" fill="#7A86A0" font-size="10">1</text>
+            <text x="6" y="141" fill="#7A86A0" font-size="10">2</text>
+            <text x="6" y="111" fill="#7A86A0" font-size="10">3</text>
+            <text x="6" y="81"  fill="#7A86A0" font-size="10">4</text>
+            <text x="6" y="51"  fill="#7A86A0" font-size="10">5</text>
+            <!-- AI line: 3.0 → 2.4 → 2.1 -->
+            <polyline points="44,108 150,123 240,138" fill="none" stroke="#5B4FE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="44"  cy="108" r="5" fill="#5B4FE8"/>
+            <circle cx="240" cy="138" r="5" fill="#5B4FE8"/>
+            <!-- transfer wait dashed -->
+            <line x1="240" y1="138" x2="252" y2="138" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
+            <line x1="252" y1="138" x2="336" y2="138" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
+            <!-- human line -->
+            <polyline points="336,145 400,111 470,78 550,45" fill="none" stroke="#00A98A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="336" cy="145" r="5" fill="#D9880E"/>
+            <circle cx="550" cy="45"  r="5" fill="#00A98A"/>
+            <!-- data labels -->
+            <text x="50"  y="104" fill="#5B4FE8" font-size="10" font-family="JetBrains Mono,monospace">AI 2.1</text>
+            <text x="460" y="74"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Human 3.7</text>
+            <text x="390" y="64"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Sentiment Δ +1.6</text>
+          </svg>
         </div>
 
-        <!-- DIVIDER -->
-        <div style="background:var(--border);"></div>
+        <!-- RIGHT: supporting data cards -->
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Supporting data — where this view comes from</div>
+          <div style="font-size:11px;color:var(--ai);margin-bottom:14px;">Three independent signals on the same journey. The curve on the left is built from them — each is a separate source you can drill into.</div>
 
-        <!-- RIGHT: sentiment line chart -->
-        <div style="padding-left:24px;">
-          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Sentiment Through the Journey</div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:14px;">Each leg scored independently · recovery measured at human leg end</div>
-          <svg width="100%" height="108" viewBox="0 0 420 108" preserveAspectRatio="xMidYMid meet">
-            <line x1="0" y1="96" x2="420" y2="96" stroke="#DDE2ED" stroke-width="1"/>
-            <line x1="0" y1="74" x2="420" y2="74" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
-            <line x1="0" y1="52" x2="420" y2="52" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
-            <line x1="0" y1="30" x2="420" y2="30" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
-            <text x="4" y="99" fill="#7A86A0" font-size="9">1</text>
-            <text x="4" y="77" fill="#7A86A0" font-size="9">2</text>
-            <text x="4" y="55" fill="#7A86A0" font-size="9">3</text>
-            <text x="4" y="33" fill="#7A86A0" font-size="9">4</text>
-            <rect x="14" y="0" width="160" height="96" fill="rgba(91,79,232,0.05)" rx="4"/>
-            <rect x="180" y="0" width="60" height="96" fill="rgba(217,136,14,0.05)" rx="4"/>
-            <rect x="246" y="0" width="170" height="96" fill="rgba(0,169,138,0.05)" rx="4"/>
-            <polyline points="20,72 80,76 160,79" fill="none" stroke="#5B4FE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="20" cy="72" r="4" fill="#5B4FE8"/>
-            <circle cx="160" cy="79" r="4" fill="#5B4FE8"/>
-            <line x1="160" y1="79" x2="180" y2="79" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
-            <line x1="180" y1="79" x2="246" y2="79" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
-            <polyline points="246,79 320,54 416,37" fill="none" stroke="#00A98A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="246" cy="79" r="4" fill="#D9880E"/>
-            <circle cx="416" cy="37" r="4" fill="#00A98A"/>
-            <text x="20" y="68" fill="#5B4FE8" font-size="9" font-family="JetBrains Mono">2.1</text>
-            <text x="160" y="75" fill="#5B4FE8" font-size="9" font-family="JetBrains Mono">1.8</text>
-            <text x="416" y="33" fill="#00A98A" font-size="9" font-family="JetBrains Mono">3.7</text>
-          </svg>
+          <!-- Card 1: Sentiment Δ -->
+          <div style="border:1px solid var(--border);border-left:3px solid var(--ai);border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--ai);margin-bottom:2px;">+1.6</div>
+            <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;">Journey Sentiment Δ</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Source · Sentiment API (per-turn)</div>
+            <div style="font-size:11px;color:var(--muted);">AI 2.1 → Human 3.7 · defines the shape of the curve.</div>
+          </div>
+
+          <!-- Card 2: Survey Score -->
+          <div style="border:1px solid var(--border);border-left:3px solid var(--text-dim);border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text);margin-bottom:2px;">3.9 <span style="font-size:14px;font-weight:400;color:var(--muted);">/5</span></div>
+            <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;">Journey Survey Score</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Source · Post-Interaction Survey</div>
+            <div style="font-size:11px;color:var(--muted);">The customer's own rating of the whole journey.</div>
+          </div>
+
+          <!-- Card 3: QM Score -->
+          <div style="border:1px solid var(--border);border-left:3px solid var(--human);border-radius:8px;padding:12px 14px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text);margin-bottom:2px;">74</div>
+            <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;">Journey QM Score</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Source · Quality Management</div>
+            <div style="font-size:11px;color:var(--danger);">▼ 3 pts vs prior · evaluation of the human leg.</div>
+          </div>
         </div>
 
       </div>
@@ -795,14 +1003,7 @@ svg text { font-family: 'Inter', sans-serif; }
 
     <div class="spacer"></div>
 
-    <div class="section-header">
-      <div class="section-title-row">
-        <div class="section-dot" style="background:var(--ai)"></div>
-        <div class="section-title">Drill-Down · By Intent & AI Agent Type</div>
-      </div>
-      <span class="section-action">Export ↗</span>
-    </div>
-    <div class="chart-card" style="padding:0;overflow:hidden">
+    <div style="display:none">
       <table class="drill-table">
         <thead>
           <tr>
@@ -894,109 +1095,11 @@ svg text { font-family: 'Inter', sans-serif; }
           </tr>
         </tbody>
       </table>
-    </div>
+    </div></div><!-- /hidden drill-down -->
 
   </div><!-- /overview -->
 
   <!-- ══════════════════════════════════════════ ESCALATIONS ══ -->
-  <div class="tab-panel" id="tab-escalations">
-    <div class="section-header" style="margin-top:0">
-      <div class="section-title-row">
-        <div class="section-dot" style="background:var(--danger)"></div>
-        <div class="section-title">Escalation Quality Breakdown</div>
-      </div>
-    </div>
-
-    <div class="kpi-grid">
-      <div class="kpi-card k-danger">
-        <div class="kpi-label">Total Escalations</div>
-        <div class="kpi-value">1,713</div>
-      </div>
-      <div class="kpi-card k-ai">
-        <div class="kpi-label">Rightful Escalations</div>
-        <div class="kpi-value">1,090</div>
-        <div class="kpi-sub">64% — should reach a human</div>
-      </div>
-      <div class="kpi-card k-handover">
-        <div class="kpi-label">Wrongful / Avoidable</div>
-        <div class="kpi-value">623</div>
-        <div class="kpi-sub">36% — automation opportunities</div>
-      </div>
-      <div class="kpi-card k-neutral">
-        <div class="kpi-label">Customer-Requested</div>
-        <div class="kpi-value">418</div>
-        <div class="kpi-sub">38% of rightful</div>
-      </div>
-      <div class="kpi-card k-neutral">
-        <div class="kpi-label">AI Dead Ends</div>
-        <div class="kpi-value">672</div>
-        <div class="kpi-sub">62% of rightful</div>
-      </div>
-    </div>
-
-    <div class="spacer"></div>
-
-    <div class="two-col">
-      <div class="chart-card">
-        <div class="chart-card-title">Rightful Escalation — Granular Reasons</div>
-        <div class="chart-card-sub">Why did the AI correctly hand off to a human?</div>
-        <div class="esc-breakdown" style="margin-top:8px">
-          <div class="esc-row">
-            <div class="esc-label">Customer asked for human</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:38%;background:var(--ai)"></div></div>
-            <div class="esc-pct mono">38%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">AI reached intent dead end</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:29%;background:var(--ai);opacity:0.7"></div></div>
-            <div class="esc-pct mono">29%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">Special handling exception</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:18%;background:var(--handover)"></div></div>
-            <div class="esc-pct mono">18%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">Emotional distress detected</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:10%;background:var(--danger)"></div></div>
-            <div class="esc-pct mono">10%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">Compliance/auth required</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:5%;background:var(--muted)"></div></div>
-            <div class="esc-pct mono">5%</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <div class="chart-card-title">Avoidable Escalations — Automation Opportunities</div>
-        <div class="chart-card-sub">623 contacts could have been resolved by AI with prompt or flow improvements</div>
-        <div class="esc-breakdown" style="margin-top:8px">
-          <div class="esc-row">
-            <div class="esc-label">FAQ / knowledge gap</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:44%;background:var(--handover)"></div></div>
-            <div class="esc-pct mono">44%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">Prompt loop / no progress</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:28%;background:var(--handover);opacity:0.7"></div></div>
-            <div class="esc-pct mono">28%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">System integration failure</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:18%;background:var(--danger);opacity:0.6"></div></div>
-            <div class="esc-pct mono">18%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">Language / NLU failure</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:10%;background:var(--muted)"></div></div>
-            <div class="esc-pct mono">10%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div><!-- /escalations -->
 
   <!-- ══════════════════════════════════════════ HANDOVER ══ -->
   <div class="tab-panel" id="tab-handover">
@@ -1112,117 +1215,6 @@ svg text { font-family: 'Inter', sans-serif; }
   </div><!-- /handover -->
 
   <!-- ══════════════════════════════════════════ RESOLUTION ══ -->
-  <div class="tab-panel" id="tab-resolution">
-    <div class="section-header" style="margin-top:0">
-      <div class="section-title-row">
-        <div class="section-dot" style="background:var(--human)"></div>
-        <div class="section-title">Resolution & Recovery</div>
-      </div>
-    </div>
-
-    <div class="kpi-grid">
-      <div class="kpi-card k-human">
-        <div class="kpi-label">Overall Recovery Rate</div>
-        <div class="kpi-value">71%</div>
-        <div class="kpi-delta delta-down">▼ 4.2% vs prior</div>
-      </div>
-      <div class="kpi-card k-human">
-        <div class="kpi-label">FCR (First Contact)</div>
-        <div class="kpi-value">68%</div>
-        <div class="kpi-sub">resolved same interaction</div>
-      </div>
-      <div class="kpi-card k-neutral">
-        <div class="kpi-label">Journey Survey Score</div>
-        <div class="kpi-value">3.9</div>
-        <div class="kpi-sub">out of 5 · 742 responses</div>
-      </div>
-      <div class="kpi-card k-neutral">
-        <div class="kpi-label">Agent Confirmed Resolved</div>
-        <div class="kpi-value">74%</div>
-        <div class="kpi-sub">via disposition / transcript</div>
-      </div>
-      <div class="kpi-card k-human">
-        <div class="kpi-label">Resolution Held 7d</div>
-        <div class="kpi-value">82%</div>
-        <div class="kpi-delta delta-down">▼ 3.1% vs prior</div>
-      </div>
-    </div>
-
-    <div class="spacer"></div>
-
-    <div class="two-col">
-      <div class="chart-card">
-        <div class="chart-card-title">Resolution Signal Sources</div>
-        <div class="chart-card-sub">How resolution is determined — multiple signals triangulated</div>
-        <div class="res-sources">
-          <div class="res-source-row">
-            <div class="res-source-icon">📋</div>
-            <div>
-              <div class="res-source-label">FCR Metric</div>
-              <div class="res-source-sub">Existing system flag — same-contact resolution</div>
-            </div>
-            <div class="res-source-val">68%</div>
-          </div>
-          <div class="res-source-row">
-            <div class="res-source-icon">🎙️</div>
-            <div>
-              <div class="res-source-label">Transcript / Auto Summary</div>
-              <div class="res-source-sub">"Was your issue resolved today?" detected in transcript</div>
-            </div>
-            <div class="res-source-val">74%</div>
-          </div>
-          <div class="res-source-row">
-            <div class="res-source-icon">⭐</div>
-            <div>
-              <div class="res-source-label">Post-Journey Survey</div>
-              <div class="res-source-sub">Survey question: issue resolved? · 742 responses</div>
-            </div>
-            <div class="res-source-val">71%</div>
-          </div>
-          <div class="res-source-row" style="opacity:0.5">
-            <div class="res-source-icon">🔗</div>
-            <div>
-              <div class="res-source-label">System Data Signal <span style="font-size:10px;color:var(--handover)">(in development)</span></div>
-              <div class="res-source-sub">Delivery confirmation, refund posted, account updated</div>
-            </div>
-            <div class="res-source-val" style="color:var(--muted)">—</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <div class="chart-card-title">Recovery Rate · By Intent</div>
-        <div class="chart-card-sub">How well human agents recover after AI handover, per intent</div>
-        <div class="esc-breakdown" style="margin-top:12px">
-          <div class="esc-row">
-            <div class="esc-label">Medical Equipment</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:88%;background:var(--human)"></div></div>
-            <div class="esc-pct mono" style="color:var(--human)">88%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">Account Update</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:85%;background:var(--human)"></div></div>
-            <div class="esc-pct mono" style="color:var(--human)">85%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">Complaint</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:78%;background:var(--ai)"></div></div>
-            <div class="esc-pct mono">78%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">Payment Issue</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:74%;background:var(--handover)"></div></div>
-            <div class="esc-pct mono" style="color:var(--handover)">74%</div>
-          </div>
-          <div class="esc-row">
-            <div class="esc-label">Cancellation</div>
-            <div class="esc-bar-wrap"><div class="esc-bar" style="width:61%;background:var(--danger)"></div></div>
-            <div class="esc-pct mono" style="color:var(--danger)">61%</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div><!-- /resolution -->
 
   <!-- ══════════════════════════════════════════ PLAYBOOK ══ -->
   <div class="tab-panel" id="tab-playbook">
@@ -1315,5 +1307,7 @@ function switchTab(id, el) {
   document.getElementById('tab-' + id).classList.add('active');
 }
 </script>
+</div><!-- /lyra-page-wrap -->
+</div><!-- /lyra-body -->
 </body>
 </html>
