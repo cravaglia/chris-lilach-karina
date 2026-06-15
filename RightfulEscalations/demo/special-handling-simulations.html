@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NiCE Journey — Special-handling · Training Simulations</title>
+<style>
+  :root{
+    --ai:#6B57D2; --human:#2E9E5B; --good:#2E9E5B; --warn:#E8A100; --warnText:#B07A00;
+    --bad:#D6453F; --ink:#1F2A37; --muted:#6B7280; --faint:#9AA6B6; --line:#E7ECF3;
+    --bg:#EEF3F8; --card:#fff; --blue:#007AB8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,'Segoe UI',Arial,sans-serif;font-size:13px;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 22px 48px;}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:#fff;border-bottom:1px solid var(--line);}
+  .brand{font-weight:700;font-size:15px;} .brand b{color:var(--blue);}
+  .crumb{color:var(--muted);font-weight:500;margin-left:14px;} .crumb b{color:var(--ink);}
+  .back{color:var(--blue);text-decoration:none;font-weight:600;font-size:12.5px;}
+
+  /* context band */
+  .ctx{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:18px 0 14px;}
+  .ctx h1{margin:0;font-size:20px;}
+  .ctx .csub{color:var(--muted);font-size:12.5px;margin-top:3px;}
+  .stat-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .schip{border:1px solid var(--line);border-radius:9px;padding:8px 13px;background:#FBFCFE;}
+  .schip .sv{font-size:18px;font-weight:700;} .schip .sl{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+
+  /* AI summary */
+  .ai-sum{background:linear-gradient(180deg,#F7F4FE,#fff);border:1px solid #E2D8F7;border-radius:14px;padding:18px 22px;margin-bottom:18px;}
+  .ai-sum .t{font-weight:700;font-size:13.5px;color:var(--ai);margin-bottom:6px;}
+  .ai-sum p{margin:0 0 12px;line-height:1.6;color:#333;font-size:13px;}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;}
+  .chip{font-size:11px;font-weight:700;border-radius:20px;padding:3px 11px;background:#EFE9FC;color:var(--ai);}
+
+  .sectitle{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:6px 0 10px;}
+
+  /* simulation cards */
+  .sims{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .sim{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;}
+  .sim .emo{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
+  .tag{font-size:10.5px;font-weight:700;border-radius:20px;padding:3px 10px;}
+  .tag.hot{background:#FBE9E7;color:var(--bad);} .tag.vuln{background:#FCF4D6;color:var(--warnText);} .tag.phi{background:#EAF0FC;color:#2F5FC8;}
+  .sim h3{margin:0 0 8px;font-size:16px;}
+  .sim .scn{color:#444;font-size:12.5px;line-height:1.6;margin-bottom:12px;}
+  .sim .says{border-left:3px solid var(--bad);background:#FCF7F6;border-radius:0 8px 8px 0;padding:9px 12px;font-style:italic;color:#5a4a48;font-size:12.5px;margin-bottom:14px;}
+  .trains{font-size:11.5px;color:var(--muted);margin-bottom:14px;}
+  .trains b{color:var(--ink);}
+  .sim .acts{margin-top:auto;display:flex;gap:9px;align-items:center;}
+  .cta{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 12.5px Inter;cursor:pointer;}
+  .cta.ghost{background:#fff;color:var(--blue);border:1px solid #CFE0EE;}
+  .built{font-size:11px;color:var(--faint);margin-top:10px;}
+
+  /* coaching playbook */
+  .pb{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:16px;}
+  .pb.show{display:block;}
+  .pb h2{margin:0 0 2px;font-size:17px;}
+  .pb .psub{color:var(--muted);font-size:12.5px;margin-bottom:6px;}
+  .best{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px;}
+  .bchip{border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12px;background:#F3FAF5;}
+  .bchip b{color:var(--good);}
+  .move{border-top:1px solid var(--line);padding:14px 0;}
+  .move .mh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+  .move .mt{font-weight:700;font-size:13.5px;}
+  .move .quote{color:#3a3a3a;font-style:italic;font-size:12.5px;margin:6px 0 8px;line-height:1.5;}
+  .adopt{display:flex;gap:18px;font-size:11.5px;color:var(--muted);align-items:center;}
+  .adopt .gap{margin-left:auto;font-weight:700;color:var(--good);}
+  .mini{position:relative;height:7px;width:120px;background:#EDF0F4;border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:7px;}
+  .mini>span{position:absolute;left:0;top:0;height:100%;border-radius:4px;}
+  .pbclose{float:right;color:var(--muted);cursor:pointer;font-weight:600;font-size:12.5px;}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div><span class="brand">NiCE <b>Journey</b></span><span class="crumb">Handover Resolution › Coaching Opportunities › <b>Special-handling exception</b></span></div>
+  <a class="back" href="ai_human_journey_dashboard.html">← Back to dashboard</a>
+</div>
+
+<div class="wrap">
+
+  <!-- CONTEXT -->
+  <div class="ctx">
+    <h1>Special-handling exception</h1>
+    <div class="csub">medical equipment, accessibility, pets · 214 interactions · #1 coaching opportunity by impact</div>
+    <div class="stat-row">
+      <div class="schip"><div class="sv" style="color:var(--bad)">62%</div><div class="sl">Team FCR</div></div>
+      <div class="schip"><div class="sv" style="color:var(--good)">88%</div><div class="sl">Best resolvers</div></div>
+      <div class="schip"><div class="sv" style="color:var(--ai)">+26 pts</div><div class="sl">Coachable gap</div></div>
+      <div class="schip"><div class="sv">214</div><div class="sl">Interactions / period</div></div>
+    </div>
+  </div>
+
+  <!-- AI SUMMARY -->
+  <div class="ai-sum">
+    <div class="t">✦ What to put in the simulation</div>
+    <p>Best resolvers on special-handling exceptions win on <b>Expectations</b> and <b>Context</b> — the two widest gaps vs. the team. Build simulations where the agent <b>inherits a customer who has already looped with the bot</b>, and must: (1) open by acknowledging the prior friction, (2) state a concrete next step and timeframe <i>before</i> acting, and (3) use the carried-over history rather than re-asking. Score on whether they set expectations in the first turn and confirm the resolution will hold.</p>
+    <div class="chips"><span class="chip">Expectations</span><span class="chip">Context</span><span class="chip">Empathy</span></div>
+  </div>
+
+  <!-- SIMULATION CARDS -->
+  <div class="sectitle">Training simulations · built from real handed-over interactions</div>
+  <div class="sims">
+
+    <!-- CARD 1 -->
+    <div class="sim">
+      <div class="emo"><span class="tag hot">🔥 High emotion</span><span class="tag phi">Medical / PHI</span><span class="tag vuln">Vulnerable</span></div>
+      <h3>Medical-equipment exception</h3>
+      <div class="scn">Flight cancelled by a storm. The customer travels with <b>powered medical equipment</b> that needs temperature-controlled handling, and has to arrive tomorrow. The bot couldn't authorize the partner-carrier rebooking or the equipment handling and handed over — the customer is frightened it will fail like last time.</div>
+      <div class="says">"Will my equipment actually be handled? Last time it sat on the tarmac and nearly failed. I'm really worried."</div>
+      <div class="trains">Trains: <b>Expectations</b> · <b>Context</b> · <b>Empathy</b> · <b>Proficiency</b> (authorization path)</div>
+      <div class="acts">
+        <button class="cta" onclick="showPB('med')">Open coaching playbook →</button>
+        <button class="cta ghost">Build / assign →</button>
+      </div>
+      <div class="built">Built from 3 interactions where best resolvers held the customer and the team didn't.</div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="sim">
+      <div class="emo"><span class="tag hot">🔥 Very high emotion</span><span class="tag vuln">Vulnerable · pet welfare</span></div>
+      <h3>Traveling with a pet · anxious customer</h3>
+      <div class="scn">A customer flying with their dog is <b>extremely upset</b> and asked for a human. They don't just want logistics — they need to be <b>reassured the agent understands their anxiety</b> about putting their pet on a plane, and that the agent <b>knows exactly what to do</b> to keep the dog safe and comfortable.</div>
+      <div class="says">"Please — I need to know someone actually understands. I'm terrified about putting her on this flight."</div>
+      <div class="trains">Trains: <b>Empathy</b> · <b>Patience</b> · <b>Reassurance</b> · <b>Proficiency</b> (pet-travel handling)</div>
+      <div class="acts">
+        <button class="cta" onclick="showPB('pet')">Open coaching playbook →</button>
+        <button class="cta ghost">Build / assign →</button>
+      </div>
+      <div class="built">Built from interactions where best resolvers turned the customer around on emotion, not just logistics.</div>
+    </div>
+  </div>
+
+  <!-- PLAYBOOK · MEDICAL -->
+  <div class="pb" id="pb-med">
+    <span class="pbclose" onclick="hidePB()">× close</span>
+    <h2>Coaching playbook — Medical-equipment exception</h2>
+    <div class="psub">What the best resolvers do that others don't · these are the moves the simulation rewards.</div>
+    <div class="best">
+      <span class="bchip">Best resolvers: <b>Sarah M. 91</b></span>
+      <span class="bchip"><b>Marcus T. 88</b></span>
+      <span class="bchip"><b>Priya R. 86</b></span>
+      <span class="bchip">vs team avg 62</span>
+    </div>
+
+    <div class="move">
+      <div class="mh"><span class="mt">1 · Acknowledge prior friction up front</span><span class="gap" style="color:var(--good)">best 92% vs 31%</span></div>
+      <div class="quote">"I can see you've already explained this twice — I'm not going to make you repeat it."</div>
+      <div class="adopt">Adoption<span class="mini"><span style="width:92%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:31%;background:var(--faint)"></span></span>rest</div>
+    </div>
+    <div class="move">
+      <div class="mh"><span class="mt">2 · Set a concrete expectation before acting</span><span class="gap">best 88% vs 24%</span></div>
+      <div class="quote">"Here's exactly what I'll do and how long it'll take — give me about two minutes."</div>
+      <div class="adopt">Adoption<span class="mini"><span style="width:88%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:24%;background:var(--faint)"></span></span>rest</div>
+    </div>
+    <div class="move">
+      <div class="mh"><span class="mt">3 · Use the carried-over context instead of re-asking</span><span class="gap">best 84% vs 40%</span></div>
+      <div class="quote">"I've got your order number and the full history right here."</div>
+      <div class="adopt">Adoption<span class="mini"><span style="width:84%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:40%;background:var(--faint)"></span></span>rest</div>
+    </div>
+    <div class="move">
+      <div class="mh"><span class="mt">4 · Confirm the resolution will stick</span><span class="gap">best 79% vs 22%</span></div>
+      <div class="quote">"You'll get an email confirmation within the hour — if it doesn't arrive, here's my direct line."</div>
+      <div class="adopt">Adoption<span class="mini"><span style="width:79%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:22%;background:var(--faint)"></span></span>rest</div>
+    </div>
+  </div>
+
+  <!-- PLAYBOOK · PET -->
+  <div class="pb" id="pb-pet">
+    <span class="pbclose" onclick="hidePB()">× close</span>
+    <h2>Coaching playbook — Anxious pet-traveler</h2>
+    <div class="psub">What the best resolvers do that others don't · reassurance first, then competence.</div>
+    <div class="best">
+      <span class="bchip">Best resolvers: <b>Marcus T. 92</b></span>
+      <span class="bchip"><b>Sarah M. 89</b></span>
+      <span class="bchip"><b>Lena O. 86</b></span>
+      <span class="bchip">vs team avg 62</span>
+    </div>
+
+    <div class="move">
+      <div class="mh"><span class="mt">1 · Name the worry and validate it</span><span class="gap">best 90% vs 28%</span></div>
+      <div class="quote">"I completely understand — she's family, and trusting an airline with her is scary. Let's make sure she's safe."</div>
+      <div class="adopt">Adoption<span class="mini"><span style="width:90%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:28%;background:var(--faint)"></span></span>rest</div>
+    </div>
+    <div class="move">
+      <div class="mh"><span class="mt">2 · Signal competence immediately</span><span class="gap">best 86% vs 33%</span></div>
+      <div class="quote">"I handle pet travel every day — here's exactly how she'll fly and how we keep her comfortable."</div>
+      <div class="adopt">Adoption<span class="mini"><span style="width:86%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:33%;background:var(--faint)"></span></span>rest</div>
+    </div>
+    <div class="move">
+      <div class="mh"><span class="mt">3 · Walk the concrete plan, step by step</span><span class="gap">best 81% vs 26%</span></div>
+      <div class="quote">"Cabin vs hold, carrier size, the temperature window, check-in, and who'll meet you — let me take you through each."</div>
+      <div class="adopt">Adoption<span class="mini"><span style="width:81%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:26%;background:var(--faint)"></span></span>rest</div>
+    </div>
+    <div class="move">
+      <div class="mh"><span class="mt">4 · Give a confidence anchor</span><span class="gap">best 77% vs 30%</span></div>
+      <div class="quote">"I'll add a note to your booking and a direct reference, so you never have to re-explain this to anyone."</div>
+      <div class="adopt">Adoption<span class="mini"><span style="width:77%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:30%;background:var(--faint)"></span></span>rest</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showPB(which){
+    document.getElementById('pb-med').classList.remove('show');
+    document.getElementById('pb-pet').classList.remove('show');
+    var el = document.getElementById('pb-' + which);
+    el.classList.add('show');
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  function hidePB(){
+    document.getElementById('pb-med').classList.remove('show');
+    document.getElementById('pb-pet').classList.remove('show');
+  }
+</script>
+</body>
+</html>
