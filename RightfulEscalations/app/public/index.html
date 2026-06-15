@@ -47,7 +47,9 @@
     <div class="tabs">
       <div class="tab active" data-tab="overview" onclick="tab('overview')">Overview</div>
       <div class="tab" data-tab="quality" onclick="tab('quality')">Recovery Quality</div>
+      <div class="tab" data-tab="coaching" onclick="tab('coaching')">Coaching Opportunities <span class="tab-badge">NEW</span></div>
       <div class="tab" data-tab="playbook" onclick="tab('playbook')">Recovery Playbook</div>
+      <div class="tab" data-tab="vision" onclick="tab('vision')">What we're building</div>
     </div>
 
     <!-- OVERVIEW -->
@@ -104,9 +106,82 @@
       </div>
     </div>
 
+    <!-- COACHING OPPORTUNITIES -->
+    <div class="screen" id="coaching">
+      <div id="coaching-root"></div>
+    </div>
+
     <!-- PLAYBOOK (fix workspace: worklist → per-flow workspace) -->
     <div class="screen" id="playbook">
       <div id="pb-root"></div>
+    </div>
+
+    <!-- WHAT WE'RE BUILDING -->
+    <div class="screen" id="vision">
+      <div class="narr"><span class="spark">✦</span><p>A coaching loop that turns the gap between your best agents and the average into provably coachable training simulations — surfaced automatically from real escalation data.</p></div>
+
+      <div class="grid2" style="margin-bottom:16px;">
+        <div class="card">
+          <h3>The problem</h3>
+          <div class="sub" style="margin-bottom:12px;">When the bot hands a conversation to a human, some agents recover it (resolve on first contact) and some don't.</div>
+          <p style="font-size:13.5px;line-height:1.65;color:var(--txt);margin:0;">Where the good agents succeed and the average doesn't, <b>that gap is a provably coachable skill</b> — so it's a training opportunity, not just a bad-luck escalation.</p>
+        </div>
+        <div class="card">
+          <h3>Who it's for</h3>
+          <div class="sub" style="margin-bottom:12px;">A team lead who wants to act on the data, not just read it.</div>
+          <p style="font-size:13.5px;line-height:1.65;color:var(--txt);margin:0;">They need to know <b>which escalation types are coachable right now</b>, what the best agents actually do differently, and a one-click path to turn that into an interaction simulation they can assign.</p>
+        </div>
+      </div>
+
+      <div class="sec-title">The flow — built from the end backward</div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:flex-start;gap:16px;">
+          <div style="min-width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+          <div>
+            <h3 style="margin:0 0 4px;">Build Simulation <span style="font-size:12px;font-weight:500;color:var(--muted);margin-left:8px;">the payoff screen</span></h3>
+            <div class="sub" style="margin-bottom:8px;">Team lead has drilled into one escalation type. They see:</div>
+            <ul style="margin:0;padding-left:18px;font-size:13.5px;line-height:1.8;color:var(--txt);">
+              <li>An AI summary of what to add to the training simulation</li>
+              <li>What the best agents did that others didn't <span style="color:var(--muted);">(reuses the Recovery Playbook content as the basis)</span></li>
+              <li>A <b>Build / assign simulation</b> action</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:flex-start;gap:16px;">
+          <div style="min-width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+          <div>
+            <h3 style="margin:0 0 4px;">Training Opportunities <span style="font-size:12px;font-weight:500;color:var(--muted);margin-left:8px;">the drill-down</span></h3>
+            <div class="sub" style="margin-bottom:8px;">A ranked list of escalation types where best agents beat the average, sorted by <b>impact = (best % − avg %) × volume</b>.</div>
+            <div style="margin-bottom:10px;">
+              <div class="rbt-row" style="margin-bottom:6px;"><div class="rbt-name">Special-handling exception<small>High volume · biggest gap</small></div><div class="rbt-track"><div class="rbt-fill" style="width:62%;background:var(--red)"></div></div><div class="rbt-val" style="color:var(--red)">62%</div></div>
+              <div class="rbt-row" style="margin-bottom:6px;"><div class="rbt-name">Manager / authority sign-off<small></small></div><div class="rbt-track"><div class="rbt-fill" style="width:69%;background:var(--amber)"></div></div><div class="rbt-val" style="color:var(--amber)">69%</div></div>
+              <div class="rbt-row" style="margin-bottom:6px;"><div class="rbt-name">High-emotion complaint<small></small></div><div class="rbt-track"><div class="rbt-fill" style="width:73%;background:var(--amber)"></div></div><div class="rbt-val" style="color:var(--amber)">73%</div></div>
+              <div class="rbt-row" style="margin-bottom:6px;"><div class="rbt-name">Retention save<small></small></div><div class="rbt-track"><div class="rbt-fill" style="width:88%;background:var(--green)"></div></div><div class="rbt-val" style="color:var(--green)">88%</div></div>
+              <div class="rbt-row"><div class="rbt-name">Complex multi-issue<small></small></div><div class="rbt-track"><div class="rbt-fill" style="width:55%;background:var(--red)"></div></div><div class="rbt-val" style="color:var(--red)">55%</div></div>
+            </div>
+            <p style="font-size:13px;line-height:1.6;color:var(--muted);margin:0;border-top:1px solid var(--border);padding-top:10px;">The radar/spider graph stays — but as the <b>"why"</b> (best vs. average across skills), not the headline. Lead with the ranked list; keep the radar as supporting evidence. A list is faster to act on; the radar explains the gap.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:22px;">
+        <div style="display:flex;align-items:flex-start;gap:16px;">
+          <div style="min-width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+          <div>
+            <h3 style="margin:0 0 4px;">Dashboard <span style="font-size:12px;font-weight:500;color:var(--muted);margin-left:8px;">entry point</span></h3>
+            <p style="font-size:13.5px;line-height:1.65;color:var(--txt);margin:0;">The existing recovery dashboard, refined so it drills down into <b>Training Opportunities</b>. The Overview becomes the launching pad — not the destination.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--muted);background:var(--surface2,#F8F9FC);">
+        <h3 style="margin:0 0 6px;color:var(--muted);">What's gone</h3>
+        <p style="font-size:13.5px;line-height:1.65;color:var(--muted);margin:0;">The "manager refines Copilot guidance" angle is removed entirely. This product is about coaching humans — not tuning the bot.</p>
+      </div>
     </div>
   </div>
 </div>

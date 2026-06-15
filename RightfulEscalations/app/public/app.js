@@ -1,6 +1,6 @@
 // Journey Recovery v2 — front-end. Fetches /api/recovery and renders the dashboard.
-let DATA = null, curTab = 'overview', radarDone = false, stepIdx = 0, assistPublished = false, pbFlow = null;
-const STEPS = ['overview', 'quality', 'modal', 'playbook'];
+let DATA = null, curTab = 'overview', radarDone = false, stepIdx = 0, assistPublished = false, pbFlow = null, coachingFlow = null;
+const STEPS = ['overview', 'quality', 'coaching', 'modal', 'playbook'];
 const $ = (id) => document.getElementById(id);
 const svg = (vb, inner) => `<svg viewBox="${vb}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="display:block">${inner}</svg>`;
 
@@ -174,6 +174,18 @@ function initSeam(seam) {
     line(aiPts, '#2D7FF9') + line(deadPts, '#E0A800', true) + line(humPts, '#10B981') + dots(aiPts, '#2D7FF9') + dots(humPts, '#10B981') + xl);
 }
 
+function initRadarTo(containerId, rd) {
+  const labels = rd.labels, A = rd.top, B = rd.team, cx = 180, cy = 148, R = 100, n = labels.length;
+  const pt = (i, v) => { const a = (-90 + i * 360 / n) * Math.PI / 180, r = v / 10 * R; return [(cx + r * Math.cos(a)).toFixed(1), (cy + r * Math.sin(a)).toFixed(1)]; };
+  let grid = '';[2, 4, 6, 8, 10].forEach((g) => { grid += `<polygon points="${labels.map((_, i) => pt(i, g).join(',')).join(' ')}" fill="none" stroke="#EEF0F4"/>`; });
+  let axes = '', labs = '';
+  labels.forEach((lb, i) => { const [x, yy] = pt(i, 10); axes += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${yy}" stroke="#EEF0F4"/>`; const [lx, ly] = pt(i, 12.2); labs += `<text x="${lx}" y="${+ly + 3}" font-size="10.5" fill="#6B7280" text-anchor="middle">${lb}</text>`; });
+  const poly = (d, col, fill, dash) => `<polygon points="${d.map((v, i) => pt(i, v).join(',')).join(' ')}" fill="${fill}" stroke="${col}" stroke-width="2.5" ${dash ? 'stroke-dasharray="5 4"' : ''}/>`;
+  const dots = (d, col) => d.map((v, i) => { const [x, y] = pt(i, v); return `<circle cx="${x}" cy="${y}" r="2.6" fill="${col}"/>`; }).join('');
+  const legend = `<circle cx="92" cy="288" r="5" fill="#10B981"/><text x="102" y="291" font-size="10.5" fill="#6B7280">Top recoverers</text><circle cx="202" cy="288" r="5" fill="#94A3B8"/><text x="212" y="291" font-size="10.5" fill="#6B7280">Team average · the gap to close</text>`;
+  $(containerId).innerHTML = svg('0 0 360 300', grid + axes + labs + poly(B, '#94A3B8', 'rgba(148,163,184,.06)', true) + poly(A, '#10B981', 'rgba(16,185,129,.24)') + dots(A, '#10B981') + legend);
+}
+
 function initRadar(rd) {
   if (radarDone) return; radarDone = true;
   const labels = rd.labels, A = rd.top, B = rd.team, cx = 180, cy = 148, R = 100, n = labels.length;
@@ -187,12 +199,136 @@ function initRadar(rd) {
   $('cRadar').innerHTML = svg('0 0 360 300', grid + axes + labs + poly(B, '#94A3B8', 'rgba(148,163,184,.06)', true) + poly(A, '#10B981', 'rgba(16,185,129,.24)') + dots(A, '#10B981') + legend);
 }
 
+// ---- COACHING OPPORTUNITIES ----
+function renderCoaching() {
+  if (!coachingFlow) renderCoachingList();
+  else {
+    const flow = DATA.playbook.flows.find((f) => f.id === coachingFlow);
+    const opp = DATA.coaching.opportunities.find((o) => o.flowId === coachingFlow);
+    renderCoachingSimulation(flow, opp);
+  }
+}
+
+function renderCoachingList() {
+  const c = DATA.coaching;
+  const maxImpact = Math.max(...c.opportunities.map((o) => o.impact));
+  $('coaching-root').innerHTML = `
+    <div class="narr"><span class="spark">✦</span><p>${c.intro}</p></div>
+    <div class="sec-title">Training Opportunities · ranked by impact</div>
+    <div class="card" style="padding:0;margin-bottom:24px;">
+      <div class="coaching-hdr">
+        <div></div><div>Escalation type</div><div>Recovery rate</div><div>Gap</div><div>Volume</div><div>Impact score</div><div></div>
+      </div>
+      ${c.opportunities.map((o, i) => coachingRowHtml(o, i, maxImpact)).join('')}
+    </div>
+    <div class="grid2" style="align-items:start;">
+      <div>
+        <div class="sec-title">Why the gap exists</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.55;">The same evaluation NICE runs on the bot — pointed at the human leg. Top recoverers consistently outperform on empathy, patience, and personalization. That gap is the coachable skill.</p>
+        <div class="card"><div class="chart-wrap" id="cRadar2"></div></div>
+      </div>
+      <div>
+        <div class="sec-title">How impact is calculated</div>
+        <div class="card" style="font-size:13.5px;line-height:1.7;color:var(--text);">
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;">
+            <div style="font-size:22px;flex-shrink:0;">📐</div>
+            <div><b>Impact = gap × volume</b><br><span style="color:var(--muted);">Gap is best-agent recovery % minus team average %, on the same difficulty contacts. Volume is the number of escalations of that type per week. A large gap on a high-volume type outranks a huge gap on a rare one.</span></div>
+          </div>
+          <div style="background:#F4F6F8;border-radius:10px;padding:12px 14px;font-size:12.5px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="color:var(--muted);">Special-handling exception</span><span><b>+26 pts</b> × 214 contacts = <b style="color:var(--red);">5,564</b></span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="color:var(--muted);">Out-of-policy approval</span><span><b>+21 pts</b> × 180 contacts = <b style="color:var(--amber);">3,780</b></span></div>
+            <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">High-emotion complaint</span><span><b>+18 pts</b> × 158 contacts = <b style="color:var(--amber);">2,844</b></span></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  initRadarTo('cRadar2', DATA.quality.radar);
+}
+
+function coachingRowHtml(o, i, maxImpact) {
+  const impactBarW = Math.round(o.impact / maxImpact * 100);
+  return `
+    <div class="coaching-row" onclick="openCoachingFlow('${o.flowId}')">
+      <div class="coaching-rank">${i + 1}</div>
+      <div class="coaching-name">${o.name}<small>${o.sub}</small></div>
+      <div>
+        <div class="coaching-bar">
+          <div class="coaching-bar-avg" style="width:${o.avg}%;background:${o.color}99;"></div>
+          <div class="coaching-bar-top" style="left:${o.top}%;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;">
+          <span style="font-size:11px;color:${o.color};font-weight:800;">${o.avg}% avg</span>
+          <span style="font-size:11px;color:#10B981;font-weight:600;">${o.top}% best</span>
+        </div>
+      </div>
+      <div class="coaching-gap" style="color:${o.color};">+${o.gap}pt</div>
+      <div class="coaching-vol">${o.volume}</div>
+      <div>
+        <div class="coaching-impact-bar"><div style="width:${impactBarW}%;background:${o.color};height:100%;border-radius:3px;"></div></div>
+        <div style="font-size:12px;font-weight:800;color:var(--text);margin-top:3px;">${o.impact.toLocaleString()}</div>
+      </div>
+      <button class="btn" style="width:auto;padding:7px 14px;font-size:12.5px;margin:0;white-space:nowrap;" onclick="event.stopPropagation();openCoachingFlow('${o.flowId}')">Build simulation →</button>
+    </div>`;
+}
+
+function openCoachingFlow(id) { coachingFlow = id; renderCoaching(); updateDemo('coaching-sim'); }
+function backToCoaching() { coachingFlow = null; renderCoaching(); updateDemo('coaching'); }
+
+function renderCoachingSimulation(flow, opp) {
+  $('coaching-root').innerHTML = `
+    <div class="back-link" onclick="backToCoaching()">◀ Training opportunities</div>
+    <div class="ws-head">
+      <h2 class="ws-title grad">${flow.name}</h2>
+      <div class="ws-stat"><b>${opp.avg}%</b> avg recovery · <b>${opp.top}%</b> best agents · ${opp.volume} contacts · <span style="color:${opp.color};font-weight:700;">+${opp.gap}pt gap</span> · impact <b>${opp.impact.toLocaleString()}</b></div>
+    </div>
+    <div class="sim-brief">
+      <span class="spark">✦</span>
+      <div>
+        <div class="sim-label">AI Simulation Briefing</div>
+        <p>${opp.aiSummary}</p>
+      </div>
+    </div>
+    <div class="grid2" style="margin-bottom:22px;">
+      <div class="card"><h3>Who recovers it best</h3>
+        <div class="sub">Difficulty-controlled — a fair comparison across the same hard contacts.</div>
+        ${flow.leaders.map((l) => `<div class="lead"><div class="rk ${l.top ? 'top' : ''}">${l.rank}</div><div class="nm">${l.name}<span class="ag"> — ${l.team}</span></div><div class="bar-mini"><i style="width:${l.score}%"></i></div><div style="width:34px;text-align:right;font-weight:800;color:${l.top ? '#0F8A56' : '#6B7280'}">${l.score}</div></div>`).join('')}
+      </div>
+      <div class="card"><h3>What they do differently</h3>
+        <div class="sub">Real, attributed — the raw material for your simulation's model answers.</div>
+        ${flow.examples.map((e) => `<div class="ex"><div class="ex-who">${e.agent}</div><div class="ex-q">"${e.quote}"</div></div>`).join('')}
+        <div class="common"><b>The common move:</b> ${flow.commonMove}</div>
+      </div>
+    </div>
+    <div class="card sim-cta">
+      <div class="sim-cta-icon">🎯</div>
+      <h3>Ready to build the simulation</h3>
+      <p>Turn this into an interaction simulation in <b>NICE CXone Learning</b>. The AI briefing becomes the scenario brief; the best-agent quotes seed the model answers. Assign it to agents who show this gap in QM scoring.</p>
+      <div class="sim-cta-btns">
+        <button class="btn" style="width:auto;padding:10px 26px;" onclick="buildSimulationDone('${flow.id}')">Build &amp; assign simulation →</button>
+        <button class="btn ghost" style="width:auto;padding:10px 20px;">Export briefing ↗</button>
+      </div>
+    </div>`;
+}
+
+function buildSimulationDone(flowId) {
+  const opp = DATA.coaching.opportunities.find((o) => o.flowId === flowId);
+  $('coaching-root').innerHTML = `
+    <div class="back-link" onclick="backToCoaching()">◀ Training opportunities</div>
+    <div class="card" style="text-align:center;padding:44px 24px;margin-top:24px;">
+      <div style="font-size:44px;margin-bottom:12px;">✅</div>
+      <h3 style="font-size:18px;margin-bottom:8px;">Simulation created</h3>
+      <p style="color:var(--muted);font-size:13.5px;line-height:1.6;max-width:460px;margin:0 auto 22px;"><b>${opp.name}</b> simulation is live in NICE CXone Learning. Assign it to agents who score below ${opp.avg + 10}% on this escalation type in QM — the gap you're targeting.</p>
+      <button class="btn ghost" style="max-width:280px;margin:0 auto;" onclick="backToCoaching()">Back to opportunities →</button>
+    </div>`;
+}
+
 // ---- navigation ----
 function tab(id) {
   document.querySelectorAll('.screen').forEach((s) => s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === id));
   $(id).classList.add('active');
   if (id === 'quality') renderQuality();
+  if (id === 'coaching') { coachingFlow = null; renderCoaching(); }
   if (id === 'playbook') { pbFlow = null; renderPlaybook(); }
   curTab = id; updateDemo(id); stepIdx = STEPS.indexOf(id);
 }
@@ -252,7 +388,18 @@ const SCRIPT = {
     "<b>Recovery by type:</b> retention saves 88%, out-of-policy approvals 62% — same difficulty, the gap is human handling.",
     "Click a <b>session row</b> → open the stitched journey."],
     n: "👉 Next: click a session row to open the stitched journey" },
-  modal: { t: 'Scene 3 · The gap', c: [
+  coaching: { t: 'Scene 3 · Coaching Opportunities', c: [
+    "<b>Ranked list = the action layer.</b> Each row is an escalation type where best agents beat the average on identical hard contacts. Sorted by <b>impact = gap × volume</b> — the bigger the score, the more recoveries are within reach.",
+    "<b>Special-handling exception</b> is #1: a 26-point gap across 214 contacts per week. Impact score 5,564 — the biggest coaching prize in this period.",
+    "<b>Radar stays — but as supporting evidence.</b> It explains <i>why</i> the gap exists (empathy, patience, personalization). The list tells you <i>where to act first</i>.",
+    "Click <b>Build simulation →</b> on any row to drill in."],
+    n: "👉 Click <b>Build simulation →</b> on the top row" },
+  'coaching-sim': { t: 'Scene 4 · Build the simulation', c: [
+    "<b>AI Simulation Briefing</b> (purple card): the scenario, the failure mode to train past, and the coaching focus — auto-generated from the recovery data.",
+    "<b>Who recovers it best + what they do differently:</b> real attributed quotes from Sarah, Marcus, Priya. The common move distilled. This is the model-answer material.",
+    "Hit <b>Build &amp; assign simulation →</b> to push it to NICE CXone Learning — the briefing becomes the scenario, the quotes seed the model answers, and it assigns to agents showing the gap in QM."],
+    n: "👉 Hit <b>Build &amp; assign simulation →</b>" },
+  modal: { t: 'Scene 5 · The gap', c: [
     "<b>Left = the conversation</b> — the familiar transcript. The AI <i>correctly</i> escalated (rightful — medical-equipment exception). Then Tom rebooked but never addressed the equipment → Alex re-escalated.",
     "<b>Right = Recovery Analysis (new in this workspace).</b> QM already scores Tom's agent skills — what's <b>not</b> measured anywhere is the <b>recovery across this handoff</b>, bot→human stitched as one outcome.",
     "It flags the <b>gap</b>: the best-recoverer move that would've saved this isn't in Agent Assist yet."],

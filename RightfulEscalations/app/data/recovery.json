@@ -126,6 +126,103 @@
           "authoredIn": "GenAI Prompt Editor · Draft → Test → Publish (versioned)",
           "surfaceOn": "Manager sign-off escalations · all skills"
         }
+      },
+      {
+        "id": "high-emotion",
+        "name": "High-emotion complaint",
+        "sub": "vulnerable · at-risk · distressed customers",
+        "recovery": 73, "top": 91, "volume": 158,
+        "leaders": [
+          { "rank": 1, "name": "Priya Anand", "team": "Care · 29 hard recoveries", "score": 93, "top": true },
+          { "rank": 2, "name": "Sarah Okonkwo", "team": "Rebooking · 24 hard recoveries", "score": 90, "top": true },
+          { "rank": 3, "name": "Team average", "team": "all agents · same difficulty", "score": 73, "top": false }
+        ],
+        "examples": [
+          { "agent": "Priya Anand", "quote": "That should never have happened, and I'm genuinely sorry it did. I've read through everything — let me fix this properly, not just patch it." },
+          { "agent": "Sarah Okonkwo", "quote": "I can hear how frustrated you are, and you're completely right to be. I've pulled up your full history so you don't have to repeat yourself. Here's what I'm going to do." }
+        ],
+        "commonMove": "validate the emotion explicitly first — name it — then show you read the history before offering any solution",
+        "guidance": {
+          "template": "I can hear how [emotion] you are, and that's completely understandable given [situation]. I've reviewed everything — here's exactly what I'm doing: [action], and I'll confirm by [timeframe].",
+          "tokens": ["emotion", "situation", "action", "timeframe"],
+          "previewCases": [
+            { "id": "VOY-44850", "label": "M. Tan · repeat complaint", "values": { "emotion": "frustrated", "situation": "this is the third time you've had to call about the same issue", "action": "raising a priority case and escalating to the duty manager", "timeframe": "end of business today" } }
+          ],
+          "surface": "Copilot for Agents · a suggested response the agent can insert",
+          "authoredIn": "GenAI Prompt Editor · Draft → Test → Publish (versioned)",
+          "surfaceOn": "High-emotion escalations · skill = Care / Complaints"
+        }
+      },
+      {
+        "id": "retention-save",
+        "name": "Retention save",
+        "sub": "cancel intent · at-risk accounts",
+        "recovery": 88, "top": 96, "volume": 87,
+        "leaders": [
+          { "rank": 1, "name": "Devon Pratt", "team": "Retention · 19 saves", "score": 97, "top": true },
+          { "rank": 2, "name": "Marcus Reyes", "team": "Care · 16 saves", "score": 94, "top": true },
+          { "rank": 3, "name": "Team average", "team": "all agents · same difficulty", "score": 88, "top": false }
+        ],
+        "examples": [
+          { "agent": "Devon Pratt", "quote": "Before I look at what I can offer, can I ask what's driving this? I want to make sure I'm actually fixing the right thing for you." },
+          { "agent": "Marcus Reyes", "quote": "Given that it's specifically the [reason], here's what I can do that's actually tailored to that — not just a generic discount." }
+        ],
+        "commonMove": "uncover the root reason before making any offer — one probing question changes the save rate",
+        "guidance": {
+          "template": "Before I do anything, can I ask what's behind this? I want to fix the right thing. [pause] Given that, here's what I can offer that's specific to your situation: [personalised-offer] — and going forward, [forward-commitment].",
+          "tokens": ["personalised-offer", "forward-commitment"],
+          "previewCases": [
+            { "id": "VOY-44810", "label": "C. Vasquez · cancel intent", "values": { "personalised-offer": "a complimentary upgrade on your next booking and priority check-in for 12 months", "forward-commitment": "I've flagged your account so your next contact skips the queue" } }
+          ],
+          "surface": "Copilot for Agents · a suggested response the agent can insert",
+          "authoredIn": "GenAI Prompt Editor · Draft → Test → Publish (versioned)",
+          "surfaceOn": "Retention save escalations · skill = Retention / Care"
+        }
+      }
+    ]
+  },
+  "coaching": {
+    "intro": "Each row is an escalation type where your best agents significantly outperform the average — on the same hard contacts. <b>Impact = gap × volume</b>: the bigger the score, the more recoveries are within reach right now.",
+    "opportunities": [
+      {
+        "flowId": "special-handling",
+        "name": "Special-handling exception",
+        "sub": "medical equipment · accessibility · companions",
+        "avg": 62, "top": 88, "volume": 214, "gap": 26, "impact": 5564,
+        "color": "#EF4444",
+        "aiSummary": "Present a customer traveling with medical equipment whose previous trip went wrong — they're expecting the same failure. The agent must: <b>(1)</b> name the specific equipment need by name, not by category, <b>(2)</b> confirm the exception has been personally arranged — not just 'noted in the system', and <b>(3)</b> proactively close the loop on ground-crew coordination at both airports, unprompted. <b>The failure mode to practice past:</b> reassuring the customer that 'it's in the booking notes' instead of owning the outcome directly."
+      },
+      {
+        "flowId": "out-of-policy",
+        "name": "Out-of-policy approval",
+        "sub": "fee waivers · discretionary exceptions",
+        "avg": 66, "top": 87, "volume": 180, "gap": 21, "impact": 3780,
+        "color": "#F59E0B",
+        "aiSummary": "Present a customer requesting a fee waiver that sits outside standard policy — they've already been told 'no' once. The agent must make the exception feel personal and already done, not a process the customer is waiting on. <b>Practice point:</b> using 'I've personally approved this' instead of 'I'll need to check whether we can do that'. <b>The failure mode:</b> framing the exception as a favour or escalation instead of an ownership decision."
+      },
+      {
+        "flowId": "high-emotion",
+        "name": "High-emotion complaint",
+        "sub": "vulnerable · at-risk · distressed customers",
+        "avg": 73, "top": 91, "volume": 158, "gap": 18, "impact": 2844,
+        "color": "#F59E0B",
+        "aiSummary": "Present a repeat-contact customer whose frustration has been building across multiple interactions — they've explained the same problem three times. The agent must: <b>(1)</b> explicitly validate the emotion before attempting to solve ('That should never have happened — I understand why you're frustrated'), <b>(2)</b> recap what went wrong to show they read the history, and <b>(3)</b> give a concrete resolution with a named commitment. <b>The failure mode to train past:</b> jumping straight to a solution without acknowledging the emotional state."
+      },
+      {
+        "flowId": "manager-signoff",
+        "name": "Manager / authority sign-off",
+        "sub": "discretionary decisions · escalated authority",
+        "avg": 69, "top": 85, "volume": 96, "gap": 16, "impact": 1536,
+        "color": "#F59E0B",
+        "aiSummary": "Present a customer waiting on a discretionary decision that requires manager approval — the outcome is genuinely uncertain. The agent must close the interaction with a definitive answer structure: name who is acting, give a specific next step, and commit to a timeframe — even if the final decision is still pending. <b>The failure mode:</b> leaving the outcome open-ended ('I'll pass it on and someone will be in touch') — the best agents replace uncertainty with a concrete timeline."
+      },
+      {
+        "flowId": "retention-save",
+        "name": "Retention save",
+        "sub": "cancel intent · at-risk accounts",
+        "avg": 88, "top": 96, "volume": 87, "gap": 8, "impact": 696,
+        "color": "#10B981",
+        "aiSummary": "Present a customer with genuine cancel intent — not a bluff — where a generic retention offer has already failed in a prior contact. The agent must ask one probing question to uncover the root reason before making any offer. <b>Practice point:</b> the offer itself must be personalised to that specific root cause, not a standard discount. Close with a forward commitment that makes staying feel like the obvious choice rather than the path of least resistance."
       }
     ]
   },

@@ -202,6 +202,33 @@ tr.clk:hover td{background:#F7F9FC;cursor:pointer;}
 .ra-sub{font-size:11.5px;color:var(--muted);margin:2px 0 12px;}
 .new-badge{font-size:9px;font-weight:800;letter-spacing:.05em;color:#fff;background:var(--purple);padding:2px 7px;border-radius:8px;}
 
+/* TAB BADGE */
+.tab-badge{font-size:9px;font-weight:800;letter-spacing:.05em;color:#fff;background:var(--green);padding:2px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;}
+
+/* COACHING OPPORTUNITIES */
+.coaching-row{display:grid;grid-template-columns:32px 1fr 200px 60px 80px 110px auto;gap:14px;align-items:center;padding:14px 20px;border-bottom:1px solid #F0F2F5;cursor:pointer;transition:.12s;}
+.coaching-row:last-child{border-bottom:none;}
+.coaching-row:hover{background:#F7F9FC;}
+.coaching-rank{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--purple));color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.coaching-name{font-size:13.5px;font-weight:700;}
+.coaching-name small{display:block;font-size:11px;color:var(--muted2);font-weight:400;margin-top:2px;}
+.coaching-bar{height:8px;background:#EEF0F4;border-radius:5px;position:relative;overflow:visible;}
+.coaching-bar-avg{height:100%;border-radius:5px;}
+.coaching-bar-top{position:absolute;top:-4px;width:2px;height:16px;background:#10B981;border-radius:2px;}
+.coaching-gap{font-size:13px;font-weight:800;text-align:center;}
+.coaching-vol{font-size:13px;color:var(--muted);text-align:center;}
+.coaching-impact-bar{height:6px;background:#EEF0F4;border-radius:4px;overflow:hidden;margin-bottom:3px;}
+.coaching-hdr{display:grid;grid-template-columns:32px 1fr 200px 60px 80px 110px auto;gap:14px;padding:10px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--line);}
+.sim-brief{background:linear-gradient(105deg,#EEF4FF,#F5EEFE);border:1px solid #E2E0F5;border-radius:14px;padding:20px 22px;margin-bottom:22px;display:flex;gap:14px;}
+.sim-brief .spark{color:var(--purple);flex-shrink:0;font-size:17px;}
+.sim-brief .sim-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:7px;}
+.sim-brief p{font-size:14px;line-height:1.65;color:#2B2F45;margin:0;}
+.sim-cta{text-align:center;padding:36px 24px;border-radius:14px;}
+.sim-cta-icon{font-size:32px;margin-bottom:10px;}
+.sim-cta h3{font-size:17px;font-weight:800;margin-bottom:8px;}
+.sim-cta p{color:var(--muted);font-size:13.5px;line-height:1.6;max-width:500px;margin:0 auto 22px;}
+.sim-cta-btns{display:flex;gap:12px;justify-content:center;}
+
 .screen{display:none;} .screen.active{display:block;}
 
 .demo-toggle{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#fff;background:linear-gradient(90deg,var(--blue2),var(--purple));padding:6px 12px;border-radius:20px;cursor:pointer;white-space:nowrap;}
