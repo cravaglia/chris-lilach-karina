@@ -237,20 +237,18 @@ select:focus { border-color: var(--ai); }
   font-size: 16px;
   z-index: 2;
 }
-.flow-leg.ai-leg   { background: var(--ai-dim); border-right: 1px solid var(--border); border-left: 4px solid var(--ai); }
-.flow-leg.wait-leg { background: var(--handover-dim); border-right: 1px solid var(--border); flex: 0 0 140px; border-left: 4px solid var(--handover); }
-.flow-leg.human-leg { background: var(--human-dim); border-left: 4px solid var(--human); }
+.flow-leg.ai-leg   { background: var(--surface); border-right: 1px solid var(--border); }
+.flow-leg.wait-leg { background: var(--surface); border-right: 1px solid var(--border); flex: 0 0 140px; }
+.flow-leg.human-leg { background: var(--surface); }
 .flow-leg-label {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   margin-bottom: 4px;
+  color: var(--muted);
 }
-.flow-leg.ai-leg .flow-leg-label { color: var(--ai); }
-.flow-leg.wait-leg .flow-leg-label { color: var(--handover); }
-.flow-leg.human-leg .flow-leg-label { color: var(--human); }
-.flow-leg-stat { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 500; }
+.flow-leg-stat { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 500; color: var(--text); }
 .flow-leg-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
 /* ── Tabs ── */
@@ -927,6 +925,17 @@ svg text { font-family: 'Inter', sans-serif; }
         <option>Email</option>
       </select>
     </div>
+    <div class="filter-group">
+      <span class="filter-label">Team</span>
+      <select>
+        <option>All Teams</option>
+        <option>Care</option>
+        <option>Rebooking</option>
+        <option>Billing Resolution</option>
+        <option>Retention</option>
+        <option>Payments</option>
+      </select>
+    </div>
   </div>
 </div>
 
@@ -934,18 +943,18 @@ svg text { font-family: 'Inter', sans-serif; }
 <div class="journey-flow">
   <div class="flow-leg ai-leg">
     <div class="flow-leg-label">AI Agent</div>
-    <div class="flow-leg-stat" style="color:var(--ai)">1,713</div>
+    <div class="flow-leg-stat">1,713</div>
     <div class="flow-leg-sub">contacts started with AI · avg 4m 12s</div>
   </div>
   <div class="flow-leg wait-leg">
     <div class="flow-leg-label">Handover Wait</div>
-    <div class="flow-leg-stat" style="color:var(--handover)">0:48</div>
+    <div class="flow-leg-stat">0:48</div>
     <div class="flow-leg-sub">avg silent wait</div>
   </div>
   <div class="flow-leg human-leg">
     <div class="flow-leg-label">Human Agent</div>
-    <div class="flow-leg-stat" style="color:var(--human)">1,090</div>
-    <div class="flow-leg-sub">escalated · 71% recovered</div>
+    <div class="flow-leg-stat">1,200</div>
+    <div class="flow-leg-sub">escalated · 58% resolved and held</div>
   </div>
 </div>
 
@@ -961,26 +970,14 @@ svg text { font-family: 'Inter', sans-serif; }
   <!-- ══════════════════════════════════════════ OVERVIEW ══ -->
   <div class="tab-panel active" id="tab-overview">
 
-    <div class="section-header">
-      <div class="section-title-row">
-        <div class="section-dot" style="background:var(--text-dim)"></div>
-        <div class="section-title">Journey KPIs</div>
-      </div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--ai)"></div>AI Agent</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--handover)"></div>Handover</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--human)"></div>Human Agent</div>
-      </div>
-    </div>
-
     <!-- Row 1: Unified escalation widget (full width) -->
     <div class="chart-card" style="margin-bottom:0;">
       <!-- Header row: big number + subtitle -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
         <div>
-          <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Total Escalations · Last 7 Days</div>
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Total Escalations To Humans · Last 7 Days</div>
           <div style="display:flex;align-items:baseline;gap:10px;">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:600;color:var(--text);line-height:1;">1,713</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:600;color:var(--text);line-height:1;">1,200</div>
             <div style="font-size:12px;color:var(--muted);">contacts escalated from AI to human</div>
           </div>
         </div>
@@ -992,12 +989,12 @@ svg text { font-family: 'Inter', sans-serif; }
 
       <!-- Stacked bar with labels above each segment -->
       <div style="margin-bottom:6px;display:flex;">
-        <div style="width:64%;font-size:10px;font-weight:700;color:var(--ai);letter-spacing:0.06em;text-transform:uppercase;padding-left:2px;">Rightful · 64%</div>
-        <div style="width:36%;font-size:10px;font-weight:700;color:var(--handover);letter-spacing:0.06em;text-transform:uppercase;text-align:right;padding-right:2px;">Avoidable · 36%</div>
+        <div style="width:91%;font-size:10px;font-weight:700;color:var(--ai);letter-spacing:0.06em;text-transform:uppercase;padding-left:2px;">Rightful · 91%</div>
+        <div style="width:9%;font-size:10px;font-weight:700;color:var(--handover);letter-spacing:0.06em;text-transform:uppercase;text-align:right;padding-right:2px;">Avoidable · 9%</div>
       </div>
       <div style="height:12px;border-radius:8px;overflow:hidden;display:flex;margin-bottom:16px;box-shadow:inset 0 1px 2px rgba(0,0,0,0.06);">
-        <div style="width:64%;background:var(--ai);border-radius:8px 0 0 8px;"></div>
-        <div style="width:36%;background:var(--handover);border-radius:0 8px 8px 0;opacity:0.9;"></div>
+        <div style="width:91%;background:var(--ai);border-radius:8px 0 0 8px;"></div>
+        <div style="width:9%;background:var(--handover);border-radius:0 8px 8px 0;opacity:0.9;"></div>
       </div>
 
       <!-- Two split panels side by side -->
@@ -1011,7 +1008,7 @@ svg text { font-family: 'Inter', sans-serif; }
           </div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
             <span style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--ai);line-height:1;">1,090</span>
-            <span style="font-size:13px;font-weight:600;color:var(--ai);opacity:0.65;">64%</span>
+            <span style="font-size:13px;font-weight:600;color:var(--ai);opacity:0.65;">91%</span>
           </div>
           <div style="font-size:11px;color:var(--muted);">Correctly needed a human agent</div>
         </div>
@@ -1023,8 +1020,8 @@ svg text { font-family: 'Inter', sans-serif; }
             <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--handover);">Avoidable · Automation Opp</div>
           </div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
-            <span style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--handover);line-height:1;">623</span>
-            <span style="font-size:13px;font-weight:600;color:var(--handover);opacity:0.65;">36%</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--handover);line-height:1;">110</span>
+            <span style="font-size:13px;font-weight:600;color:var(--handover);opacity:0.65;">9%</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
             <span style="color:var(--muted);">Could have been resolved by AI</span>
@@ -1099,7 +1096,7 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- Special-handling exception: FCR 44 -->
-        <div onclick="switchTab('playbook', document.querySelectorAll('.tab')[1])" style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+        <div onclick="goToCoaching(0)" style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
           <div style="font-size:12px;color:var(--text);">Special-handling exception</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:44%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
@@ -1112,7 +1109,7 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- Manager / authority sign-off: FCR 53 -->
-        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+        <div onclick="goToCoaching(1)" style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
           <div style="font-size:12px;color:var(--text);">Manager / authority sign-off</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:53%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
@@ -1125,7 +1122,7 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- Complex multi-issue: FCR 56 -->
-        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+        <div onclick="goToCoaching(2)" style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
           <div style="font-size:12px;color:var(--text);">Complex multi-issue</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:56%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
@@ -1138,7 +1135,7 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- High-emotion complaint: FCR 63 -->
-        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+        <div onclick="goToCoaching(3)" style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
           <div style="font-size:12px;color:var(--text);">High-emotion complaint</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:63%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
@@ -1151,7 +1148,7 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- Retention save: FCR 94 -->
-        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+        <div onclick="goToCoaching(4)" style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
           <div style="font-size:12px;color:var(--text);">Retention save</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:94%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
@@ -1214,33 +1211,36 @@ svg text { font-family: 'Inter', sans-serif; }
             <text x="120" y="14" fill="#5B4FE8" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">AI AGENT</text>
             <text x="283" y="14" fill="#D9880E" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">HANDOVER</text>
             <text x="463" y="14" fill="#00A98A" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">HUMAN AGENT</text>
-            <!-- grid lines -->
+            <!-- grid lines (scale 0–5, y(v)=168-24v) -->
             <line x1="0" y1="168" x2="600" y2="168" stroke="#DDE2ED" stroke-width="1"/>
-            <line x1="0" y1="138" x2="600" y2="138" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
-            <line x1="0" y1="108" x2="600" y2="108" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
-            <line x1="0" y1="78"  x2="600" y2="78"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="144" x2="600" y2="144" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="120" x2="600" y2="120" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="96"  x2="600" y2="96"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="72"  x2="600" y2="72"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
             <line x1="0" y1="48"  x2="600" y2="48"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
             <!-- y-axis labels -->
-            <text x="2" y="171" fill="#7A86A0" font-size="10">1</text>
-            <text x="2" y="141" fill="#7A86A0" font-size="10">2</text>
-            <text x="2" y="111" fill="#7A86A0" font-size="10">3</text>
-            <text x="2" y="81"  fill="#7A86A0" font-size="10">4</text>
+            <text x="2" y="171" fill="#7A86A0" font-size="10">0</text>
+            <text x="2" y="147" fill="#7A86A0" font-size="10">1</text>
+            <text x="2" y="123" fill="#7A86A0" font-size="10">2</text>
+            <text x="2" y="99"  fill="#7A86A0" font-size="10">3</text>
+            <text x="2" y="75"  fill="#7A86A0" font-size="10">4</text>
             <text x="2" y="51"  fill="#7A86A0" font-size="10">5</text>
-            <!-- AI line -->
-            <polyline points="16,108 130,123 230,138" fill="none" stroke="#5B4FE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="16"  cy="108" r="5" fill="#5B4FE8"/>
-            <circle cx="230" cy="138" r="5" fill="#5B4FE8"/>
-            <!-- transfer wait dashed -->
-            <line x1="230" y1="138" x2="244" y2="138" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
-            <line x1="244" y1="138" x2="326" y2="138" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
-            <!-- human line -->
-            <polyline points="326,145 410,111 490,75 595,42" fill="none" stroke="#00A98A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="326" cy="145" r="5" fill="#D9880E"/>
-            <circle cx="595" cy="42"  r="5" fill="#00A98A"/>
+            <!-- AI line (2.1 → 1.9) -->
+            <polyline points="16,118 130,120 230,122" fill="none" stroke="#5B4FE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="16"  cy="118" r="5" fill="#5B4FE8"/>
+            <circle cx="230" cy="122" r="5" fill="#5B4FE8"/>
+            <!-- transfer wait dashed (1.9) -->
+            <line x1="230" y1="122" x2="244" y2="122" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
+            <line x1="244" y1="122" x2="326" y2="122" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
+            <!-- human line (1.9 → 3.7 → 5.0) -->
+            <polyline points="326,122 410,100 490,79 595,48" fill="none" stroke="#00A98A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="326" cy="122" r="5" fill="#D9880E"/>
+            <circle cx="490" cy="79"  r="4" fill="#00A98A"/>
+            <circle cx="595" cy="48"  r="5" fill="#00A98A"/>
             <!-- data labels -->
-            <text x="22"  y="104" fill="#5B4FE8" font-size="10" font-family="JetBrains Mono,monospace">AI 2.1</text>
-            <text x="500" y="72"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Human 3.7</text>
-            <text x="420" y="62"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Sentiment Δ +1.6</text>
+            <text x="22"  y="114" fill="#5B4FE8" font-size="10" font-family="JetBrains Mono,monospace">AI 2.1</text>
+            <text x="498" y="74"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Human 3.7</text>
+            <text x="360" y="92"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Sentiment Δ +1.6</text>
           </svg>
         </div>
 
@@ -1512,27 +1512,27 @@ svg text { font-family: 'Inter', sans-serif; }
         <div class="copp-intent active" onclick="selectIntent(0,this)">
           <div class="copp-intent-name">Special-handling exception</div>
           <div class="copp-intent-sub">Medical equipment · accessibility · companions</div>
-          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 56</span><span class="copp-vol">214 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 56%</span><span class="copp-vol">214 contacts/wk</span></div>
         </div>
         <div class="copp-intent" onclick="selectIntent(1,this)">
           <div class="copp-intent-name">Manager / authority sign-off</div>
           <div class="copp-intent-sub">Discretionary decisions · escalated authority</div>
-          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 47</span><span class="copp-vol">96 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 47%</span><span class="copp-vol">96 contacts/wk</span></div>
         </div>
         <div class="copp-intent" onclick="selectIntent(2,this)">
           <div class="copp-intent-name">Complex multi-issue</div>
           <div class="copp-intent-sub">Multiple linked problems · cross-department</div>
-          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 44</span><span class="copp-vol">132 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 44%</span><span class="copp-vol">132 contacts/wk</span></div>
         </div>
         <div class="copp-intent" onclick="selectIntent(3,this)">
           <div class="copp-intent-name">High-emotion complaint</div>
           <div class="copp-intent-sub">Vulnerable · at-risk · distressed customers</div>
-          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 37</span><span class="copp-vol">158 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 37%</span><span class="copp-vol">158 contacts/wk</span></div>
         </div>
         <div class="copp-intent" onclick="selectIntent(4,this)">
           <div class="copp-intent-name">Retention save</div>
           <div class="copp-intent-sub">Cancel intent · price objection · dissatisfaction</div>
-          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 6</span><span class="copp-vol">87 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 6%</span><span class="copp-vol">87 contacts/wk</span></div>
         </div>
       </div>
 
@@ -1549,9 +1549,6 @@ svg text { font-family: 'Inter', sans-serif; }
         <h1>Special-handling exception</h1>
         <div class="csub">medical equipment, accessibility, pets · 214 interactions · #1 coaching opportunity by impact</div>
         <div class="stat-row">
-          <div class="schip"><div class="sv" style="color:var(--bad)">62%</div><div class="sl">Team FCR</div></div>
-          <div class="schip"><div class="sv" style="color:var(--good)">88%</div><div class="sl">Best resolvers</div></div>
-          <div class="schip"><div class="sv" style="color:var(--ai)">+26 pts</div><div class="sl">Coachable gap</div></div>
           <div class="schip"><div class="sv">214</div><div class="sl">Interactions / period</div></div>
         </div>
       </div>
@@ -1674,6 +1671,19 @@ function initCoppDetail() {
   if (document.getElementById('copp-detail').innerHTML.trim() === '') {
     selectIntent(0, document.querySelector('.copp-intent'));
   }
+}
+
+// Jump from the Resolution Outcome By Intent chart into the Coaching Opportunities tab,
+// selecting the matching intent. Does not alter the chart data.
+function goToCoaching(idx) {
+  const tab = [...document.querySelectorAll('.tab')].find(t => (t.getAttribute('onclick') || '').includes('coaching-opp'));
+  if (tab) switchTab('coaching-opp', tab);
+  // make sure we're on the intent list, not an embedded sim view
+  const sf = document.getElementById('copp-simframe'); if (sf) sf.style.display = 'none';
+  const cm = document.getElementById('copp-main'); if (cm) cm.style.display = 'block';
+  const items = document.querySelectorAll('.copp-intent');
+  if (items[idx]) selectIntent(idx, items[idx]);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Coaching Opportunities
