@@ -954,7 +954,7 @@ svg text { font-family: 'Inter', sans-serif; }
 
       <!-- Resolution Outcome widget -->
       <div class="chart-card">
-        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Resolution Outcome · 1,090 Contacts</div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Resolution Outcome</div>
         <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">14-day window - Not reopened</div>
 
         <!-- Stacked bar -->
@@ -1098,7 +1098,7 @@ svg text { font-family: 'Inter', sans-serif; }
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
         <div>
           <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Journey Sentiment Overview</div>
-          <div style="font-size:12px;color:var(--ai);">How the customer <em>feels</em> across the whole journey — and the signals this view is built from.</div>
+          <div style="font-size:12px;color:var(--text-dim);">How the customer <em>feels</em> across the whole journey — and the signals this view is built from.</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
           <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Intent</div>
@@ -1111,55 +1111,54 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;margin-top:14px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-top:14px;">
 
         <!-- LEFT: chart -->
-        <div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Sentiment through the journey · scored 1–5 · final reading at the human-leg end</div>
+        <div style="min-width:0;">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Sentiment through the journey · scored 1–5 · final reading at the human-leg end</div>
 
-          <svg width="100%" height="180" viewBox="0 0 560 180" preserveAspectRatio="xMidYMid meet">
-            <!-- leg backgrounds (shifted down 20px to leave room for labels) -->
-            <rect x="28"  y="20" width="220" height="148" fill="rgba(91,79,232,0.05)"  rx="4"/>
-            <rect x="252" y="20" width="80"  height="148" fill="rgba(217,136,14,0.06)" rx="4"/>
-            <rect x="336" y="20" width="218" height="148" fill="rgba(0,169,138,0.05)"  rx="4"/>
-            <!-- leg labels inside SVG, centered over each band -->
-            <text x="138" y="14" fill="#5B4FE8" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">AI AGENT</text>
-            <text x="292" y="14" fill="#D9880E" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">HANDOVER</text>
-            <text x="445" y="14" fill="#00A98A" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">HUMAN AGENT</text>
+          <svg width="100%" height="180" viewBox="0 0 600 180" preserveAspectRatio="none">
+            <!-- leg backgrounds -->
+            <rect x="0"   y="20" width="240" height="148" fill="rgba(91,79,232,0.05)"  rx="4"/>
+            <rect x="244" y="20" width="78"  height="148" fill="rgba(217,136,14,0.06)" rx="4"/>
+            <rect x="326" y="20" width="274" height="148" fill="rgba(0,169,138,0.05)"  rx="4"/>
+            <!-- leg labels centered over each band -->
+            <text x="120" y="14" fill="#5B4FE8" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">AI AGENT</text>
+            <text x="283" y="14" fill="#D9880E" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">HANDOVER</text>
+            <text x="463" y="14" fill="#00A98A" font-size="10" font-weight="700" font-family="Inter,sans-serif" text-anchor="middle" letter-spacing="1">HUMAN AGENT</text>
             <!-- grid lines -->
-            <line x1="28" y1="168" x2="554" y2="168" stroke="#DDE2ED" stroke-width="1"/>
-            <line x1="28" y1="138" x2="554" y2="138" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
-            <line x1="28" y1="108" x2="554" y2="108" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
-            <line x1="28" y1="78"  x2="554" y2="78"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
-            <line x1="28" y1="48"  x2="554" y2="48"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="168" x2="600" y2="168" stroke="#DDE2ED" stroke-width="1"/>
+            <line x1="0" y1="138" x2="600" y2="138" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="108" x2="600" y2="108" stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="78"  x2="600" y2="78"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
+            <line x1="0" y1="48"  x2="600" y2="48"  stroke="#DDE2ED" stroke-width="0.5" stroke-dasharray="4,4"/>
             <!-- y-axis labels -->
-            <text x="6" y="171" fill="#7A86A0" font-size="10">1</text>
-            <text x="6" y="141" fill="#7A86A0" font-size="10">2</text>
-            <text x="6" y="111" fill="#7A86A0" font-size="10">3</text>
-            <text x="6" y="81"  fill="#7A86A0" font-size="10">4</text>
-            <text x="6" y="51"  fill="#7A86A0" font-size="10">5</text>
-            <!-- AI line: 3.0 → 2.4 → 2.1 -->
-            <polyline points="44,108 150,123 240,138" fill="none" stroke="#5B4FE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="44"  cy="108" r="5" fill="#5B4FE8"/>
-            <circle cx="240" cy="138" r="5" fill="#5B4FE8"/>
+            <text x="2" y="171" fill="#7A86A0" font-size="10">1</text>
+            <text x="2" y="141" fill="#7A86A0" font-size="10">2</text>
+            <text x="2" y="111" fill="#7A86A0" font-size="10">3</text>
+            <text x="2" y="81"  fill="#7A86A0" font-size="10">4</text>
+            <text x="2" y="51"  fill="#7A86A0" font-size="10">5</text>
+            <!-- AI line -->
+            <polyline points="16,108 130,123 230,138" fill="none" stroke="#5B4FE8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="16"  cy="108" r="5" fill="#5B4FE8"/>
+            <circle cx="230" cy="138" r="5" fill="#5B4FE8"/>
             <!-- transfer wait dashed -->
-            <line x1="240" y1="138" x2="252" y2="138" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
-            <line x1="252" y1="138" x2="336" y2="138" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
+            <line x1="230" y1="138" x2="244" y2="138" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
+            <line x1="244" y1="138" x2="326" y2="138" stroke="#D9880E" stroke-width="2" stroke-dasharray="4,3"/>
             <!-- human line -->
-            <polyline points="336,145 400,111 470,78 550,45" fill="none" stroke="#00A98A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="336" cy="145" r="5" fill="#D9880E"/>
-            <circle cx="550" cy="45"  r="5" fill="#00A98A"/>
+            <polyline points="326,145 410,111 490,75 595,42" fill="none" stroke="#00A98A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="326" cy="145" r="5" fill="#D9880E"/>
+            <circle cx="595" cy="42"  r="5" fill="#00A98A"/>
             <!-- data labels -->
-            <text x="50"  y="104" fill="#5B4FE8" font-size="10" font-family="JetBrains Mono,monospace">AI 2.1</text>
-            <text x="460" y="74"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Human 3.7</text>
-            <text x="390" y="64"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Sentiment Δ +1.6</text>
+            <text x="22"  y="104" fill="#5B4FE8" font-size="10" font-family="JetBrains Mono,monospace">AI 2.1</text>
+            <text x="500" y="72"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Human 3.7</text>
+            <text x="420" y="62"  fill="#00A98A" font-size="10" font-family="JetBrains Mono,monospace">Sentiment Δ +1.6</text>
           </svg>
         </div>
 
         <!-- RIGHT: supporting data cards -->
         <div>
-          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">Supporting data — where this view comes from</div>
-          <div style="font-size:11px;color:var(--ai);margin-bottom:14px;">Three independent signals on the same journey. The curve on the left is built from them — each is a separate source you can drill into.</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">Three independent signals on the same journey. The curve on the left is built from them — each is a separate source you can drill into.</div>
 
           <!-- Card 1: Sentiment Δ -->
           <div style="border:1px solid var(--border);border-left:3px solid var(--ai);border-radius:8px;padding:12px 14px;margin-bottom:10px;">
