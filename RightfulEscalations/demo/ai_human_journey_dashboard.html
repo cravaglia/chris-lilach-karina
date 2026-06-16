@@ -852,9 +852,8 @@ svg text { font-family: 'Inter', sans-serif; }
 <!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="switchTab('overview', this)">Overview</div>
-  <div class="tab" onclick="switchTab('playbook', this)">Coaching Playbook</div>
-  <div class="tab" onclick="switchTab('handover', this)">Handover Detail</div>
   <div class="tab" onclick="switchTab('coaching-opp', this)">Coaching Opportunities <span style="font-size:10px;font-weight:800;letter-spacing:.05em;color:#fff;background:var(--ai);padding:2px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;">NEW</span></div>
+  <div class="tab" onclick="switchTab('handover', this)">Handover Details</div>
 </div>
 
 <div class="main">
@@ -989,9 +988,8 @@ svg text { font-family: 'Inter', sans-serif; }
         <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px;">Ranked by FCR</div>
 
         <!-- Column headers -->
-        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">
           <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Intent</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);text-align:center;">Resolved & Held (FCR) %</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">
             <span style="color:var(--human);font-weight:700;">Resolved & Held</span>
             <span style="color:var(--handover);font-weight:700;margin-left:12px;">Reopened</span>
@@ -1001,9 +999,8 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- Special-handling exception: FCR 44 -->
-        <div onclick="switchTab('playbook', document.querySelectorAll('.tab')[1])" style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
-          <div style="font-size:12px;color:var(--ai);font-weight:600;text-decoration:underline;text-underline-offset:2px;">Special-handling exception</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">44%</div>
+        <div onclick="switchTab('playbook', document.querySelectorAll('.tab')[1])" style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);">
+          <div style="font-size:12px;color:var(--text);">Special-handling exception</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:44%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
             <div style="width:22%;background:var(--handover);opacity:0.85;"></div>
@@ -1015,9 +1012,8 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- Manager / authority sign-off: FCR 53 -->
-        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
           <div style="font-size:12px;color:var(--text);">Manager / authority sign-off</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">53%</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:53%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
             <div style="width:20%;background:var(--handover);opacity:0.85;"></div>
@@ -1029,9 +1025,8 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- Complex multi-issue: FCR 56 -->
-        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
           <div style="font-size:12px;color:var(--text);">Complex multi-issue</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">56%</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:56%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
             <div style="width:19%;background:var(--handover);opacity:0.85;"></div>
@@ -1043,9 +1038,8 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- High-emotion complaint: FCR 63 -->
-        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
           <div style="font-size:12px;color:var(--text);">High-emotion complaint</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">63%</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:63%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
             <div style="width:17%;background:var(--handover);opacity:0.85;"></div>
@@ -1057,9 +1051,8 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- Retention save: FCR 94 -->
-        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
+        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);cursor:pointer;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='#F0F2F7'" onmouseout="this.style.background=''">
           <div style="font-size:12px;color:var(--text);">Retention save</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text);text-align:center;">94%</div>
           <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;">
             <div style="width:94%;background:var(--human);opacity:0.85;border-radius:5px 0 0 5px;"></div>
             <div style="width:4%;background:var(--handover);opacity:0.85;"></div>
@@ -1071,9 +1064,8 @@ svg text { font-family: 'Inter', sans-serif; }
         </div>
 
         <!-- Overall row -->
-        <div style="display:grid;grid-template-columns:130px 60px 1fr 110px;gap:6px;align-items:center;padding:7px 0 0;">
+        <div style="display:grid;grid-template-columns:130px 1fr 110px;gap:6px;align-items:center;padding:7px 0 0;">
           <div style="font-size:12px;font-weight:700;color:var(--text);">Overall</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--text);text-align:center;">58%</div>
           <div style="font-size:11px;color:var(--muted);display:flex;gap:12px;">
             <span><span style="color:var(--human);font-weight:600;">58%</span> resolved & held</span>
             <span><span style="color:var(--handover);font-weight:600;">13%</span> reopened</span>
@@ -1401,85 +1393,6 @@ svg text { font-family: 'Inter', sans-serif; }
   <!-- ══════════════════════════════════════════ RESOLUTION ══ -->
 
   <!-- ══════════════════════════════════════════ PLAYBOOK ══ -->
-  <div class="tab-panel" id="tab-playbook">
-    <div class="section-header" style="margin-top:0">
-      <div class="section-title-row">
-        <div class="section-dot" style="background:var(--human)"></div>
-        <div class="section-title">Coaching Playbook — Human Agent Recovery</div>
-      </div>
-      <span style="font-size:12px;color:var(--muted)">Ranked by recovery impact · filtered to post-handover behaviors</span>
-    </div>
-
-    <div class="coaching-grid">
-      <div class="coaching-card priority-1">
-        <div class="coaching-priority">🔴 Immediate · Priority 1</div>
-        <div class="coaching-title">Own the Context — Don't Ask What the Bot Already Captured</div>
-        <div class="coaching-desc">Only 61% of transfers include full AI context. Agents who re-ask questions already answered by the AI score 22pts lower on Journey QM and trigger a -0.8 sentiment drop. Coach agents to use the AI summary panel before speaking.</div>
-        <div class="coaching-impact">
-          <span class="impact-tag positive">+22pts QM</span>
-          <span class="impact-tag positive">+0.8 sentiment</span>
-          <span class="impact-tag">312 affected contacts</span>
-        </div>
-        <button class="coaching-btn">View Transcript Examples →</button>
-      </div>
-
-      <div class="coaching-card priority-1">
-        <div class="coaching-priority">🔴 Immediate · Priority 2</div>
-        <div class="coaching-title">Acknowledge the Wait — Every Time</div>
-        <div class="coaching-desc">Agents who acknowledge the transfer wait within 10 seconds achieve 88% recovery vs 62% for those who don't. Script: "Thank you for holding — I can see you were just with our automated assistant. Let me pick this up from where it left off."</div>
-        <div class="coaching-impact">
-          <span class="impact-tag positive">+26pts recovery</span>
-          <span class="impact-tag">0:48 avg wait to address</span>
-        </div>
-        <button class="coaching-btn">View Best Recoverers →</button>
-      </div>
-
-      <div class="coaching-card priority-2">
-        <div class="coaching-priority">🟡 Near-Term · Priority 3</div>
-        <div class="coaching-title">Special-Handling Exception Authority</div>
-        <div class="coaching-desc">18% of rightful escalations involve special-handling (medical equipment, travel exceptions). Agents stall on who can authorize. Push the exception decision tree into Agent Assist. Reduces handle time by 1m 10s per contact.</div>
-        <div class="coaching-impact">
-          <span class="impact-tag positive">-1:10 handle time</span>
-          <span class="impact-tag">Agent Assist</span>
-        </div>
-        <button class="coaching-btn">Configure Agent Assist →</button>
-      </div>
-
-      <div class="coaching-card priority-2">
-        <div class="coaching-priority">🟡 Near-Term · Priority 4</div>
-        <div class="coaching-title">Cancellation Recovery Script</div>
-        <div class="coaching-desc">Cancellation intent has the lowest recovery rate (61%) and the only negative sentiment trend (-0.3). FAQ Bot is escalating 58% of these unnecessarily. Coach agents on retention language and flag the bot's FAQ gap for prompt update.</div>
-        <div class="coaching-impact">
-          <span class="impact-tag positive">+14pts potential</span>
-          <span class="impact-tag">198 contacts/wk</span>
-        </div>
-        <button class="coaching-btn">View Cancellation Transcripts →</button>
-      </div>
-
-      <div class="coaching-card priority-3">
-        <div class="coaching-priority">🔵 Coaching · Priority 5</div>
-        <div class="coaching-title">Close the Loop — Confirm Resolution Before Wrap</div>
-        <div class="coaching-desc">Only 74% of agents explicitly confirm resolution in transcript. Gap between transcript confirmation (74%) and 7-day held resolution (82%) suggests under-reporting, not actual failure. Coach agents to ask and document "Was your issue fully resolved today?"</div>
-        <div class="coaching-impact">
-          <span class="impact-tag">FCR accuracy</span>
-          <span class="impact-tag">Disposition quality</span>
-        </div>
-        <button class="coaching-btn">View QM Rubric →</button>
-      </div>
-
-      <div class="coaching-card priority-3">
-        <div class="coaching-priority">🔵 Coaching · Priority 6</div>
-        <div class="coaching-title">Top Recoverers — Replicate the Playbook</div>
-        <div class="coaching-desc">3 agents recover 88% vs the team's 62% on special-handling contacts. Same contacts, same intents — the gap is human handling. Surface their calls in team calibration and extract the behavioral pattern for peer coaching.</div>
-        <div class="coaching-impact">
-          <span class="impact-tag positive">62% → 88%</span>
-          <span class="impact-tag">QM Coaching</span>
-        </div>
-        <button class="coaching-btn">Compare Top vs Bottom →</button>
-      </div>
-    </div>
-
-  </div><!-- /playbook -->
 
   <!-- ══════════════════════════════════════════ COACHING OPP ══ -->
   <div class="tab-panel" id="tab-coaching-opp">
