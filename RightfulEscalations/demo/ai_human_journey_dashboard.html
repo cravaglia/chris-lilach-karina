@@ -27,6 +27,9 @@
   --text: #1A2236;
   --text-dim: #4B5672;
   --tab-active: #5B4FE8;
+  /* aliases used by the inlined Special-handling simulations content */
+  --line: #DDE2ED; --ink: #1A2236; --card: #FFFFFF; --good: #1E9652;
+  --warn: #D9880E; --warnText: #B07A00; --bad: #D02F3E; --faint: #9AA6B6;
 }
 
 body {
@@ -571,6 +574,8 @@ svg text { font-family: 'Inter', sans-serif; }
 /* ── Tab panels ── */
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
+/* panels that live outside `.main` need the same padding Overview gets from `.main` */
+#tab-coaching-opp, #tab-handover { padding: 24px 28px 60px; }
 
 /* ── Inline badge ── */
 .badge {
@@ -646,6 +651,89 @@ svg text { font-family: 'Inter', sans-serif; }
 .copp-reason-bar div { height: 100%; border-radius: 4px; }
 .copp-reason-share span { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
 .copp-reason-insight { font-size: 12px; color: var(--text-dim); line-height: 1.55; margin-bottom: 12px; }
+
+/* embedded simulations page */
+.copp-simbar { margin-bottom: 10px; }
+
+/* inlined Special-handling simulations content (scoped) */
+#copp-sim .ctx{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:0 0 14px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+#copp-sim .ctx h1{margin:0;font-size:20px;}
+#copp-sim .csub{color:var(--muted);font-size:12.5px;margin-top:3px;}
+#copp-sim .stat-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+#copp-sim .schip{border:1px solid var(--line);border-radius:9px;padding:8px 13px;background:var(--surface2);}
+#copp-sim .schip .sv{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+#copp-sim .schip .sl{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+#copp-sim .ai-sum{background:linear-gradient(105deg,#EEF4FF,#F5EEFE);border:1px solid #E2E0F5;border-radius:12px;padding:18px 22px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+#copp-sim .ai-sum .t{font-weight:700;font-size:13.5px;color:var(--ai);margin-bottom:6px;}
+#copp-sim .ai-sum p{margin:0 0 12px;line-height:1.6;color:var(--text-dim);font-size:13px;}
+#copp-sim .chips{display:flex;gap:7px;flex-wrap:wrap;}
+#copp-sim .chip{font-size:11px;font-weight:700;border-radius:20px;padding:3px 11px;background:var(--ai-dim);color:var(--ai);}
+#copp-sim .sectitle{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:6px 0 10px;}
+#copp-sim .sims{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+#copp-sim .sim{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+#copp-sim .emo{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
+#copp-sim .tag{font-size:10.5px;font-weight:700;border-radius:20px;padding:3px 10px;}
+#copp-sim .tag.hot{background:rgba(208,47,62,0.10);color:var(--bad);}
+#copp-sim .tag.vuln{background:rgba(217,136,14,0.12);color:var(--warnText);}
+#copp-sim .tag.phi{background:var(--ai-dim);color:var(--ai);}
+#copp-sim .sim h3{margin:0 0 8px;font-size:16px;}
+#copp-sim .scn{color:var(--text-dim);font-size:12.5px;line-height:1.6;margin-bottom:12px;}
+#copp-sim .says{border-left:3px solid var(--bad);background:rgba(208,47,62,0.05);border-radius:0 8px 8px 0;padding:9px 12px;font-style:italic;color:#5a4a48;font-size:12.5px;margin-bottom:14px;}
+#copp-sim .trains{font-size:11.5px;color:var(--muted);margin-bottom:14px;}
+#copp-sim .trains b{color:var(--ink);}
+#copp-sim .acts{margin-top:auto;display:flex;gap:9px;align-items:center;}
+#copp-sim .cta{background:var(--ai);color:#fff;border:none;border-radius:8px;padding:9px 14px;font:600 12.5px 'Inter';cursor:pointer;transition:filter .15s;}
+#copp-sim .cta:hover{filter:brightness(1.08);}
+#copp-sim .cta.ghost{background:var(--surface);color:var(--ai);border:1px solid var(--line);}
+#copp-sim .built{font-size:11px;color:var(--faint);margin-top:10px;}
+#copp-sim .pb{display:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;margin-top:16px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+#copp-sim .pb.show{display:block;}
+#copp-sim .pb h2{margin:0 0 2px;font-size:17px;}
+#copp-sim .psub{color:var(--muted);font-size:12.5px;margin-bottom:6px;}
+#copp-sim .best{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px;}
+#copp-sim .bchip{border:1px solid var(--line);border-radius:20px;padding:5px 12px;font-size:12px;background:var(--human-dim);}
+#copp-sim .bchip b{color:var(--good);}
+#copp-sim .move{border-top:1px solid var(--line);padding:14px 0;}
+#copp-sim .move .mh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+#copp-sim .move .mt{font-weight:700;font-size:13.5px;}
+#copp-sim .move .quote{color:#3a3a3a;font-style:italic;font-size:12.5px;margin:6px 0 8px;line-height:1.5;}
+#copp-sim .adopt{display:flex;gap:18px;font-size:11.5px;color:var(--muted);align-items:center;}
+#copp-sim .adopt .gap{margin-left:auto;font-weight:700;color:var(--good);}
+#copp-sim .mini{position:relative;height:7px;width:120px;background:var(--surface2);border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:7px;}
+#copp-sim .mini>span{position:absolute;left:0;top:0;height:100%;border-radius:4px;}
+#copp-sim .pbclose{float:right;color:var(--muted);cursor:pointer;font-weight:600;font-size:12.5px;}
+/* session-creation modal */
+.sm-overlay{position:fixed;inset:0;background:rgba(20,26,42,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:24px;}
+.sm-overlay.show{display:flex;}
+.sm-modal{background:var(--surface);border-radius:16px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.35);}
+.sm-head{background:linear-gradient(135deg,#5B4FE8,#4339C0);color:#fff;padding:20px 22px;position:relative;overflow:hidden;}
+.sm-head .wm{position:absolute;right:14px;bottom:-18px;font-size:90px;font-weight:800;opacity:.12;line-height:1;}
+.sm-badges{display:flex;gap:8px;margin-bottom:10px;}
+.sm-badge{font-size:10px;font-weight:700;letter-spacing:.05em;background:rgba(255,255,255,.18);padding:4px 11px;border-radius:20px;}
+.sm-title{font-size:20px;font-weight:700;line-height:1.2;max-width:74%;}
+.sm-persona{display:flex;gap:16px;margin-top:10px;font-size:13px;opacity:.95;}
+.sm-ctrl{position:absolute;top:18px;right:18px;display:flex;gap:8px;align-items:center;}
+.sm-dot{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.6);}
+.sm-done{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:600;cursor:pointer;}
+.sm-x{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:8px;font-size:16px;cursor:pointer;}
+.sm-body{padding:20px 22px;}
+.sm-desc{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:18px;}
+.sm-cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:18px;}
+.sm-coltitle{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--ai);text-transform:uppercase;margin-bottom:10px;}
+.sm-obj{font-size:12.5px;color:var(--text-dim);line-height:1.6;}
+.sm-skill{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:9px;font-size:13px;}
+.sm-config{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.sm-cfg{font-size:11.5px;color:var(--muted);background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;}
+.sm-modelabel{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--faint);text-transform:uppercase;margin-bottom:10px;}
+.sm-modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.sm-mode{border:1px solid var(--line);border-radius:10px;padding:13px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--ink);}
+.sm-mode.active{border-color:var(--ai);background:var(--ai-dim);color:var(--ai);}
+.sm-foot{display:flex;gap:12px;padding:16px 22px;border-top:1px solid var(--line);}
+.sm-foot button{flex:1;border-radius:10px;padding:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter';}
+.sm-ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink);}
+.sm-ghost:hover{border-color:var(--ai);color:var(--ai);}
+.sm-primary{background:var(--ai);border:none;color:#fff;}
+.sm-primary:hover{filter:brightness(1.08);}
 
 /* coaching-opp tables */
 .copp-table { width: 100%; border-collapse: collapse; }
@@ -1408,6 +1496,7 @@ svg text { font-family: 'Inter', sans-serif; }
   <!-- ══════════════════════════════════════════ COACHING OPP ══ -->
   <div class="tab-panel" id="tab-coaching-opp">
 
+   <div id="copp-main">
     <div class="section-header" style="margin-top:0">
       <div class="section-title-row">
         <div class="section-dot" style="background:var(--ai)"></div>
@@ -1450,6 +1539,113 @@ svg text { font-family: 'Inter', sans-serif; }
       <!-- Detail area -->
       <div class="copp-detail" id="copp-detail"></div>
     </div>
+   </div><!-- /copp-main -->
+
+   <!-- Embedded simulations page (shown in-tab) -->
+   <div id="copp-simframe" style="display:none;">
+    <div class="copp-simbar"><button class="copp-perf-btn" style="width:auto;padding:7px 13px" onclick="closeSimFrame()">← Back to Coaching Opportunities</button></div>
+    <div id="copp-sim">
+      <div class="ctx">
+        <h1>Special-handling exception</h1>
+        <div class="csub">medical equipment, accessibility, pets · 214 interactions · #1 coaching opportunity by impact</div>
+        <div class="stat-row">
+          <div class="schip"><div class="sv" style="color:var(--bad)">62%</div><div class="sl">Team FCR</div></div>
+          <div class="schip"><div class="sv" style="color:var(--good)">88%</div><div class="sl">Best resolvers</div></div>
+          <div class="schip"><div class="sv" style="color:var(--ai)">+26 pts</div><div class="sl">Coachable gap</div></div>
+          <div class="schip"><div class="sv">214</div><div class="sl">Interactions / period</div></div>
+        </div>
+      </div>
+
+      <div class="ai-sum">
+        <div class="t">✦ What to put in the simulation</div>
+        <p>Best resolvers on special-handling exceptions win on <b>Expectations</b> and <b>Context</b> — the two widest gaps vs. the team. Build simulations where the agent <b>inherits a customer who has already looped with the bot</b>, and must: (1) open by acknowledging the prior friction, (2) state a concrete next step and timeframe <i>before</i> acting, and (3) use the carried-over history rather than re-asking. Score on whether they set expectations in the first turn and confirm the resolution will hold.</p>
+        <div class="chips"><span class="chip">Expectations</span><span class="chip">Context</span><span class="chip">Empathy</span></div>
+      </div>
+
+      <div class="sectitle">Training simulations · built from real handed-over interactions</div>
+      <div class="sims">
+        <div class="sim">
+          <div class="emo"><span class="tag hot">🔥 High emotion</span><span class="tag phi">Medical / PHI</span><span class="tag vuln">Vulnerable</span></div>
+          <h3>Medical-equipment exception</h3>
+          <div class="scn">Flight cancelled by a storm. The customer travels with <b>powered medical equipment</b> that needs temperature-controlled handling, and has to arrive tomorrow. The bot couldn't authorize the partner-carrier rebooking or the equipment handling and handed over — the customer is frightened it will fail like last time.</div>
+          <div class="says">"Will my equipment actually be handled? Last time it sat on the tarmac and nearly failed. I'm really worried."</div>
+          <div class="trains">Trains: <b>Expectations</b> · <b>Context</b> · <b>Empathy</b> · <b>Proficiency</b> (authorization path)</div>
+          <div class="acts"><button class="cta" onclick="showPB('med')">Open coaching playbook →</button></div>
+          <div class="built">Built from 3 interactions where best resolvers held the customer and the team didn't.</div>
+        </div>
+        <div class="sim">
+          <div class="emo"><span class="tag hot">🔥 Very high emotion</span><span class="tag vuln">Vulnerable · pet welfare</span></div>
+          <h3>Traveling with a pet · anxious customer</h3>
+          <div class="scn">A customer flying with their dog is <b>extremely upset</b> and asked for a human. They don't just want logistics — they need to be <b>reassured the agent understands their anxiety</b> about putting their pet on a plane, and that the agent <b>knows exactly what to do</b> to keep the dog safe and comfortable.</div>
+          <div class="says">"Please — I need to know someone actually understands. I'm terrified about putting her on this flight."</div>
+          <div class="trains">Trains: <b>Empathy</b> · <b>Patience</b> · <b>Reassurance</b> · <b>Proficiency</b> (pet-travel handling)</div>
+          <div class="acts"><button class="cta" onclick="showPB('pet')">Open coaching playbook →</button></div>
+          <div class="built">Built from interactions where best resolvers turned the customer around on emotion, not just logistics.</div>
+        </div>
+      </div>
+
+      <div class="pb" id="pb-med">
+        <span class="pbclose" onclick="hidePB()">× close</span>
+        <h2>Coaching playbook — Medical-equipment exception</h2>
+        <div class="psub">What the best resolvers do that others don't · these are the moves the simulation rewards.</div>
+        <div class="best"><span class="bchip">Best resolvers: <b>Sarah M. 91</b></span><span class="bchip"><b>Marcus T. 88</b></span><span class="bchip"><b>Priya R. 86</b></span><span class="bchip">vs team avg 62</span></div>
+        <div class="move">
+          <div class="mh"><span class="mt"><input type="checkbox" class="pb-check" checked style="margin-right:9px;vertical-align:middle;width:15px;height:15px;accent-color:var(--ai);cursor:pointer">1 · Acknowledge prior friction up front</span><span class="gap" style="color:var(--good)">best 92% vs 31%</span></div>
+          <div class="quote">"I can see you've already explained this twice — I'm not going to make you repeat it."</div>
+          <div class="adopt">Adoption<span class="mini"><span style="width:92%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:31%;background:var(--faint)"></span></span>rest</div>
+        </div>
+        <div class="move">
+          <div class="mh"><span class="mt"><input type="checkbox" class="pb-check" checked style="margin-right:9px;vertical-align:middle;width:15px;height:15px;accent-color:var(--ai);cursor:pointer">2 · Set a concrete expectation before acting</span><span class="gap">best 88% vs 24%</span></div>
+          <div class="quote">"Here's exactly what I'll do and how long it'll take — give me about two minutes."</div>
+          <div class="adopt">Adoption<span class="mini"><span style="width:88%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:24%;background:var(--faint)"></span></span>rest</div>
+        </div>
+        <div class="move">
+          <div class="mh"><span class="mt"><input type="checkbox" class="pb-check" checked style="margin-right:9px;vertical-align:middle;width:15px;height:15px;accent-color:var(--ai);cursor:pointer">3 · Use the carried-over context instead of re-asking</span><span class="gap">best 84% vs 40%</span></div>
+          <div class="quote">"I've got your order number and the full history right here."</div>
+          <div class="adopt">Adoption<span class="mini"><span style="width:84%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:40%;background:var(--faint)"></span></span>rest</div>
+        </div>
+        <div class="move">
+          <div class="mh"><span class="mt"><input type="checkbox" class="pb-check" checked style="margin-right:9px;vertical-align:middle;width:15px;height:15px;accent-color:var(--ai);cursor:pointer">4 · Confirm the resolution will stick</span><span class="gap">best 79% vs 22%</span></div>
+          <div class="quote">"You'll get an email confirmation within the hour — if it doesn't arrive, here's my direct line."</div>
+          <div class="adopt">Adoption<span class="mini"><span style="width:79%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:22%;background:var(--faint)"></span></span>rest</div>
+        </div>
+        <div style="border-top:1px solid var(--line);padding-top:16px;margin-top:4px;display:flex;justify-content:flex-end;"><button class="cta" onclick="assignSim('Medical-equipment exception')">Assign coaching simulation →</button></div>
+      </div>
+
+      <div class="pb" id="pb-pet">
+        <span class="pbclose" onclick="hidePB()">× close</span>
+        <h2>Coaching playbook — Anxious pet-traveler</h2>
+        <div class="psub">What the best resolvers do that others don't · reassurance first, then competence.</div>
+        <div class="best"><span class="bchip">Best resolvers: <b>Marcus T. 92</b></span><span class="bchip"><b>Sarah M. 89</b></span><span class="bchip"><b>Lena O. 86</b></span><span class="bchip">vs team avg 62</span></div>
+        <div class="move">
+          <div class="mh"><span class="mt"><input type="checkbox" class="pb-check" checked style="margin-right:9px;vertical-align:middle;width:15px;height:15px;accent-color:var(--ai);cursor:pointer">1 · Name the worry and validate it</span><span class="gap">best 90% vs 28%</span></div>
+          <div class="quote">"I completely understand — she's family, and trusting an airline with her is scary. Let's make sure she's safe."</div>
+          <div class="adopt">Adoption<span class="mini"><span style="width:90%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:28%;background:var(--faint)"></span></span>rest</div>
+        </div>
+        <div class="move">
+          <div class="mh"><span class="mt"><input type="checkbox" class="pb-check" checked style="margin-right:9px;vertical-align:middle;width:15px;height:15px;accent-color:var(--ai);cursor:pointer">2 · Signal competence immediately</span><span class="gap">best 86% vs 33%</span></div>
+          <div class="quote">"I handle pet travel every day — here's exactly how she'll fly and how we keep her comfortable."</div>
+          <div class="adopt">Adoption<span class="mini"><span style="width:86%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:33%;background:var(--faint)"></span></span>rest</div>
+        </div>
+        <div class="move">
+          <div class="mh"><span class="mt"><input type="checkbox" class="pb-check" checked style="margin-right:9px;vertical-align:middle;width:15px;height:15px;accent-color:var(--ai);cursor:pointer">3 · Walk the concrete plan, step by step</span><span class="gap">best 81% vs 26%</span></div>
+          <div class="quote">"Cabin vs hold, carrier size, the temperature window, check-in, and who'll meet you — let me take you through each."</div>
+          <div class="adopt">Adoption<span class="mini"><span style="width:81%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:26%;background:var(--faint)"></span></span>rest</div>
+        </div>
+        <div class="move">
+          <div class="mh"><span class="mt"><input type="checkbox" class="pb-check" checked style="margin-right:9px;vertical-align:middle;width:15px;height:15px;accent-color:var(--ai);cursor:pointer">4 · Give a confidence anchor</span><span class="gap">best 77% vs 30%</span></div>
+          <div class="quote">"I'll add a note to your booking and a direct reference, so you never have to re-explain this to anyone."</div>
+          <div class="adopt">Adoption<span class="mini"><span style="width:77%;background:var(--good)"></span></span>best&nbsp;&nbsp;<span class="mini"><span style="width:30%;background:var(--faint)"></span></span>rest</div>
+        </div>
+        <div style="border-top:1px solid var(--line);padding-top:16px;margin-top:4px;display:flex;justify-content:flex-end;"><button class="cta" onclick="assignSim('Anxious pet-traveler')">Assign coaching simulation →</button></div>
+      </div>
+    </div><!-- /copp-sim -->
+
+    <!-- session-creation modal -->
+    <div class="sm-overlay" id="sm-overlay" onclick="if(event.target===this)closeSM()">
+      <div class="sm-modal" id="sm-modal"></div>
+    </div>
+   </div>
 
   </div><!-- /coaching-opp -->
 
@@ -1465,7 +1661,12 @@ function switchTab(id, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('tab-' + id).classList.add('active');
+  const panel = document.getElementById('tab-' + id);
+  panel.classList.add('active');
+  // The Overview panel lives inside `.main`; other panels are siblings after it.
+  // Hide the empty `.main` wrapper when its panel isn't the active one so it doesn't waste space.
+  const mainEl = document.querySelector('.main');
+  if (mainEl) mainEl.style.display = mainEl.contains(panel) ? 'block' : 'none';
   if (id === 'coaching-opp') initCoppDetail();
 }
 
@@ -2138,8 +2339,8 @@ function showPerformers(idx) {
         <div class="copp-td-quote" style="font-style:normal"><span style="color:var(--ai);font-weight:600">✦</span> ${p.remarkable}</div>
       </div>
       <div style="text-align:center;flex-shrink:0">
-        <span class="copp-fcr-pill">Non-FCR ${100 - p.fcr}%</span>
-        <div class="copp-td-quote" style="font-style:normal;text-align:center">${p.vol} recoveries</div>
+        <span class="copp-fcr-pill">${p.vol}<span style="font-size:11px;font-weight:600;opacity:.7">(${100 - p.fcr}%)</span></span>
+        <div class="copp-td-quote" style="font-style:normal;text-align:center">recoveries</div>
       </div>
       <button class="copp-perf-btn" style="width:auto;padding:7px 13px;flex-shrink:0;font-size:14px" title="Intelligent Player" aria-label="Intelligent Player" onclick="openTranscript(${idx},${pi})">▶</button>
     </div>`).join('');
@@ -2155,11 +2356,88 @@ function showPerformers(idx) {
   document.getElementById('tx-modal').style.display = 'flex';
 }
 
-// Redirect to the intent's simulations page; fall back to the inline builder modal
+// Show the inlined Special-handling simulations content in-tab; fall back to the inline builder modal
 function openSimPage(idx, focusReason) {
   const d = INTENT_DATA[idx];
-  if (d.simPage) { window.location.href = d.simPage; return; }
+  if (d.simPage) {
+    document.getElementById('copp-main').style.display = 'none';
+    const frame = document.getElementById('copp-simframe');
+    frame.style.display = 'block';
+    hidePB();
+    const y = frame.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+    return;
+  }
   buildSimulation(idx, focusReason);
+}
+
+function closeSimFrame() {
+  document.getElementById('copp-simframe').style.display = 'none';
+  document.getElementById('copp-main').style.display = 'block';
+  const tabs = document.querySelector('.tabs');
+  if (tabs) window.scrollTo({ top: tabs.getBoundingClientRect().top + window.scrollY, behavior: 'smooth' });
+}
+
+// ── Inlined simulations-page behaviour ──
+function showPB(which) {
+  document.getElementById('pb-med').classList.remove('show');
+  document.getElementById('pb-pet').classList.remove('show');
+  const el = document.getElementById('pb-' + which);
+  el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function hidePB() {
+  const m = document.getElementById('pb-med'); if (m) m.classList.remove('show');
+  const p = document.getElementById('pb-pet'); if (p) p.classList.remove('show');
+}
+const SIM_SESSIONS = {
+  'Medical-equipment exception': { level:'INTERMEDIATE', persona:'Alex Chen', sentiment:'🔥 Frustrated',
+    desc:'The agent frequently misses opportunities to set expectations and confirm exception handling, leading to unresolved special-handling escalations.',
+    objective:'Address the identified gap: acknowledge prior friction, set a concrete expectation before acting, and confirm the resolution will hold.',
+    scored:['expectations','context','empathy','proficiency'] },
+  'Anxious pet-traveler': { level:'INTERMEDIATE', persona:'Jordan Blake', sentiment:'🔥 Very anxious',
+    desc:'The agent moves to logistics before reassurance, leaving anxious customers unconvinced their concern is understood.',
+    objective:'Address the identified gap: name and validate the worry, signal competence, then walk the concrete plan step by step.',
+    scored:['empathy','patience','reassurance','proficiency'] }
+};
+function assignSim(name) {
+  const s = SIM_SESSIONS[name] || {level:'INTERMEDIATE',persona:'Customer',sentiment:'🔥 Frustrated',desc:'',objective:'',scored:[]};
+  const skills = s.scored.map(sk => `<div class="sm-skill">⭐ <span>${sk}</span></div>`).join('');
+  document.getElementById('sm-modal').innerHTML =
+    '<div class="sm-head">' +
+      '<div class="wm">G</div>' +
+      '<div class="sm-badges"><span class="sm-badge">QUALITY SCORE</span><span class="sm-badge">' + s.level + '</span></div>' +
+      '<div class="sm-title">Quality Score – ' + name + '</div>' +
+      '<div class="sm-persona"><span>🧑 ' + s.persona + '</span><span>' + s.sentiment + '</span></div>' +
+      '<div class="sm-ctrl"><div class="sm-dot"></div><button class="sm-done" onclick="closeSM()">× Done</button><button class="sm-x" onclick="closeSM()">×</button></div>' +
+    '</div>' +
+    '<div class="sm-body">' +
+      '<div class="sm-desc">' + s.desc + '</div>' +
+      '<div class="sm-cols">' +
+        '<div><div class="sm-coltitle">Objective</div><div class="sm-obj">' + s.objective + '</div></div>' +
+        '<div><div class="sm-coltitle">Scored on</div>' + skills + '</div>' +
+      '</div>' +
+      '<div class="sm-config"><span class="sm-cfg">🎭 In character</span><span class="sm-cfg">💬 Up to 6 turns</span><span class="sm-cfg">🚫 No hints</span><span class="sm-cfg">✨ AI feedback</span></div>' +
+      '<div class="sm-modelabel">Practice mode</div>' +
+      '<div class="sm-modes"><div class="sm-mode active" onclick="pickMode(this)">💬 Chat</div><div class="sm-mode" onclick="pickMode(this)">📞 Voice</div></div>' +
+    '</div>' +
+    '<div class="sm-foot">' +
+      '<button class="sm-ghost" onclick="alert(\'▶ Launching test session…\')">▶ Test</button>' +
+      '<button class="sm-ghost" onclick="alert(\'📅 Session scheduled.\')">📅 Schedule</button>' +
+      '<button class="sm-primary" onclick="sendSim(' + JSON.stringify(name) + ')">📨 Send to Agent</button>' +
+    '</div>';
+  document.getElementById('sm-overlay').classList.add('show');
+}
+function pickMode(el) {
+  el.parentElement.querySelectorAll('.sm-mode').forEach(m => m.classList.remove('active'));
+  el.classList.add('active');
+}
+function sendSim(name) {
+  closeSM();
+  alert('✅ Coaching simulation sent\n\n"' + name + '" is live in NICE CXone Learning and assigned to agents who show this gap in QM scoring.');
+}
+function closeSM() {
+  document.getElementById('sm-overlay').classList.remove('show');
 }
 
 // ── Build simulation → assign to under-performers ──
