@@ -718,6 +718,18 @@ svg text { font-family: 'Inter', sans-serif; }
 .tx-turn.email { max-width: 100%; }
 .tx-turn.email .tx-bubble { background: var(--surface2); color: var(--text); border-radius: 10px; border: 1px solid var(--border); }
 .tx-turn.email.agent .tx-bubble { background: var(--ai-dim); border-color: rgba(91,79,232,0.2); }
+/* AI agent turn (the bot leg before handover) */
+.tx-ai { align-self: flex-start; max-width: 82%; }
+.tx-ai .tx-who { color: var(--ai); }
+.tx-ai .tx-bubble { font-size: 13px; line-height: 1.5; padding: 10px 14px; border-radius: 12px; border-bottom-left-radius: 3px; background: var(--ai-dim); color: var(--text); border: 1px dashed rgba(91,79,232,0.4); }
+/* handover wait marker */
+.tx-wait-marker { align-self: center; font-size: 11px; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 999px; padding: 4px 14px; }
+/* handover context block */
+.tx-context { align-self: stretch; background: var(--handover-dim); border: 1px solid rgba(217,136,14,0.3); border-radius: 10px; padding: 12px 14px; }
+.tx-context-h { font-size: 11px; font-weight: 700; color: var(--handover); margin-bottom: 8px; }
+.tx-context-row { font-size: 12px; color: var(--text-dim); line-height: 1.5; margin-bottom: 4px; }
+.tx-context-row:last-child { margin-bottom: 0; }
+.tx-context-row b { color: var(--text); font-weight: 600; }
 .tx-body { padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 12px; }
 .tx-turn { max-width: 82%; }
 .tx-turn.cust { align-self: flex-start; }
@@ -852,7 +864,7 @@ svg text { font-family: 'Inter', sans-serif; }
 <!-- TABS -->
 <div class="tabs">
   <div class="tab active" onclick="switchTab('overview', this)">Overview</div>
-  <div class="tab" onclick="switchTab('coaching-opp', this)">Coaching Opportunities <span style="font-size:10px;font-weight:800;letter-spacing:.05em;color:#fff;background:var(--ai);padding:2px 6px;border-radius:8px;margin-left:6px;vertical-align:middle;">NEW</span></div>
+  <div class="tab" onclick="switchTab('coaching-opp', this)">Coaching Opportunities</div>
   <div class="tab" onclick="switchTab('handover', this)">Handover Details</div>
 </div>
 
@@ -1400,7 +1412,7 @@ svg text { font-family: 'Inter', sans-serif; }
     <div class="section-header" style="margin-top:0">
       <div class="section-title-row">
         <div class="section-dot" style="background:var(--ai)"></div>
-        <div class="section-title">Coaching Opportunities — Training &amp; Best Practices by Intent</div>
+        <div class="section-title">Coaching Opportunities — Coaching &amp; Training Opportunities by Intent</div>
       </div>
       <span style="font-size:12px;color:var(--muted)">Select an intent to see its escalation reasons, each with a training opportunity or best practice</span>
     </div>
@@ -1559,7 +1571,20 @@ const INTENT_DATA = [
         quote:{agent:'Priya Anand', text:'I\'ve documented this as a standing exception on your profile, so every future trip is handled this way without you asking.'} },
     ],
     performers:[
-      { name:'Sarah Okonkwo', team:'Rebooking', fcr:91, vol:41, remarkable:'Personally arranges the exception and closes the loop on ground crew at both airports — never leaves it as "it\'s in the notes".',
+      { name:'Sarah Okonkwo', team:'Rebooking', fcr:91, vol:41,
+        cust:{name:'Alex Chen', tier:'Platinum'}, agentRole:'Rebooking',
+        journey:[
+          {t:'cust', text:'My flight MSP→CDG was cancelled and I travel with powered medical equipment that needs temperature-controlled handling. I have to get there tomorrow.'},
+          {t:'ai', text:'I\'m sorry — flight VYR221 was cancelled due to the storm. Rebooking onto a partner carrier and the medical-equipment handling both need a specialist to authorize. I\'m connecting you to one now.'},
+          {t:'wait', text:'1:10 — waiting for a live agent'},
+          {t:'context', carried:'Booking VYR221 (MSP→CDG · cancelled, winter storm) · Alex Chen · Platinum · 3rd contact on this issue', botDid:'looked up the flight · proposed rebooking · flagged medical-equipment + partner-carrier exception for a specialist', sentiment:'🔥 Hot — frustrated, worried the equipment won\'t be handled, near abandonment (1.8 / 5)'},
+          {t:'agent', text:'I can see you\'ve already been through this twice — I won\'t make you repeat it. I have the cancellation and your equipment requirements right here.'},
+          {t:'cust', text:'Will my equipment actually be handled? Last time it sat on the tarmac and nearly failed. I\'m really worried.'},
+          {t:'agent', text:'I\'ve arranged a partner-carrier exception and flagged temperature-controlled handling at both airports — set up just for you, not just noted in the file.'},
+          {t:'cust', text:'You\'ve actually done all that already?'},
+          {t:'agent', text:'It\'s done and confirmed. I\'ve also added it as a standing note so your next trip is handled the same way automatically.'},
+        ],
+        remarkable:'Personally arranges the exception and closes the loop on ground crew at both airports — never leaves it as "it\'s in the notes".',
         transcript:[
           {who:'cust', text:'Last time I flew with my oxygen concentrator it got held at security and I missed my connection. I can\'t go through that again.'},
           {who:'agent', text:'I\'m so sorry that happened — that should never have been on you. Let me make sure it can\'t repeat this time.'},
@@ -1581,7 +1606,19 @@ const INTENT_DATA = [
               {who:'cust', text:'Perfect, thanks.'},
             ] },
         ] },
-      { name:'Marcus Reyes', team:'Care', fcr:88, vol:38, remarkable:'Coordinates companion and carer needs across both legs of the journey proactively, so nothing falls through the handover.',
+      { name:'Marcus Reyes', team:'Care', fcr:88, vol:38,
+        cust:{name:'Dana Whitfield', tier:'Gold'}, agentRole:'Care',
+        journey:[
+          {t:'cust', text:'I\'m travelling with my carer next week but the booking split us across both flights and I can\'t fix it myself.'},
+          {t:'ai', text:'I can see the two bookings, but reseating you together across both legs and arranging assistance needs a live agent. Connecting you now.'},
+          {t:'wait', text:'0:52 — waiting for a live agent'},
+          {t:'context', carried:'Linked bookings (outbound + return) · Dana Whitfield · Gold · travelling with carer · 2nd contact', botDid:'located both bookings · confirmed carer eligibility · flagged assistance request', sentiment:'😟 Anxious — worried the assistance won\'t be there on the day (2.3 / 5)'},
+          {t:'agent', text:'I can see exactly what happened — let me sort the whole journey, not just one flight.'},
+          {t:'cust', text:'It\'s both flights that always get missed.'},
+          {t:'agent', text:'I\'ve reseated you together on both legs and arranged assistance on and off the aircraft at each airport.'},
+          {t:'agent', text:'Both legs are confirmed end to end — you won\'t need to re-explain this to anyone on the day.'},
+        ],
+        remarkable:'Coordinates companion and carer needs across both legs of the journey proactively, so nothing falls through the handover.',
         transcript:[
           {who:'cust', text:'I\'m travelling with my carer but the booking split us up and the bot couldn\'t fix it.'},
           {who:'agent', text:'I can see exactly what happened — let me sort the whole journey, not just one flight.'},
@@ -1620,7 +1657,20 @@ const INTENT_DATA = [
         quote:{agent:'Sarah Okonkwo', text:'I\'ve written up your full case for my manager so you won\'t have to explain any of this again.'} },
     ],
     performers:[
-      { name:'Marcus Reyes', team:'Care', fcr:87, vol:24, remarkable:'Replaces an open-ended outcome with a definitive structure — names who is acting, the next step, and a committed timeframe.',
+      { name:'Marcus Reyes', team:'Care', fcr:87, vol:24,
+        cust:{name:'Robert Ellison', tier:'Gold'}, agentRole:'Care',
+        journey:[
+          {t:'cust', text:'I was promised a refund of $214 weeks ago and nothing has happened. I want to know what is going on.'},
+          {t:'ai', text:'I can see the refund request, but amounts at this level need manager approval, which I can\'t authorize. I\'m handing you to someone who can.'},
+          {t:'wait', text:'1:24 — waiting for a live agent'},
+          {t:'context', carried:'Refund $214 · Robert Ellison · Gold · pending manager approval · 3rd contact', botDid:'verified the refund request · confirmed eligibility · flagged for manager sign-off', sentiment:'🔥 Hot — feels ignored, no clear owner or timeline (2.0 / 5)'},
+          {t:'agent', text:'That\'s not good enough and I\'ll fix it. Let me tell you exactly who\'s handling it and when you\'ll hear back.'},
+          {t:'cust', text:'Every time I call it\'s a different answer.'},
+          {t:'agent', text:'I\'ve submitted it to my supervisor, Dana, who reviews these daily. You\'ll have a decision by Thursday and I\'ll personally call you that morning.'},
+          {t:'cust', text:'So it\'s actually moving, with a real date.'},
+          {t:'agent', text:'A real date and a real person. It\'s in your file with my name on it, so anyone you speak to sees the same commitment.'},
+        ],
+        remarkable:'Replaces an open-ended outcome with a definitive structure — names who is acting, the next step, and a committed timeframe.',
         transcript:[
           {who:'cust', text:'The bot said my refund "needs manager approval" and that was it. No idea what happens now.'},
           {who:'agent', text:'That\'s not good enough and I\'ll fix it. Let me tell you exactly who\'s handling it and when you\'ll hear back.'},
@@ -1636,7 +1686,19 @@ const INTENT_DATA = [
               {who:'cust', text:'You actually called when you said you would, and now this in writing. Thank you.'},
             ] },
         ] },
-      { name:'Devon Pratt', team:'Billing Resolution', fcr:82, vol:19, remarkable:'Commits to a concrete callback time even while the approval is still pending, so the wait never feels open-ended.',
+      { name:'Devon Pratt', team:'Billing Resolution', fcr:82, vol:19,
+        cust:{name:'Mei Lin', tier:'Silver'}, agentRole:'Billing Resolution',
+        journey:[
+          {t:'cust', text:'How long is this approval going to take? I\'ve had three different answers already.'},
+          {t:'ai', text:'Your request is with the approvals team, but I can\'t give a firm timeline myself. Let me connect you to an agent who can.'},
+          {t:'wait', text:'0:48 — waiting for a live agent'},
+          {t:'context', carried:'Discretionary approval pending · Mei Lin · Silver · 3rd contact', botDid:'confirmed the request is in the approval queue · could not commit a timeframe', sentiment:'😤 Frustrated — wants certainty, tired of vague answers (2.4 / 5)'},
+          {t:'agent', text:'Let me give you one clear answer you can hold me to. The review takes up to 48 hours.'},
+          {t:'cust', text:'That\'s the first straight answer I\'ve had.'},
+          {t:'agent', text:'I\'ll call you Thursday by noon with the outcome either way — approved or not, you\'ll hear from me directly.'},
+          {t:'agent', text:'It\'s logged in your file with my name on it, so the commitment stands no matter who you reach.'},
+        ],
+        remarkable:'Commits to a concrete callback time even while the approval is still pending, so the wait never feels open-ended.',
         transcript:[
           {who:'cust', text:'How long is this approval going to take? Every time I call it\'s a different answer.'},
           {who:'agent', text:'Let me give you one clear answer you can hold me to. The review takes up to 48 hours.'},
@@ -1675,7 +1737,19 @@ const INTENT_DATA = [
         quote:{agent:'Sarah Okonkwo', text:'Let\'s tackle the urgent billing block first so your service is restored, then I\'ll fix the rest while we talk.'} },
     ],
     performers:[
-      { name:'Priya Anand', team:'Care', fcr:84, vol:33, remarkable:'Surfaces and tracks every open issue at the start, so a multi-problem contact doesn\'t close with half of it unresolved.',
+      { name:'Priya Anand', team:'Care', fcr:84, vol:33,
+        cust:{name:'Sofia Marrone', tier:'Gold'}, agentRole:'Care',
+        journey:[
+          {t:'cust', text:'I\'ve got a billing error, my app won\'t log in, and my address is wrong. The bot only dealt with the login.'},
+          {t:'ai', text:'I\'ve reset your login, but the billing correction and address change need an agent. Connecting you now.'},
+          {t:'wait', text:'0:39 — waiting for a live agent'},
+          {t:'context', carried:'3 open issues (billing · login · address) · Sofia Marrone · Gold · 2nd contact', botDid:'reset the login · could not action billing or address · flagged remaining issues', sentiment:'😕 Irritated — worried the other two will be forgotten (2.6 / 5)'},
+          {t:'agent', text:'Thanks for laying it all out — let me note all three so none of them slip: billing error, login, and address.'},
+          {t:'cust', text:'Usually I have to call back for the other things.'},
+          {t:'agent', text:'Not today. I\'ll work through them in order and confirm each as done before we finish.'},
+          {t:'agent', text:'Billing corrected, login reset, address updated — all three confirmed before you go.'},
+        ],
+        remarkable:'Surfaces and tracks every open issue at the start, so a multi-problem contact doesn\'t close with half of it unresolved.',
         transcript:[
           {who:'cust', text:'I\'ve got a billing error, my app won\'t log in, and my address is wrong. The bot only dealt with the login.'},
           {who:'agent', text:'Thanks for laying it all out — let me note all three so none of them slip: billing error, login, and address.'},
@@ -1692,7 +1766,19 @@ const INTENT_DATA = [
               {who:'cust', text:'Okay great, it just refreshed. All correct.'},
             ] },
         ] },
-      { name:'Marcus Reyes', team:'Care', fcr:80, vol:28, remarkable:'Owns cross-department coordination instead of transferring, so the customer never gets bounced between teams.',
+      { name:'Marcus Reyes', team:'Care', fcr:80, vol:28,
+        cust:{name:'James Park', tier:'Silver'}, agentRole:'Care',
+        journey:[
+          {t:'cust', text:'Billing says it\'s a technical problem, tech says it\'s billing. I\'ve been transferred four times.'},
+          {t:'ai', text:'I can see contacts with both teams, but I can\'t coordinate them. Let me connect you to an agent who can own this end to end.'},
+          {t:'wait', text:'1:05 — waiting for a live agent'},
+          {t:'context', carried:'Cross-department dispute (billing ↔ technical) · James Park · Silver · 4th contact', botDid:'logged the disputed charge · confirmed both teams involved · could not coordinate', sentiment:'🔥 Hot — bounced repeatedly, close to leaving (1.9 / 5)'},
+          {t:'agent', text:'That ends here — I\'ll coordinate both teams myself so you\'re not in the middle of it.'},
+          {t:'cust', text:'So I don\'t have to call either of them?'},
+          {t:'agent', text:'No more calls. I\'ve opened a joint case, spoken to both, and confirmed the charge was a system error tech has now cleared.'},
+          {t:'agent', text:'It\'s resolved on both sides and I\'ll send written confirmation today.'},
+        ],
+        remarkable:'Owns cross-department coordination instead of transferring, so the customer never gets bounced between teams.',
         transcript:[
           {who:'cust', text:'Billing says it\'s a technical problem, tech says it\'s billing. I\'ve been transferred four times.'},
           {who:'agent', text:'That ends here — I\'ll coordinate both teams myself so you\'re not in the middle of it.'},
@@ -1730,7 +1816,19 @@ const INTENT_DATA = [
         quote:{agent:'Marcus Reyes', text:'Here\'s exactly what I\'m doing and by when — and my name is on it so you have a point of contact.'} },
     ],
     performers:[
-      { name:'Priya Anand', team:'Care', fcr:93, vol:29, remarkable:'Validates the emotion explicitly before solving, then recaps the history — defusing repeat-contact frustration on first response.',
+      { name:'Priya Anand', team:'Care', fcr:93, vol:29,
+        cust:{name:'Helen Voss', tier:'Gold'}, agentRole:'Care',
+        journey:[
+          {t:'cust', text:'This is the fourth time I\'ve called about the same thing. I\'m done being polite.'},
+          {t:'ai', text:'I can see this has been a repeated issue and I\'m sorry. This needs a person who can resolve it properly — connecting you now.'},
+          {t:'wait', text:'1:18 — waiting for a live agent'},
+          {t:'context', carried:'Same unresolved issue · Helen Voss · Gold · 4th contact', botDid:'pulled the prior three contacts · could not resolve · escalated to a human', sentiment:'🔥 Very hot — angry, feels unheard, high churn risk (1.5 / 5)'},
+          {t:'agent', text:'You have every right to be frustrated, and I\'m sorry you\'ve had to call four times. That\'s on us, not you.'},
+          {t:'cust', text:'Finally, someone who actually looked.'},
+          {t:'agent', text:'I\'ve read through all four contacts so you don\'t have to repeat anything — I can see exactly where this broke down.'},
+          {t:'agent', text:'Here\'s what I\'m doing to fix it for good, and I\'ll personally follow up Friday to confirm it held.'},
+        ],
+        remarkable:'Validates the emotion explicitly before solving, then recaps the history — defusing repeat-contact frustration on first response.',
         transcript:[
           {who:'cust', text:'This is the fourth time I\'ve called about the same thing. I\'m done being polite.'},
           {who:'agent', text:'You have every right to be frustrated, and I\'m sorry you\'ve had to call four times. That\'s on us, not you.'},
@@ -1747,7 +1845,19 @@ const INTENT_DATA = [
               {who:'cust', text:'Thank you for treating this seriously.'},
             ] },
         ] },
-      { name:'Sarah Okonkwo', team:'Rebooking', fcr:90, vol:24, remarkable:'Leads with acknowledgement and a full history recap, so the customer feels heard before any fix is offered.',
+      { name:'Sarah Okonkwo', team:'Rebooking', fcr:90, vol:24,
+        cust:{name:'Daniel Reyes', tier:'Silver'}, agentRole:'Rebooking',
+        journey:[
+          {t:'cust', text:'I\'m so tired of explaining this over and over to different people.'},
+          {t:'ai', text:'I understand, and I won\'t ask you to start over. Let me bring in an agent with your full history.'},
+          {t:'wait', text:'0:57 — waiting for a live agent'},
+          {t:'context', carried:'Repeat issue · Daniel Reyes · Silver · 3rd contact', botDid:'compiled the full contact history · escalated with context attached', sentiment:'😞 Exhausted — worn down, feels unheard (2.1 / 5)'},
+          {t:'agent', text:'I can hear how exhausting this has been, and you\'re right to be upset. Let me take that off you.'},
+          {t:'cust', text:'That\'s all I wanted, for someone to actually see it.'},
+          {t:'agent', text:'I\'ve pulled your full history — three contacts, same issue. You shouldn\'t have had to chase this.'},
+          {t:'agent', text:'Here\'s the concrete fix with a date attached so it doesn\'t happen a fourth time.'},
+        ],
+        remarkable:'Leads with acknowledgement and a full history recap, so the customer feels heard before any fix is offered.',
         transcript:[
           {who:'cust', text:'I\'m so tired of explaining this over and over to different people.'},
           {who:'agent', text:'I can hear how exhausting this has been, and you\'re right to be upset. Let me take that off you.'},
@@ -1785,7 +1895,21 @@ const INTENT_DATA = [
         quote:{agent:'Priya Anand', text:'Before any offer, let me fix what went wrong — that\'s the real reason you\'re thinking of leaving.'} },
     ],
     performers:[
-      { name:'Devon Pratt', team:'Retention', fcr:97, vol:19, remarkable:'Acknowledges the competitor offer head-on and responds to the specific value gap — wins on what matters to that customer, not a blanket discount.',
+      { name:'Devon Pratt', team:'Retention', fcr:97, vol:19,
+        cust:{name:'Olivia Grant', tier:'Platinum'}, agentRole:'Retention',
+        journey:[
+          {t:'cust', text:'A competitor is offering me the same thing for $15 less. Give me a reason to stay or I\'m cancelling.'},
+          {t:'ai', text:'I can see your plan and the cancellation request. A retention review like this is best handled by a specialist — connecting you now.'},
+          {t:'wait', text:'0:44 — waiting for a live agent'},
+          {t:'context', carried:'Cancel intent · competitor offer −$15 · Olivia Grant · Platinum · 1st contact', botDid:'pulled plan + usage · logged the competitor offer · flagged retention review', sentiment:'😐 Decided — calm but ready to leave on price (3.0 / 5)'},
+          {t:'agent', text:'That\'s a genuinely fair offer, and I won\'t pretend otherwise. Let me focus on the value that actually matters to you.'},
+          {t:'cust', text:'Their plan is cheaper, that\'s the bottom line.'},
+          {t:'agent', text:'You use priority support and cloud backup heavily — neither is in their plan. Losing those would cost you more than $15 in time.'},
+          {t:'cust', text:'True, I forgot their plan is bare-bones.'},
+          {t:'agent', text:'I\'ll also match $10 of the gap, so you\'re barely paying more for far more. Keep everything you rely on?'},
+          {t:'cust', text:'Yeah, that actually makes sense. I\'ll stay.'},
+        ],
+        remarkable:'Acknowledges the competitor offer head-on and responds to the specific value gap — wins on what matters to that customer, not a blanket discount.',
         transcript:[
           {who:'cust', text:'A competitor is offering me the same thing for $15 less. Give me a reason to stay.'},
           {who:'agent', text:'That\'s a genuinely fair offer, and I won\'t pretend otherwise. Let me focus on the value that actually matters to you.'},
@@ -1803,7 +1927,20 @@ const INTENT_DATA = [
               {who:'cust', text:'Seeing it laid out like that, staying is the obvious call.'},
             ] },
         ] },
-      { name:'Marcus Reyes', team:'Retention', fcr:94, vol:16, remarkable:'Reframes a price objection around real usage and value before reaching for any discount — finds the customer a better-fit plan rather than just cutting the price.',
+      { name:'Marcus Reyes', team:'Retention', fcr:94, vol:16,
+        cust:{name:'Tom Becker', tier:'Gold'}, agentRole:'Retention',
+        journey:[
+          {t:'cust', text:'It\'s just too expensive. I\'m cancelling.'},
+          {t:'ai', text:'I can process cancellations, but let me connect you to someone who can review your plan first in case there\'s a better fit.'},
+          {t:'wait', text:'0:36 — waiting for a live agent'},
+          {t:'context', carried:'Cancel intent · price objection · Tom Becker · Gold · 1st contact', botDid:'pulled plan + usage · logged the price objection · flagged for retention', sentiment:'😐 Decided — frustrated by cost, open to options (2.8 / 5)'},
+          {t:'agent', text:'Let me look at how you actually use this before we talk price — I might be able to fix the real issue.'},
+          {t:'cust', text:'I just feel like I\'m overpaying.'},
+          {t:'agent', text:'You\'re on the premium tier but only using about 40% of it. There\'s a plan with everything you touch for $20 less.'},
+          {t:'cust', text:'Wait, I\'ve been overpaying this whole time?'},
+          {t:'agent', text:'For your usage, yes. I\'ve switched you to the right plan — same value you rely on, $20 cheaper every month.'},
+        ],
+        remarkable:'Reframes a price objection around real usage and value before reaching for any discount — finds the customer a better-fit plan rather than just cutting the price.',
         transcript:[
           {who:'cust', text:'It\'s just too expensive. I\'m cancelling.'},
           {who:'agent', text:'Let me look at how you actually use this before we talk price — I might be able to fix the real issue.'},
@@ -1839,8 +1976,8 @@ function selectIntent(idx, el) {
     const isOpp = r.type === 'opp';
     const accent = isOpp ? 'var(--ai)' : 'var(--human)';
     const tag = isOpp
-      ? '<span class="copp-reason-tag opp">🎯 Training Opp</span>'
-      : '<span class="copp-reason-tag bp">⭐ Best Practice</span>';
+      ? '<span class="copp-reason-tag opp">🎯 Coaching Opportunity</span>'
+      : '<span class="copp-reason-tag bp">📚 Training Opportunity</span>';
     return `
       <tr>
         <td style="max-width:280px"><div class="copp-td-name">${r.name}</div><div class="copp-td-quote" style="font-style:normal">${r.summary || r.insight}</div></td>
@@ -1863,20 +2000,19 @@ function selectIntent(idx, el) {
     <div class="copp-card">
       <div class="copp-card-label opp">📊 ${d.name} — Resolution Breakdown</div>
       <div class="copp-stat-row">
-        <div class="copp-stat"><div class="copp-stat-val">${d.fcr}</div><div class="copp-stat-lbl">FCR score</div></div>
         <div class="copp-stat"><div class="copp-stat-val">${d.vol}</div><div class="copp-stat-lbl">Contacts / wk</div></div>
-        <div class="copp-stat"><div class="copp-stat-val" style="color:var(--ai)">${oppCount}</div><div class="copp-stat-lbl">Training opps</div></div>
-        <div class="copp-stat"><div class="copp-stat-val" style="color:var(--human)">${bpCount}</div><div class="copp-stat-lbl">Best practices</div></div>
+        <div class="copp-stat"><div class="copp-stat-val" style="color:var(--ai)">${oppCount}</div><div class="copp-stat-lbl">Coaching opps</div></div>
+        <div class="copp-stat"><div class="copp-stat-val" style="color:var(--human)">${bpCount}</div><div class="copp-stat-lbl">Training opps</div></div>
       </div>
       <div style="height:12px;border-radius:6px;overflow:hidden;display:flex;margin-bottom:8px;box-shadow:inset 0 1px 2px rgba(0,0,0,0.06);">
-        <div style="width:${d.notResolved}%;background:var(--danger);opacity:.85"></div>
-        <div style="width:${d.reopened}%;background:var(--handover);opacity:.85"></div>
         <div style="width:${d.held}%;background:var(--human);opacity:.85"></div>
+        <div style="width:${d.reopened}%;background:var(--handover);opacity:.85"></div>
+        <div style="width:${d.notResolved}%;background:var(--danger);opacity:.85"></div>
       </div>
       <div style="font-size:11px;color:var(--muted);display:flex;gap:14px;">
-        <span><span style="color:var(--danger);font-weight:600">${d.notResolved}%</span> not resolved</span>
-        <span><span style="color:var(--handover);font-weight:600">${d.reopened}%</span> reopened</span>
-        <span><span style="color:var(--human);font-weight:600">${d.held}%</span> resolved &amp; held</span>
+        <span><span style="color:var(--human);font-weight:600">${d.held}%</span> Resolved and Held</span>
+        <span><span style="color:var(--handover);font-weight:600">${d.reopened}%</span> Reopened</span>
+        <span><span style="color:var(--danger);font-weight:600">${d.notResolved}%</span> Not Resolved</span>
       </div>
     </div>
 
@@ -1900,8 +2036,23 @@ let TX_CTX = { idx:0, pi:0 };
 
 // Normalise a performer into a list of interactions across channels
 function perfInteractions(p) {
-  const first = { channel: p.channel || 'voice', meta: p.meta || '', attachments: p.attachments || [], turns: p.transcript };
+  const first = { channel: p.channel || 'voice', meta: p.meta || '', attachments: p.attachments || [], turns: p.journey || p.transcript };
   return [first, ...(p.extras || [])];
+}
+
+// The handover/transfer context for a performer (taken from their primary journey)
+function perfHandover(p) {
+  const turns = p.journey || p.transcript || [];
+  return turns.find(t => (t.t || t.who) === 'context') || null;
+}
+
+function contextBlockHtml(firstName, c) {
+  return `<div class="tx-context">
+    <div class="tx-context-h">👁 What ${firstName} saw at pickup · carried over from the AI agent</div>
+    <div class="tx-context-row"><b>Context carried over:</b> ${c.carried}</div>
+    <div class="tx-context-row"><b>Bot already did:</b> ${c.botDid}</div>
+    <div class="tx-context-row"><b>Sentiment at handoff:</b> ${c.sentiment}</div>
+  </div>`;
 }
 
 function openTranscript(idx, pi) {
@@ -1945,15 +2096,32 @@ function switchInteraction(ii) {
     <div class="tx-attachments">
       ${it.attachments.map(a => `<span class="tx-file">📎 ${a}</span>`).join('')}
     </div>` : '';
+  const custLabel = p.cust ? `Customer (${p.cust.name} · ${p.cust.tier})` : 'Customer';
+  const agentLabel = p.agentRole ? `${p.name} (${p.agentRole})` : p.name;
+  const firstName = p.name.split(' ')[0];
   const turns = it.turns.map(t => {
-    const isAgent = t.who === 'agent';
-    const label = isEmail ? (isAgent ? p.name : 'Customer') : (isAgent ? p.name : 'Customer');
+    const type = t.t || t.who; // support rich (t) and simple (who) turns
+    if (type === 'ai') {
+      return `<div class="tx-ai"><div class="tx-who">🤖 AI Agent</div><div class="tx-bubble">${t.text}</div></div>`;
+    }
+    if (type === 'wait') {
+      return `<div class="tx-wait-marker">⏸ ${t.text}</div>`;
+    }
+    if (type === 'context') {
+      return contextBlockHtml(firstName, t);
+    }
+    const isAgent = type === 'agent';
+    const label = isAgent ? agentLabel : custLabel;
     return `<div class="tx-turn ${isAgent?'agent':'cust'} ${isEmail?'email':''}">
       <div class="tx-who">${label}</div>
       <div class="tx-bubble">${t.text}</div>
     </div>`;
   }).join('');
-  document.getElementById('tx-interaction').innerHTML = `${player}${attach}<div class="tx-body">${turns}</div>`;
+  // Ensure every interaction shows the transfer detail — prepend it when not already inline
+  const hasContext = it.turns.some(t => (t.t || t.who) === 'context');
+  const ho = perfHandover(p);
+  const ctxPrefix = (!hasContext && ho) ? contextBlockHtml(firstName, ho) : '';
+  document.getElementById('tx-interaction').innerHTML = `${player}${attach}<div class="tx-body">${ctxPrefix}${turns}</div>`;
 }
 
 function closeTranscript() {
@@ -1974,7 +2142,7 @@ function showPerformers(idx) {
         <span class="copp-fcr-pill">${p.fcr}</span>
         <div class="copp-td-quote" style="font-style:normal;text-align:center">${p.vol} recoveries</div>
       </div>
-      <button class="copp-perf-btn" style="width:auto;padding:7px 13px;flex-shrink:0" onclick="openTranscript(${idx},${pi})">Transcripts →</button>
+      <button class="copp-perf-btn" style="width:auto;padding:7px 13px;flex-shrink:0;font-size:14px" title="Intelligent Player" aria-label="Intelligent Player" onclick="openTranscript(${idx},${pi})">▶</button>
     </div>`).join('');
   document.getElementById('tx-modal-body').innerHTML = `
     <div class="tx-head">
