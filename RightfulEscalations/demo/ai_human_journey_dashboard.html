@@ -656,7 +656,7 @@ svg text { font-family: 'Inter', sans-serif; }
 .copp-td-name { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
 .copp-td-quote { font-size: 11px; color: var(--muted); font-style: italic; line-height: 1.45; }
 .copp-td-insight { line-height: 1.5; max-width: 360px; }
-.copp-fcr-pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--human); background: var(--human-dim); padding: 3px 10px; border-radius: 6px; }
+.copp-fcr-pill { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--ai); background: var(--ai-dim); padding: 3px 10px; border-radius: 6px; }
 
 /* build-simulation CTA */
 .copp-sim-cta-card { display: flex; align-items: center; gap: 18px; background: linear-gradient(105deg,#EEF4FF,#F5EEFE); border: 1px solid #E2E0F5; border-radius: 12px; padding: 18px 22px; }
@@ -1419,31 +1419,31 @@ svg text { font-family: 'Inter', sans-serif; }
     <div class="copp-layout">
       <!-- Intent sidebar -->
       <div class="copp-sidebar">
-        <div class="copp-sidebar-label">Intents · worst to best FCR</div>
+        <div class="copp-sidebar-label">Intents · highest Non-FCR first</div>
         <div class="copp-intent active" onclick="selectIntent(0,this)">
           <div class="copp-intent-name">Special-handling exception</div>
           <div class="copp-intent-sub">Medical equipment · accessibility · companions</div>
-          <div class="copp-intent-stats"><span class="copp-badge red">FCR 44</span><span class="copp-vol">214 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 56</span><span class="copp-vol">214 contacts/wk</span></div>
         </div>
         <div class="copp-intent" onclick="selectIntent(1,this)">
           <div class="copp-intent-name">Manager / authority sign-off</div>
           <div class="copp-intent-sub">Discretionary decisions · escalated authority</div>
-          <div class="copp-intent-stats"><span class="copp-badge red">FCR 53</span><span class="copp-vol">96 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 47</span><span class="copp-vol">96 contacts/wk</span></div>
         </div>
         <div class="copp-intent" onclick="selectIntent(2,this)">
           <div class="copp-intent-name">Complex multi-issue</div>
           <div class="copp-intent-sub">Multiple linked problems · cross-department</div>
-          <div class="copp-intent-stats"><span class="copp-badge amber">FCR 56</span><span class="copp-vol">132 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 44</span><span class="copp-vol">132 contacts/wk</span></div>
         </div>
         <div class="copp-intent" onclick="selectIntent(3,this)">
           <div class="copp-intent-name">High-emotion complaint</div>
           <div class="copp-intent-sub">Vulnerable · at-risk · distressed customers</div>
-          <div class="copp-intent-stats"><span class="copp-badge amber">FCR 63</span><span class="copp-vol">158 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 37</span><span class="copp-vol">158 contacts/wk</span></div>
         </div>
         <div class="copp-intent" onclick="selectIntent(4,this)">
           <div class="copp-intent-name">Retention save</div>
           <div class="copp-intent-sub">Cancel intent · price objection · dissatisfaction</div>
-          <div class="copp-intent-stats"><span class="copp-badge blue">FCR 94</span><span class="copp-vol">87 contacts/wk</span></div>
+          <div class="copp-intent-stats"><span class="copp-badge blue">Non-FCR 6</span><span class="copp-vol">87 contacts/wk</span></div>
         </div>
       </div>
 
@@ -2008,10 +2008,10 @@ function selectIntent(idx, el) {
         <div style="width:${d.reopened}%;background:var(--handover);opacity:.85"></div>
         <div style="width:${d.notResolved}%;background:var(--danger);opacity:.85"></div>
       </div>
-      <div style="font-size:11px;color:var(--muted);display:flex;gap:14px;">
-        <span><span style="color:var(--human);font-weight:600">${d.held}%</span> Resolved and Held</span>
-        <span><span style="color:var(--handover);font-weight:600">${d.reopened}%</span> Reopened</span>
-        <span><span style="color:var(--danger);font-weight:600">${d.notResolved}%</span> Not Resolved</span>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;display:flex;gap:16px;">
+        <span style="color:var(--human)">${d.held}% Resolved &amp; Held</span>
+        <span style="color:var(--handover)">${d.reopened}% Reopened</span>
+        <span style="color:var(--danger)">${d.notResolved}% Not Resolved</span>
       </div>
     </div>
 
@@ -2067,7 +2067,7 @@ function openTranscript(idx, pi) {
     <div class="tx-head">
       <div>
         <div class="tx-title">${p.name} · ${d.name}</div>
-        <div class="tx-sub">FCR ${p.fcr} · ${p.vol} recoveries · ${inters.length} interaction${inters.length!==1?'s':''} across channels</div>
+        <div class="tx-sub"><span style="color:var(--ai);font-weight:600">Non-FCR ${100 - p.fcr}%</span> · ${p.vol} recoveries · ${inters.length} interaction${inters.length!==1?'s':''} across channels</div>
       </div>
       <div class="tx-close" onclick="closeTranscript()">×</div>
     </div>
@@ -2138,7 +2138,7 @@ function showPerformers(idx) {
         <div class="copp-td-quote" style="font-style:normal"><span style="color:var(--ai);font-weight:600">✦</span> ${p.remarkable}</div>
       </div>
       <div style="text-align:center;flex-shrink:0">
-        <span class="copp-fcr-pill">${p.fcr}</span>
+        <span class="copp-fcr-pill">Non-FCR ${100 - p.fcr}%</span>
         <div class="copp-td-quote" style="font-style:normal;text-align:center">${p.vol} recoveries</div>
       </div>
       <button class="copp-perf-btn" style="width:auto;padding:7px 13px;flex-shrink:0;font-size:14px" title="Intelligent Player" aria-label="Intelligent Player" onclick="openTranscript(${idx},${pi})">▶</button>
@@ -2192,7 +2192,7 @@ function buildSimulation(idx, focusReason) {
         <div class="copp-perf-avatar" style="width:28px;height:28px;font-size:10px;background:var(--muted)">${u.name.split(' ').map(n=>n[0]).join('')}</div>
         <div><div class="copp-td-name">${u.name}</div><div class="copp-td-quote" style="font-style:normal">${u.gap}</div></div>
       </div>
-      <span class="copp-fcr-pill" style="background:var(--danger-dim);color:var(--danger)">FCR ${u.fcr}</span>
+      <span class="copp-fcr-pill">Non-FCR ${100 - u.fcr}%</span>
     </label>`).join('');
 
   document.getElementById('tx-modal-body').innerHTML = `

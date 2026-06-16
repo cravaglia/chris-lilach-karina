@@ -74,6 +74,39 @@
   .mini{position:relative;height:7px;width:120px;background:var(--surface2);border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:7px;}
   .mini>span{position:absolute;left:0;top:0;height:100%;border-radius:4px;}
   .pbclose{float:right;color:var(--muted);cursor:pointer;font-weight:600;font-size:12.5px;}
+
+  /* session-creation modal */
+  .sm-overlay{position:fixed;inset:0;background:rgba(20,26,42,.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:24px;}
+  .sm-overlay.show{display:flex;}
+  .sm-modal{background:var(--surface);border-radius:16px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.35);}
+  .sm-head{background:linear-gradient(135deg,#5B4FE8,#4339C0);color:#fff;padding:20px 22px;position:relative;overflow:hidden;}
+  .sm-head .wm{position:absolute;right:14px;bottom:-18px;font-size:90px;font-weight:800;opacity:.12;line-height:1;}
+  .sm-badges{display:flex;gap:8px;margin-bottom:10px;}
+  .sm-badge{font-size:10px;font-weight:700;letter-spacing:.05em;background:rgba(255,255,255,.18);padding:4px 11px;border-radius:20px;}
+  .sm-title{font-size:20px;font-weight:700;line-height:1.2;max-width:74%;}
+  .sm-persona{display:flex;gap:16px;margin-top:10px;font-size:13px;opacity:.95;}
+  .sm-ctrl{position:absolute;top:18px;right:18px;display:flex;gap:8px;align-items:center;}
+  .sm-dot{width:30px;height:30px;border-radius:50%;border:2px solid rgba(255,255,255,.6);}
+  .sm-done{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:8px;padding:7px 12px;font-size:12.5px;font-weight:600;cursor:pointer;}
+  .sm-x{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:8px;font-size:16px;cursor:pointer;}
+  .sm-body{padding:20px 22px;}
+  .sm-desc{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:18px;}
+  .sm-cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:18px;}
+  .sm-coltitle{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--ai);text-transform:uppercase;margin-bottom:10px;}
+  .sm-obj{font-size:12.5px;color:var(--text-dim);line-height:1.6;}
+  .sm-skill{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:9px;font-size:13px;}
+  .sm-config{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .sm-cfg{font-size:11.5px;color:var(--muted);background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;}
+  .sm-modelabel{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--faint);text-transform:uppercase;margin-bottom:10px;}
+  .sm-modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .sm-mode{border:1px solid var(--line);border-radius:10px;padding:13px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--ink);}
+  .sm-mode.active{border-color:var(--ai);background:var(--ai-dim);color:var(--ai);}
+  .sm-foot{display:flex;gap:12px;padding:16px 22px;border-top:1px solid var(--line);}
+  .sm-foot button{flex:1;border-radius:10px;padding:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter';}
+  .sm-ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink);}
+  .sm-ghost:hover{border-color:var(--ai);color:var(--ai);}
+  .sm-primary{background:var(--ai);border:none;color:#fff;}
+  .sm-primary:hover{filter:brightness(1.08);}
 </style>
 </head>
 <body>
@@ -211,6 +244,11 @@
 
 </div>
 
+<!-- SESSION-CREATION MODAL -->
+<div class="sm-overlay" id="sm-overlay" onclick="if(event.target===this)closeSM()">
+  <div class="sm-modal" id="sm-modal"></div>
+</div>
+
 <script>
   function showPB(which){
     document.getElementById('pb-med').classList.remove('show');
@@ -223,8 +261,59 @@
     document.getElementById('pb-med').classList.remove('show');
     document.getElementById('pb-pet').classList.remove('show');
   }
+  const SIM_SESSIONS = {
+    'Medical-equipment exception':{
+      level:'INTERMEDIATE', persona:'Alex Chen', sentiment:'🔥 Frustrated',
+      desc:'The agent frequently misses opportunities to set expectations and confirm exception handling, leading to unresolved special-handling escalations.',
+      objective:'Address the identified gap: acknowledge prior friction, set a concrete expectation before acting, and confirm the resolution will hold.',
+      scored:['expectations','context','empathy','proficiency']
+    },
+    'Anxious pet-traveler':{
+      level:'INTERMEDIATE', persona:'Jordan Blake', sentiment:'🔥 Very anxious',
+      desc:'The agent moves to logistics before reassurance, leaving anxious customers unconvinced their concern is understood.',
+      objective:'Address the identified gap: name and validate the worry, signal competence, then walk the concrete plan step by step.',
+      scored:['empathy','patience','reassurance','proficiency']
+    }
+  };
+
   function assignSim(name){
-    alert('✅ Coaching simulation assigned\n\n"' + name + '" is live in NICE CXone Learning and assigned to agents who show this gap in QM scoring.');
+    const s = SIM_SESSIONS[name] || {level:'INTERMEDIATE',persona:'Customer',sentiment:'🔥 Frustrated',desc:'',objective:'',scored:[]};
+    const skills = s.scored.map(function(sk){return '<div class="sm-skill">⭐ <span>'+sk+'</span></div>';}).join('');
+    document.getElementById('sm-modal').innerHTML =
+      '<div class="sm-head">'+
+        '<div class="wm">G</div>'+
+        '<div class="sm-badges"><span class="sm-badge">QUALITY SCORE</span><span class="sm-badge">'+s.level+'</span></div>'+
+        '<div class="sm-title">Quality Score – '+name+'</div>'+
+        '<div class="sm-persona"><span>🧑 '+s.persona+'</span><span>'+s.sentiment+'</span></div>'+
+        '<div class="sm-ctrl"><div class="sm-dot"></div><button class="sm-done" onclick="closeSM()">× Done</button><button class="sm-x" onclick="closeSM()">×</button></div>'+
+      '</div>'+
+      '<div class="sm-body">'+
+        '<div class="sm-desc">'+s.desc+'</div>'+
+        '<div class="sm-cols">'+
+          '<div><div class="sm-coltitle">Objective</div><div class="sm-obj">'+s.objective+'</div></div>'+
+          '<div><div class="sm-coltitle">Scored on</div>'+skills+'</div>'+
+        '</div>'+
+        '<div class="sm-config"><span class="sm-cfg">🎭 In character</span><span class="sm-cfg">💬 Up to 6 turns</span><span class="sm-cfg">🚫 No hints</span><span class="sm-cfg">✨ AI feedback</span></div>'+
+        '<div class="sm-modelabel">Practice mode</div>'+
+        '<div class="sm-modes"><div class="sm-mode active" onclick="pickMode(this)">💬 Chat</div><div class="sm-mode" onclick="pickMode(this)">📞 Voice</div></div>'+
+      '</div>'+
+      '<div class="sm-foot">'+
+        '<button class="sm-ghost" onclick="alert(\'▶ Launching test session…\')">▶ Test</button>'+
+        '<button class="sm-ghost" onclick="alert(\'📅 Session scheduled.\')">📅 Schedule</button>'+
+        '<button class="sm-primary" onclick="sendSim('+JSON.stringify(name)+')">📨 Send to Agent</button>'+
+      '</div>';
+    document.getElementById('sm-overlay').classList.add('show');
+  }
+  function pickMode(el){
+    el.parentElement.querySelectorAll('.sm-mode').forEach(function(m){m.classList.remove('active');});
+    el.classList.add('active');
+  }
+  function sendSim(name){
+    closeSM();
+    alert('✅ Coaching simulation sent\n\n"'+name+'" is live in NICE CXone Learning and assigned to agents who show this gap in QM scoring.');
+  }
+  function closeSM(){
+    document.getElementById('sm-overlay').classList.remove('show');
   }
 </script>
 </body>
